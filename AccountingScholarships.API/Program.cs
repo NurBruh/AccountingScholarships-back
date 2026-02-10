@@ -37,7 +37,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "AccountingScholarships API",
         Version = "v1",
-        Description = "API ��� ����� ��������� � �������"
+        Description = "API для учета стипендий и студентов"
     });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -47,7 +47,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "������� JWT �����"
+        Description = "Введите JWT токен"
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement

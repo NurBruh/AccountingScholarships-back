@@ -5,7 +5,7 @@
     },
     "omnisharp.enableRoslynAnalyzers": true,
     "omnisharp.enableEditorConfigSupport": true,
-    "omnisharp.enableImportCompletion": true,
     "dotnet.defaultSolution": "AccountingScholarships.sln",
-    "csharp.suppressDotnetRestoreNotification": true
+    "csharp.suppressDotnetRestoreNotification": true,
+    "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true
 }
