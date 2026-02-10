@@ -50,17 +50,7 @@ namespace AccountingScholarships.Infrastructure.Migrations.EpvoDb
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.InsertData(
-                table: "EpvoStudents",
-                columns: new[] { "Id", "Course", "DateOfBirth", "Faculty", "FirstName", "GrantAmount", "GrantName", "IIN", "IsActive", "LastName", "MiddleName", "ScholarshipAmount", "ScholarshipName", "Speciality", "SyncDate" },
-                values: new object[,]
-                {
-                    { new Guid("a1b2c3d4-e5f6-7890-abcd-ef1234567890"), 4, new DateTime(2003, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Информационные технологии", "Алихан", 500000m, "Государственный грант", "030515500123", true, "Сериков", "Бауржанович", 36660m, "Академическая стипендия", "Программная инженерия", new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc) },
-                    { new Guid("b2c3d4e5-f6a7-8901-bcde-f12345678901"), 3, new DateTime(2004, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Экономика", "Айгерим", 450000m, "Государственный грант", "040820600456", true, "Нурланова", "Ерлановна", 50000m, "Повышенная стипендия", "Финансы", new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc) },
-                    { new Guid("c3d4e5f6-a7b8-9012-cdef-123456789012"), 2, new DateTime(2002, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Юриспруденция", "Дамир", 400000m, "Государственный грант", "020110500789", true, "Касымов", null, null, null, "Правоведение", new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc) },
-                    { new Guid("d4e5f6a7-b8c9-0123-defa-234567890123"), 1, new DateTime(2005, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Информационные технологии", "Мадина", null, null, "050305700234", true, "Абдрахманова", "Канатовна", null, null, "Информационная безопасность", new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc) },
-                    { new Guid("e5f6a7b8-c9d0-1234-efab-345678901234"), 4, new DateTime(2001, 7, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), "Медицина", "Нурсултан", 600000m, "Государственный грант", "010725500567", false, "Токаев", "Маратович", 36660m, "Академическая стипендия", "Общая медицина", new DateTime(2024, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc) }
-                });
+
 
             migrationBuilder.CreateIndex(
                 name: "IX_EpvoStudents_IIN",

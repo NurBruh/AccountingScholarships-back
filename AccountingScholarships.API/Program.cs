@@ -1,9 +1,6 @@
 ﻿using AccountingScholarships.API.Middleware;
 using AccountingScholarships.Application;
 using AccountingScholarships.Infrastructure;
-using AccountingScholarships.Infrastructure.Persistence;
-using AccountingScholarships.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -70,19 +67,6 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
-
-// Auto-migrate databases
-using (var scope = app.Services.CreateScope())
-{
-    var appDb = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    await appDb.Database.MigrateAsync();
-
-    var epvoDb = scope.ServiceProvider.GetRequiredService<EpvoDbContext>();
-    await epvoDb.Database.MigrateAsync();
-    // Seed data
-    await EpvoDbContextSeed.SeedAsync(epvoDb);
-    await ApplicationDbContextSeed.SeedAsync(appDb);
-}
 
 // Middleware pipeline
 app.UseMiddleware<CorrelationIdMiddleware>();

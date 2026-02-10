@@ -7,11 +7,13 @@ namespace AccountingScholarships.Application.Features.Auth.Commands;
 
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthResponseDto>
 {
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IRepository<User> _userRepository;
     private readonly IJwtTokenService _jwtTokenService;
 
-    public RegisterCommandHandler(IRepository<User> userRepository, IJwtTokenService jwtTokenService)
+    public RegisterCommandHandler(IUnitOfWork unitOfWork, IRepository<User> userRepository, IJwtTokenService jwtTokenService)
     {
+        _unitOfWork = unitOfWork;
         _userRepository = userRepository;
         _jwtTokenService = jwtTokenService;
     }
@@ -35,6 +37,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthRespo
         };
 
         await _userRepository.AddAsync(user, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var token = _jwtTokenService.GenerateToken(user.Id.ToString(), user.Username, user.Role);
 
