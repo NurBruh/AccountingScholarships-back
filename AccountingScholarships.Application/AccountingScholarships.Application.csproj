@@ -16,4 +16,8 @@
     <ProjectReference Include="..\AccountingScholarships.Domain\AccountingScholarships.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
 </Project>

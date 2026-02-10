@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "http": {
+    "AccountingScholarships.API": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

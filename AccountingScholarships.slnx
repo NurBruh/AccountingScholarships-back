@@ -1,6 +1,17 @@
 <Solution>
-  <Project Path="AccountingScholarships.API/AccountingScholarships.API.csproj" />
-  <Project Path="AccountingScholarships.Application/AccountingScholarships.Application.csproj" />
-  <Project Path="AccountingScholarships.Domain/AccountingScholarships.Domain.csproj" />
-  <Project Path="AccountingScholarships.Infrastructure/AccountingScholarships.Infrastructure.csproj" />
+  <Folder Name="1. Presentation">
+    <Project Path="AccountingScholarships.API\AccountingScholarships.API.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="2. Application">
+    <Project Path="AccountingScholarships.Application\AccountingScholarships.Application.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="3. Infrastructure">
+    <Project Path="AccountingScholarships.Infrastructure\AccountingScholarships.Infrastructure.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="4. Domain">
+    <Project Path="AccountingScholarships.Domain\AccountingScholarships.Domain.csproj" Type="Classic C#" />
+  </Folder>
+  <Properties Name="Visual Studio">
+    <Property Name="OpenWith" Value="Visual Studio 2022" />
+  </Properties>
 </Solution>
