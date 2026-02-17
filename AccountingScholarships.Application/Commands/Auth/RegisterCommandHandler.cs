@@ -1,5 +1,4 @@
-
-using AccountingScholarships.Domain.DTO;
+п»їusing AccountingScholarships.Domain.DTO;
 using AccountingScholarships.Domain.Interfaces;
 using AccountingScholarships.Domain.Entities;
 using MediatR;
@@ -9,23 +8,21 @@ namespace AccountingScholarships.Application.Commands.Auth;
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthResponseDto>
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IRepository<User> _userRepository;
     private readonly IJwtTokenService _jwtTokenService;
 
-    public RegisterCommandHandler(IUnitOfWork unitOfWork, IRepository<User> userRepository, IJwtTokenService jwtTokenService)
+    public RegisterCommandHandler(IUnitOfWork unitOfWork, IJwtTokenService jwtTokenService)
     {
         _unitOfWork = unitOfWork;
-        _userRepository = userRepository;
         _jwtTokenService = jwtTokenService;
     }
 
     public async Task<AuthResponseDto> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        var existing = await _userRepository.FindAsync(
+        var existing = await _unitOfWork.Users.FindAsync(
             u => u.Username == request.Register.Username, cancellationToken);
 
         if (existing.Any())
-            throw new InvalidOperationException("Пользователь с таким именем уже существует.");
+            throw new InvalidOperationException("РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ СЃ С‚Р°РєРёРј РёРјРµРЅРµРј СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚.");
 
         var user = new User
         {
@@ -36,7 +33,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthRespo
             CreatedAt = DateTime.UtcNow
         };
 
-        await _userRepository.AddAsync(user, cancellationToken);
+        await _unitOfWork.Users.AddAsync(user, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var token = _jwtTokenService.GenerateToken(user.Id.ToString(), user.Username, user.Role);

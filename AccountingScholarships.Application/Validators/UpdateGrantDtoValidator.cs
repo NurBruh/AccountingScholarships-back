@@ -1,5 +1,4 @@
-
-using AccountingScholarships.Domain.DTO;
+﻿using AccountingScholarships.Domain.DTO;
 using FluentValidation;
 
 namespace AccountingScholarships.Application.Validators;

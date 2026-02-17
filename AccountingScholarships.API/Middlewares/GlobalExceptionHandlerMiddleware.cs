@@ -1,4 +1,4 @@
-using System.Net;
+п»їusing System.Net;
 using System.Text.Json;
 
 namespace AccountingScholarships.API.Middleware;
@@ -22,12 +22,12 @@ public class GlobalExceptionHandlerMiddleware
         }
         catch (InvalidOperationException ex)
         {
-            _logger.LogWarning(ex, "Бизнес-ошибка: {Message}", ex.Message);
+            _logger.LogWarning(ex, "Р‘РёР·РЅРµСЃ-РѕС€РёР±РєР°: {Message}", ex.Message);
             await HandleExceptionAsync(context, ex, HttpStatusCode.BadRequest);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Необработанная ошибка: {Message}", ex.Message);
+            _logger.LogError(ex, "РќРµРїСЂРµРґРІРёРґРµРЅРЅР°СЏ РѕС€РёР±РєР°: {Message}", ex.Message);
             await HandleExceptionAsync(context, ex, HttpStatusCode.InternalServerError);
         }
     }
@@ -41,7 +41,7 @@ public class GlobalExceptionHandlerMiddleware
         {
             StatusCode = (int)statusCode,
             Message = statusCode == HttpStatusCode.InternalServerError
-                ? "Произошла внутренняя ошибка сервера."
+                ? "РџСЂРѕРёР·РѕС€Р»Р° РІРЅСѓС‚СЂРµРЅРЅСЏСЏ РѕС€РёР±РєР° СЃРµСЂРІРµСЂР°."
                 : exception.Message,
             CorrelationId = context.Items["CorrelationId"]?.ToString()
         };

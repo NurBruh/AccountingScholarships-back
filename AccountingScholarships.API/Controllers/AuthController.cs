@@ -1,4 +1,4 @@
-using AccountingScholarships.API.Contracts.Requests;
+п»їusing AccountingScholarships.API.Contracts.Requests;
 
 using AccountingScholarships.Domain.DTO;
 using AccountingScholarships.Application.Commands.Auth;
@@ -26,7 +26,7 @@ public class AuthController : ControllerBase
         var result = await _mediator.Send(new LoginCommand(dto), cancellationToken);
 
         if (result is null)
-            return Unauthorized(new { Message = "Неверное имя пользователя или пароль." });
+            return Unauthorized(new { Message = "РќРµРІРµСЂРЅРѕРµ РёРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёР»Рё РїР°СЂРѕР»СЊ." });
 
         return Ok(result);
     }
@@ -38,4 +38,3 @@ public class AuthController : ControllerBase
         return CreatedAtAction(nameof(Login), result);
     }
 }
-

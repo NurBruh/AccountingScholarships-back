@@ -1,4 +1,4 @@
-using AccountingScholarships.API.Contracts.Requests;
+п»їusing AccountingScholarships.API.Contracts.Requests;
 
 using AccountingScholarships.Domain.DTO;
 using AccountingScholarships.Application.Commands.Epvo;
@@ -34,7 +34,6 @@ public class EpvoController : ControllerBase
     public async Task<IActionResult> SyncFromEpvo(CancellationToken cancellationToken)
     {
         var syncedCount = await _mediator.Send(new SyncStudentsFromEpvoCommand(), cancellationToken);
-        return Ok(new { SyncedCount = syncedCount, Message = $"Синхронизировано {syncedCount} студентов из ЕПВО." });
+        return Ok(new { SyncedCount = syncedCount, Message = $"РЎРёРЅС…СЂРѕРЅРёР·РёСЂРѕРІР°РЅРѕ {syncedCount} СЃС‚СѓРґРµРЅС‚РѕРІ РёР· Р•РџР’Рћ." });
     }
 }
-

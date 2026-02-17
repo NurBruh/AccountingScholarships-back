@@ -8,18 +8,18 @@ namespace AccountingScholarships.Application.Commands.Auth;
 
 public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResponseDto?>
 {
-    private readonly IRepository<User> _userRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IJwtTokenService _jwtTokenService;
 
-    public LoginCommandHandler(IRepository<User> userRepository, IJwtTokenService jwtTokenService)
+    public LoginCommandHandler(IUnitOfWork unitOfWork, IJwtTokenService jwtTokenService)
     {
-        _userRepository = userRepository;
+        _unitOfWork = unitOfWork;
         _jwtTokenService = jwtTokenService;
     }
 
     public async Task<AuthResponseDto?> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var users = await _userRepository.FindAsync(
+        var users = await _unitOfWork.Users.FindAsync(
             u => u.Username == request.Login.Username, cancellationToken);
 
         var user = users.FirstOrDefault();

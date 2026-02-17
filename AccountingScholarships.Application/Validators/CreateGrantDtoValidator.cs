@@ -1,5 +1,4 @@
-
-using AccountingScholarships.Domain.DTO;
+﻿using AccountingScholarships.Domain.DTO;
 using FluentValidation;
 
 namespace AccountingScholarships.Application.Validators;
@@ -27,6 +26,6 @@ public class CreateGrantDtoValidator : AbstractValidator<CreateGrantDto>
             .When(x => x.EndDate.HasValue);
 
         RuleFor(x => x.StudentId)
-            .NotEmpty().WithMessage("ID студента обязателен");
+            .GreaterThan(0).WithMessage("Необходимо указать студента");
     }
 }

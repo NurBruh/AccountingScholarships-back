@@ -48,7 +48,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "AccountingScholarships API",
         Version = "v1",
-        Description = "API для учета стипендий и студентов"
+        Description = "API для учета стипендий и грантов студентов"
     });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -102,4 +102,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
