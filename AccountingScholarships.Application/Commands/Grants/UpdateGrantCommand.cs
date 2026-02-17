@@ -4,4 +4,4 @@ using MediatR;
 
 namespace AccountingScholarships.Application.Commands.Grants;
 
-public record UpdateGrantCommand(Guid Id, UpdateGrantDto Dto) : IRequest<GrantDto?>;
+public record UpdateGrantCommand(int Id, UpdateGrantDto Dto) : IRequest<GrantDto?>;

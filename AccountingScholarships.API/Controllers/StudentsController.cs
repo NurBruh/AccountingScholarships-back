@@ -24,14 +24,14 @@ public class StudentsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<StudentDto>>> GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetAllStudentsQuery(), cancellationToken);
         return Ok(result);
     }
 
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult<StudentDto>> GetById(Guid id, CancellationToken cancellationToken)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetStudentByIdQuery(id), cancellationToken);
 
@@ -42,14 +42,14 @@ public class StudentsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<StudentDto>> Create([FromBody] CreateStudentRequest dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] CreateStudentRequest dto, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new CreateStudentCommand(dto), cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = result.Id, version = "1.0" }, result);
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<ActionResult<StudentDto>> Update(Guid id, [FromBody] UpdateStudentRequest dto, CancellationToken cancellationToken)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateStudentRequest dto, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new UpdateStudentCommand(id, dto), cancellationToken);
 
@@ -59,8 +59,8 @@ public class StudentsController : ControllerBase
         return Ok(result);
     }
 
-    [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new DeleteStudentCommand(id), cancellationToken);
 

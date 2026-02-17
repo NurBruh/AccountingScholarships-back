@@ -21,7 +21,6 @@ public class CreateStudentCommandHandler : IRequestHandler<CreateStudentCommand,
 
         var student = new Student
         {
-            Id = Guid.NewGuid(),
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             MiddleName = dto.MiddleName,

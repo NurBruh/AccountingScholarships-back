@@ -4,4 +4,4 @@ using MediatR;
 
 namespace AccountingScholarships.Application.Queries.Grants;
 
-public record GetGrantByIdQuery(Guid Id) : IRequest<GrantDto?>;
+public record GetGrantByIdQuery(int Id) : IRequest<GrantDto?>;

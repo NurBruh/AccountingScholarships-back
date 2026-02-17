@@ -24,7 +24,7 @@ public class EpvoRepository : IEpvoRepository
         return await _context.EpvoStudents.FirstOrDefaultAsync(s => s.IIN == iin, cancellationToken);
     }
 
-    public async Task<EpvoStudent?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<EpvoStudent?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         return await _context.EpvoStudents.FindAsync(new object[] { id }, cancellationToken);
     }

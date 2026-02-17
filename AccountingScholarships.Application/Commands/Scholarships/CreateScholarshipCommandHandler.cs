@@ -21,7 +21,6 @@ public class CreateScholarshipCommandHandler : IRequestHandler<CreateScholarship
     {
         var scholarship = new Scholarship
         {
-            Id = Guid.NewGuid(),
             Name = request.Dto.Name,
             Type = request.Dto.Type,
             Amount = request.Dto.Amount,

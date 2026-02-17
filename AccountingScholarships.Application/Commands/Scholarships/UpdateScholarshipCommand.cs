@@ -4,4 +4,4 @@ using MediatR;
 
 namespace AccountingScholarships.Application.Commands.Scholarships;
 
-public record UpdateScholarshipCommand(Guid Id, UpdateScholarshipDto Dto) : IRequest<ScholarshipDto?>;
+public record UpdateScholarshipCommand(int Id, UpdateScholarshipDto Dto) : IRequest<ScholarshipDto?>;

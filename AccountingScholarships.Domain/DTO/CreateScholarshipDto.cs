@@ -8,5 +8,5 @@ public class CreateScholarshipDto
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public bool IsActive { get; set; } = true;
-    public Guid StudentId { get; set; }
+    public int StudentId { get; set; }
 }

@@ -2,7 +2,7 @@ namespace AccountingScholarships.Domain.DTO;
 
 public class EpvoStudentDto
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string? MiddleName { get; set; }

@@ -21,7 +21,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<AuthResponseDto>> Login([FromBody] LoginRequest dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Login([FromBody] LoginRequest dto, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new LoginCommand(dto), cancellationToken);
 
@@ -32,7 +32,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<AuthResponseDto>> Register([FromBody] RegisterRequest dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Register([FromBody] RegisterRequest dto, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new RegisterCommand(dto), cancellationToken);
         return CreatedAtAction(nameof(Login), result);

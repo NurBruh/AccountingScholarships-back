@@ -11,7 +11,7 @@ public class ScholarshipRepository : Repository<Scholarship>, IScholarshipReposi
     {
     }
 
-    public async Task<IReadOnlyList<Scholarship>> GetByStudentIdAsync(Guid studentId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Scholarship>> GetByStudentIdAsync(int studentId, CancellationToken cancellationToken = default)
     {
         return await _context.Set<Scholarship>()
             .Where(s => s.StudentId == studentId)

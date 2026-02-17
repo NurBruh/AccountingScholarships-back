@@ -21,7 +21,6 @@ public class CreateGrantCommandHandler : IRequestHandler<CreateGrantCommand, Gra
     {
         var grant = new Grant
         {
-            Id = Guid.NewGuid(),
             Name = request.Dto.Name,
             Type = request.Dto.Type,
             Amount = request.Dto.Amount,

@@ -24,14 +24,14 @@ public class EpvoController : ControllerBase
     }
 
     [HttpGet("students")]
-    public async Task<ActionResult<IReadOnlyList<EpvoStudentDto>>> GetAllEpvoStudents(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAllEpvoStudents(CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetAllEpvoStudentsQuery(), cancellationToken);
         return Ok(result);
     }
 
     [HttpPost("sync")]
-    public async Task<ActionResult<object>> SyncFromEpvo(CancellationToken cancellationToken)
+    public async Task<IActionResult> SyncFromEpvo(CancellationToken cancellationToken)
     {
         var syncedCount = await _mediator.Send(new SyncStudentsFromEpvoCommand(), cancellationToken);
         return Ok(new { SyncedCount = syncedCount, Message = $"Синхронизировано {syncedCount} студентов из ЕПВО." });

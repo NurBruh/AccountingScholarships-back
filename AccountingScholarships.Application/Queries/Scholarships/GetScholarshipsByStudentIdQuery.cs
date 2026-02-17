@@ -4,4 +4,4 @@ using MediatR;
 
 namespace AccountingScholarships.Application.Queries.Scholarships;
 
-public record GetScholarshipsByStudentIdQuery(Guid StudentId) : IRequest<IReadOnlyList<ScholarshipDto>>;
+public record GetScholarshipsByStudentIdQuery(int StudentId) : IRequest<IReadOnlyList<ScholarshipDto>>;

@@ -32,7 +32,6 @@ public class SyncStudentsFromEpvoCommandHandler : IRequestHandler<SyncStudentsFr
                 {
                     var student = new Student
                     {
-                        Id = Guid.NewGuid(),
                         FirstName = epvo.FirstName,
                         LastName = epvo.LastName,
                         MiddleName = epvo.MiddleName,

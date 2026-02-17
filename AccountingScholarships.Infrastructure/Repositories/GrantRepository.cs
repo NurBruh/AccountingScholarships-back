@@ -11,7 +11,7 @@ public class GrantRepository : Repository<Grant>, IGrantRepository
     {
     }
 
-    public async Task<IReadOnlyList<Grant>> GetByStudentIdAsync(Guid studentId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Grant>> GetByStudentIdAsync(int studentId, CancellationToken cancellationToken = default)
     {
         return await _context.Set<Grant>()
             .Where(g => g.StudentId == studentId)

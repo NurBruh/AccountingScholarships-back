@@ -11,6 +11,6 @@ public class Scholarship : BaseEntity
     public DateTime? EndDate { get; set; }
     public bool IsActive { get; set; } = true;
 
-    public Guid StudentId { get; set; }
+    public int StudentId { get; set; }
     public Student Student { get; set; } = null!;
 }

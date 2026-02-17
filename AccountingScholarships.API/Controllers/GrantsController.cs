@@ -23,8 +23,8 @@ public class GrantsController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult<GrantDto>> GetById(Guid id, CancellationToken cancellationToken)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetGrantByIdQuery(id), cancellationToken);
 
@@ -34,22 +34,22 @@ public class GrantsController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("student/{studentId:guid}")]
-    public async Task<ActionResult<IReadOnlyList<GrantDto>>> GetByStudentId(Guid studentId, CancellationToken cancellationToken)
+    [HttpGet("student/{studentId:int}")]
+    public async Task<IActionResult> GetByStudentId(int studentId, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetGrantsByStudentIdQuery(studentId), cancellationToken);
         return Ok(result);
     }
 
     [HttpPost]
-    public async Task<ActionResult<GrantDto>> Create([FromBody] CreateGrantRequest dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] CreateGrantRequest dto, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new CreateGrantCommand(dto), cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = result.Id, version = "1.0" }, result);
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<ActionResult<GrantDto>> Update(Guid id, [FromBody] UpdateGrantRequest dto, CancellationToken cancellationToken)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateGrantRequest dto, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new UpdateGrantCommand(id, dto), cancellationToken);
 
@@ -59,8 +59,8 @@ public class GrantsController : ControllerBase
         return Ok(result);
     }
 
-    [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new DeleteGrantCommand(id), cancellationToken);
 

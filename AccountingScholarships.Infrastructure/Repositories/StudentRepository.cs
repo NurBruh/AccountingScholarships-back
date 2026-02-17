@@ -14,7 +14,7 @@ public class StudentRepository : Repository<Student>, IStudentRepository
         return await _dbSet.FirstOrDefaultAsync(s => s.IIN == iin, cancellationToken);
     }
 
-    public async Task<Student?> GetWithDetailsAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<Student?> GetWithDetailsAsync(int id, CancellationToken cancellationToken = default)
     {
         return await _dbSet
             .Include(s => s.Grants)

@@ -4,5 +4,5 @@ namespace AccountingScholarships.Domain.Interfaces;
 
 public interface IGrantRepository : IRepository<Grant>
 {
-    Task<IReadOnlyList<Grant>> GetByStudentIdAsync(Guid studentId, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Grant>> GetByStudentIdAsync(int studentId, CancellationToken cancellationToken = default);
 }

@@ -23,8 +23,8 @@ public class ScholarshipsController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult<ScholarshipDto>> GetById(Guid id, CancellationToken cancellationToken)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetScholarshipByIdQuery(id), cancellationToken);
 
@@ -34,22 +34,22 @@ public class ScholarshipsController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("student/{studentId:guid}")]
-    public async Task<ActionResult<IReadOnlyList<ScholarshipDto>>> GetByStudentId(Guid studentId, CancellationToken cancellationToken)
+    [HttpGet("student/{studentId:int}")]
+    public async Task<IActionResult> GetByStudentId(int studentId, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetScholarshipsByStudentIdQuery(studentId), cancellationToken);
         return Ok(result);
     }
 
     [HttpPost]
-    public async Task<ActionResult<ScholarshipDto>> Create([FromBody] CreateScholarshipRequest dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create([FromBody] CreateScholarshipRequest dto, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new CreateScholarshipCommand(dto), cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = result.Id, version = "1.0" }, result);
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<ActionResult<ScholarshipDto>> Update(Guid id, [FromBody] UpdateScholarshipRequest dto, CancellationToken cancellationToken)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateScholarshipRequest dto, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new UpdateScholarshipCommand(id, dto), cancellationToken);
 
@@ -59,8 +59,8 @@ public class ScholarshipsController : ControllerBase
         return Ok(result);
     }
 
-    [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new DeleteScholarshipCommand(id), cancellationToken);
 
