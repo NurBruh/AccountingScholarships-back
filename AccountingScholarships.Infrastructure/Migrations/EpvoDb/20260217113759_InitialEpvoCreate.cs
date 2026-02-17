@@ -1,9 +1,8 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
-
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
 namespace AccountingScholarships.Infrastructure.Migrations.EpvoDb
 {
@@ -20,7 +19,8 @@ namespace AccountingScholarships.Infrastructure.Migrations.EpvoDb
                 name: "EpvoStudents",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     FirstName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     LastName = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
@@ -49,8 +49,6 @@ namespace AccountingScholarships.Infrastructure.Migrations.EpvoDb
                     table.PrimaryKey("PK_EpvoStudents", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
-
-
 
             migrationBuilder.CreateIndex(
                 name: "IX_EpvoStudents_IIN",
