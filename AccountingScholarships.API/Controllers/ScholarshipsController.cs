@@ -1,6 +1,8 @@
-using AccountingScholarships.Application.DTOs;
-using AccountingScholarships.Application.Features.Scholarships.Commands;
-using AccountingScholarships.Application.Features.Scholarships.Queries;
+using AccountingScholarships.API.Contracts.Requests;
+
+using AccountingScholarships.Domain.DTO;
+using AccountingScholarships.Application.Commands.Scholarships;
+using AccountingScholarships.Application.Queries.Scholarships;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -40,14 +42,14 @@ public class ScholarshipsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<ScholarshipDto>> Create([FromBody] CreateScholarshipDto dto, CancellationToken cancellationToken)
+    public async Task<ActionResult<ScholarshipDto>> Create([FromBody] CreateScholarshipRequest dto, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new CreateScholarshipCommand(dto), cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = result.Id, version = "1.0" }, result);
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<ActionResult<ScholarshipDto>> Update(Guid id, [FromBody] UpdateScholarshipDto dto, CancellationToken cancellationToken)
+    public async Task<ActionResult<ScholarshipDto>> Update(Guid id, [FromBody] UpdateScholarshipRequest dto, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new UpdateScholarshipCommand(id, dto), cancellationToken);
 
@@ -68,3 +70,4 @@ public class ScholarshipsController : ControllerBase
         return NoContent();
     }
 }
+

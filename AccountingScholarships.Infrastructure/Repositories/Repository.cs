@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
-using AccountingScholarships.Application.Interfaces;
+using AccountingScholarships.Domain.Interfaces;
 using AccountingScholarships.Domain.Common;
-using AccountingScholarships.Infrastructure.Persistence;
+using AccountingScholarships.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountingScholarships.Infrastructure.Repositories;

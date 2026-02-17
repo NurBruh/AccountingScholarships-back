@@ -1,6 +1,8 @@
-using AccountingScholarships.Application.DTOs;
-using AccountingScholarships.Application.Features.Students.Commands;
-using AccountingScholarships.Application.Features.Students.Queries;
+using AccountingScholarships.API.Contracts.Requests;
+
+using AccountingScholarships.Domain.DTO;
+using AccountingScholarships.Application.Commands.Students;
+using AccountingScholarships.Application.Queries.Students;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -40,14 +42,14 @@ public class StudentsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<StudentDto>> Create([FromBody] CreateStudentDto dto, CancellationToken cancellationToken)
+    public async Task<ActionResult<StudentDto>> Create([FromBody] CreateStudentRequest dto, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new CreateStudentCommand(dto), cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = result.Id, version = "1.0" }, result);
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<ActionResult<StudentDto>> Update(Guid id, [FromBody] UpdateStudentDto dto, CancellationToken cancellationToken)
+    public async Task<ActionResult<StudentDto>> Update(Guid id, [FromBody] UpdateStudentRequest dto, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new UpdateStudentCommand(id, dto), cancellationToken);
 
@@ -68,3 +70,4 @@ public class StudentsController : ControllerBase
         return NoContent();
     }
 }
+

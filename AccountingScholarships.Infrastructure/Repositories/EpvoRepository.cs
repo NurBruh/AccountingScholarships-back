@@ -1,6 +1,6 @@
-using AccountingScholarships.Application.Interfaces;
+using AccountingScholarships.Domain.Interfaces;
 using AccountingScholarships.Domain.Entities.Epvo;
-using AccountingScholarships.Infrastructure.Persistence;
+using AccountingScholarships.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountingScholarships.Infrastructure.Repositories;

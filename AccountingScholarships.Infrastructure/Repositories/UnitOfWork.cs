@@ -1,5 +1,5 @@
-using AccountingScholarships.Application.Interfaces;
-using AccountingScholarships.Infrastructure.Persistence;
+using AccountingScholarships.Domain.Interfaces;
+using AccountingScholarships.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace AccountingScholarships.Infrastructure.Repositories;

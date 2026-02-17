@@ -1,6 +1,8 @@
-using AccountingScholarships.Application.DTOs;
-using AccountingScholarships.Application.Features.Epvo.Commands;
-using AccountingScholarships.Application.Features.Epvo.Queries;
+using AccountingScholarships.API.Contracts.Requests;
+
+using AccountingScholarships.Domain.DTO;
+using AccountingScholarships.Application.Commands.Epvo;
+using AccountingScholarships.Application.Queries.Epvo;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -35,3 +37,4 @@ public class EpvoController : ControllerBase
         return Ok(new { SyncedCount = syncedCount, Message = $"Синхронизировано {syncedCount} студентов из ЕПВО." });
     }
 }
+

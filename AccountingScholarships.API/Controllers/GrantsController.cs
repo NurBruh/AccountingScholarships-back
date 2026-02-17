@@ -1,6 +1,8 @@
-using AccountingScholarships.Application.DTOs;
-using AccountingScholarships.Application.Features.Grants.Commands;
-using AccountingScholarships.Application.Features.Grants.Queries;
+using AccountingScholarships.API.Contracts.Requests;
+
+using AccountingScholarships.Domain.DTO;
+using AccountingScholarships.Application.Commands.Grants;
+using AccountingScholarships.Application.Queries.Grants;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -40,14 +42,14 @@ public class GrantsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<GrantDto>> Create([FromBody] CreateGrantDto dto, CancellationToken cancellationToken)
+    public async Task<ActionResult<GrantDto>> Create([FromBody] CreateGrantRequest dto, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new CreateGrantCommand(dto), cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = result.Id, version = "1.0" }, result);
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<ActionResult<GrantDto>> Update(Guid id, [FromBody] UpdateGrantDto dto, CancellationToken cancellationToken)
+    public async Task<ActionResult<GrantDto>> Update(Guid id, [FromBody] UpdateGrantRequest dto, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new UpdateGrantCommand(id, dto), cancellationToken);
 
@@ -68,3 +70,4 @@ public class GrantsController : ControllerBase
         return NoContent();
     }
 }
+
