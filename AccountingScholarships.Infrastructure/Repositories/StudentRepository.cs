@@ -21,4 +21,12 @@ public class StudentRepository : Repository<Student>, IStudentRepository
             .Include(s => s.Scholarships)
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
+
+    public async Task<IReadOnlyList<Student>> GetAllWithDetailsAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbSet
+            .Include(s => s.Grants)
+            .Include(s => s.Scholarships)
+            .ToListAsync(cancellationToken);
+    }
 }

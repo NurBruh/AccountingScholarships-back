@@ -6,4 +6,5 @@ public interface IStudentRepository : IRepository<Student>
 {
     Task<Student?> GetByIINAsync(string iin, CancellationToken cancellationToken = default);
     Task<Student?> GetWithDetailsAsync(int id, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Student>> GetAllWithDetailsAsync(CancellationToken cancellationToken = default);
 }
