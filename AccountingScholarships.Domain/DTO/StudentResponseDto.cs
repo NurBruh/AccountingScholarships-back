@@ -18,6 +18,6 @@ public class StudentResponseDto
     public string? ScholarshipName { get; set; }
     public decimal? ScholarshipAmount { get; set; }
     public bool HasScholarship { get; set; }
+    public string iban { get; set; } = string.Empty;
     public DateTime? SyncDate { get; set; }
-    public string? Iban { get; set; }
 }
