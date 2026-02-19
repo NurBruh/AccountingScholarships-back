@@ -13,5 +13,6 @@ public class CreateStudentDto
     public string? Faculty { get; set; }
     public string? Speciality { get; set; }
     public int Course { get; set; }
+    public string iban { get; set; } = string.Empty;
     public string? EducationForm { get; set; }
 }

@@ -29,6 +29,7 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Phone).HasMaxLength(20);
             entity.Property(e => e.GroupName).HasMaxLength(50);
             entity.Property(e => e.Faculty).HasMaxLength(200);
+            entity.Property(e => e.iban).HasMaxLength(20);
             entity.Property(e => e.Speciality).HasMaxLength(200);
             entity.Property(e => e.EducationForm).HasMaxLength(50);
         });

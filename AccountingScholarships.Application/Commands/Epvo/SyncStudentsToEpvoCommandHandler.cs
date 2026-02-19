@@ -46,6 +46,7 @@ public class SyncStudentsToEpvoCommandHandler : IRequestHandler<SyncStudentsToEp
                     GrantAmount = activeGrant?.Amount,
                     ScholarshipName = activeScholarship?.Name,
                     ScholarshipAmount = activeScholarship?.Amount,
+                    iban = sso.iban,
                     IsActive = sso.IsActive,
                     SyncDate = DateTime.UtcNow
                 };
@@ -68,6 +69,7 @@ public class SyncStudentsToEpvoCommandHandler : IRequestHandler<SyncStudentsToEp
                 existing.ScholarshipName = activeScholarship?.Name;
                 existing.ScholarshipAmount = activeScholarship?.Amount;
                 existing.IsActive = sso.IsActive;
+                existing.iban = sso.iban;
                 existing.SyncDate = DateTime.UtcNow;
 
                 await _epvoRepository.UpdateAsync(existing, cancellationToken);

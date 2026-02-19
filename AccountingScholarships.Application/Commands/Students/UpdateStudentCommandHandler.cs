@@ -35,6 +35,7 @@ public class UpdateStudentCommandHandler : IRequestHandler<UpdateStudentCommand,
         student.Speciality = dto.Speciality;
         student.Course = dto.Course;
         student.EducationForm = dto.EducationForm;
+        student.iban = dto.iban;
         student.IsActive = dto.IsActive;
         student.UpdatedAt = DateTime.UtcNow;
 
@@ -56,6 +57,7 @@ public class UpdateStudentCommandHandler : IRequestHandler<UpdateStudentCommand,
             Speciality = student.Speciality,
             Course = student.Course,
             EducationForm = student.EducationForm,
+            iban = student.iban,
             IsActive = student.IsActive,
             CreatedAt = student.CreatedAt,
             UpdatedAt = student.UpdatedAt

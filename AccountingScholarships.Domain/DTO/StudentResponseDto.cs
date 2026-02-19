@@ -19,4 +19,5 @@ public class StudentResponseDto
     public decimal? ScholarshipAmount { get; set; }
     public bool HasScholarship { get; set; }
     public DateTime? SyncDate { get; set; }
+    public string? Iban { get; set; }
 }

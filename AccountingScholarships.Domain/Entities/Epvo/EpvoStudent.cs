@@ -15,6 +15,7 @@ public class EpvoStudent
     public decimal? GrantAmount { get; set; }
     public string? ScholarshipName { get; set; }
     public decimal? ScholarshipAmount { get; set; }
+    public string iban { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
     public DateTime SyncDate { get; set; } = DateTime.UtcNow;
 }

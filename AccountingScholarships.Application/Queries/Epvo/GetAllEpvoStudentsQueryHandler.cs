@@ -36,7 +36,8 @@ public class GetAllEpvoStudentsQueryHandler : IRequestHandler<GetAllEpvoStudents
             ScholarshipName = s.ScholarshipName,
             ScholarshipAmount = s.ScholarshipAmount,
             HasScholarship = s.ScholarshipName != null,
-            SyncDate = s.SyncDate
+            SyncDate = s.SyncDate,
+            Iban = s.iban
         }).ToList().AsReadOnly();
     }
 }

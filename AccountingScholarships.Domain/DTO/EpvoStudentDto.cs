@@ -15,6 +15,7 @@ public class StudentResponesDto
     public decimal? GrantAmount { get; set; }
     public string? ScholarshipName { get; set; }
     public decimal? ScholarshipAmount { get; set; }
+    public string iban { get; set; } = string.Empty;    
     public bool IsActive { get; set; }
     public DateTime SyncDate { get; set; }
 }

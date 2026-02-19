@@ -37,6 +37,7 @@ public class GetStudentByIdQueryHandler : IRequestHandler<GetStudentByIdQuery, S
             Course = student.Course,
             EducationForm = student.EducationForm,
             IsActive = student.IsActive,
+            iban = student.iban,
             CreatedAt = student.CreatedAt,
             UpdatedAt = student.UpdatedAt,
             Grants = student.Grants.Select(g => new GrantDto

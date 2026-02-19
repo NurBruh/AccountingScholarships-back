@@ -33,6 +33,7 @@ public class CreateStudentCommandHandler : IRequestHandler<CreateStudentCommand,
             Speciality = dto.Speciality,
             Course = dto.Course,
             EducationForm = dto.EducationForm,
+            iban = dto.iban,
             IsActive = true,
             CreatedAt = DateTime.UtcNow
         };
@@ -56,6 +57,7 @@ public class CreateStudentCommandHandler : IRequestHandler<CreateStudentCommand,
             Course = student.Course,
             EducationForm = student.EducationForm,
             IsActive = student.IsActive,
+            iban = student.iban,
             CreatedAt = student.CreatedAt,
             UpdatedAt = student.UpdatedAt
         };

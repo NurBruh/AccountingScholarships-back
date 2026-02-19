@@ -41,6 +41,7 @@ public class SyncStudentsFromEpvoCommandHandler : IRequestHandler<SyncStudentsFr
                         Speciality = epvo.Speciality,
                         Course = epvo.Course,
                         IsActive = epvo.IsActive,
+                        iban = epvo.iban,
                         CreatedAt = DateTime.UtcNow
                     };
 
@@ -56,6 +57,7 @@ public class SyncStudentsFromEpvoCommandHandler : IRequestHandler<SyncStudentsFr
                     existing.Speciality = epvo.Speciality;
                     existing.Course = epvo.Course;
                     existing.IsActive = epvo.IsActive;
+                    existing.iban = epvo.iban;
                     existing.UpdatedAt = DateTime.UtcNow;
 
                     await _unitOfWork.Students.UpdateAsync(existing, cancellationToken);

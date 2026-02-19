@@ -43,4 +43,11 @@ public class EpvoController : ControllerBase
         var syncedCount = await _mediator.Send(new SyncStudentsToEpvoCommand(), cancellationToken);
         return Ok(new { SyncedCount = syncedCount, Message = $"Синхронизировано {syncedCount} студентов в ЕПВО." });
     }
+
+    [HttpGet("compare")]
+    public async Task<IActionResult> GetSsoEpvoComparison(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetSsoEpvoComparisonQuery(), cancellationToken);
+        return Ok(result);
+    }
 }

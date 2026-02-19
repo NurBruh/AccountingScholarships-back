@@ -16,6 +16,7 @@ public class StudentDto
     public int Course { get; set; }
     public string? EducationForm { get; set; }
     public bool IsActive { get; set; }
+    public string iban { get; set; } = string.Empty;    
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public List<GrantDto> Grants { get; set; } = new();

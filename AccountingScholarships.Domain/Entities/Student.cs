@@ -16,6 +16,7 @@ public class Student : BaseEntity
     public string? Speciality { get; set; }
     public int Course { get; set; }
     public string? EducationForm { get; set; }
+    public string iban { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
 
     public ICollection<Grant> Grants { get; set; } = new List<Grant>();

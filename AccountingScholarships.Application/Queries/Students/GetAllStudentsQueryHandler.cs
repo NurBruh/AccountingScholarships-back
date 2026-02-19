@@ -33,6 +33,7 @@ public class GetAllStudentsQueryHandler : IRequestHandler<GetAllStudentsQuery, I
             Course = s.Course,
             EducationForm = s.EducationForm,
             IsActive = s.IsActive,
+            iban = s.iban,
             CreatedAt = s.CreatedAt,
             UpdatedAt = s.UpdatedAt,
             Grants = s.Grants.Select(g => new GrantDto

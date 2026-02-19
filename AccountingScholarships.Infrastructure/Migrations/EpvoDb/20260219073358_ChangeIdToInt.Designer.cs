@@ -4,6 +4,7 @@ using AccountingScholarships.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccountingScholarships.Infrastructure.Migrations.EpvoDb
 {
     [DbContext(typeof(EpvoDbContext))]
-    partial class EpvoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260219073358_ChangeIdToInt")]
+    partial class ChangeIdToInt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,11 +87,6 @@ namespace AccountingScholarships.Infrastructure.Migrations.EpvoDb
 
                     b.Property<DateTime>("SyncDate")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<string>("iban")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
 
                     b.HasKey("Id");
 
