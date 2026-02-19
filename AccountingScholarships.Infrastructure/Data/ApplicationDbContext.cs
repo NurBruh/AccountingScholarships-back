@@ -1,3 +1,4 @@
+using AccountingScholarships.Domain;
 using AccountingScholarships.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Grant> Grants => Set<Grant>();
     public DbSet<Scholarship> Scholarships => Set<Scholarship>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<EpvoPosrednik> EpvoPosredniki => Set<EpvoPosrednik>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -69,6 +71,23 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.PasswordHash).HasMaxLength(500).IsRequired();
             entity.Property(e => e.Email).HasMaxLength(200).IsRequired();
             entity.Property(e => e.Role).HasMaxLength(50).IsRequired();
+        });
+
+        modelBuilder.Entity<EpvoPosrednik>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.IIN).IsUnique();
+            entity.Property(e => e.FirstName).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.LastName).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.MiddleName).HasMaxLength(100);
+            entity.Property(e => e.IIN).HasMaxLength(12).IsRequired();
+            entity.Property(e => e.Faculty).HasMaxLength(200);
+            entity.Property(e => e.Speciality).HasMaxLength(200);
+            entity.Property(e => e.GrantName).HasMaxLength(200);
+            entity.Property(e => e.GrantAmount).HasPrecision(18, 2);
+            entity.Property(e => e.ScholarshipName).HasMaxLength(200);
+            entity.Property(e => e.ScholarshipAmount).HasPrecision(18, 2);
+            entity.Property(e => e.iban).HasMaxLength(20);
         });
     }
 }

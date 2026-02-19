@@ -50,4 +50,12 @@ public class EpvoController : ControllerBase
         var result = await _mediator.Send(new GetSsoEpvoComparisonQuery(), cancellationToken);
         return Ok(result);
     }
+
+    [HttpPost("sync-student/{iin}")]
+    public async Task<IActionResult> SyncStudentToEpvo(string iin, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new SyncStudentToEpvoCommand(iin), cancellationToken);
+        if (!result) return NotFound(new { Message = $"Студент с ИИН {iin} не найден в посреднике." });
+        return Ok(new { Message = $"Студент с ИИН {iin} успешно синхронизирован в ЕПВО." });
+    }
 }

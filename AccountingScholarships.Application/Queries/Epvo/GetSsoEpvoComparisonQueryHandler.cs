@@ -1,3 +1,4 @@
+using AccountingScholarships.Domain;
 using AccountingScholarships.Domain.DTO;
 using AccountingScholarships.Domain.Interfaces;
 using MediatR;
@@ -8,51 +9,58 @@ public class GetSsoEpvoComparisonQueryHandler : IRequestHandler<GetSsoEpvoCompar
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IEpvoRepository _epvoRepository;
+    private readonly IPosrednikRepository _posrednikRepository;
 
-    public GetSsoEpvoComparisonQueryHandler(IUnitOfWork unitOfWork, IEpvoRepository epvoRepository)
+    public GetSsoEpvoComparisonQueryHandler(
+        IUnitOfWork unitOfWork,
+        IEpvoRepository epvoRepository,
+        IPosrednikRepository posrednikRepository)
     {
         _unitOfWork = unitOfWork;
         _epvoRepository = epvoRepository;
+        _posrednikRepository = posrednikRepository;
     }
 
     public async Task<SsoEpvoComparisonDto> Handle(GetSsoEpvoComparisonQuery request, CancellationToken cancellationToken)
     {
-        var ssoStudents = await _unitOfWork.Students.GetAllWithDetailsAsync(cancellationToken);
+        // 1. Обновляем Посредник из ССО
+        await RefreshPosrednikFromSso(cancellationToken);
+
+        // 2. Загружаем данные из Посредника и ЕПВО
+        var posrednikStudents = await _posrednikRepository.GetAllAsync(cancellationToken);
         var epvoStudents = await _epvoRepository.GetAllAsync(cancellationToken);
 
         var epvoMap = epvoStudents.ToDictionary(e => e.IIN);
-        var ssoIINs = new HashSet<string>(ssoStudents.Select(s => s.IIN));
+        var posrednikIINs = new HashSet<string>(posrednikStudents.Select(s => s.IIN));
 
         var items = new List<SsoEpvoComparisonItemDto>();
 
-        foreach (var sso in ssoStudents)
+        // 3. Сравниваем Посредник (ССО) vs ЕПВО
+        foreach (var p in posrednikStudents)
         {
-            var activeGrant = sso.Grants?.FirstOrDefault(g => g.IsActive);
-            var activeScholarship = sso.Scholarships?.FirstOrDefault(s => s.IsActive);
-
             var ssoData = new StudentSsoDataDto
             {
-                Id = sso.Id,
-                FirstName = sso.FirstName,
-                LastName = sso.LastName,
-                MiddleName = sso.MiddleName,
-                IIN = sso.IIN,
-                Faculty = sso.Faculty,
-                Speciality = sso.Speciality,
-                Course = sso.Course,
-                GrantName = activeGrant?.Name,
-                GrantAmount = activeGrant?.Amount,
-                ScholarshipName = activeScholarship?.Name,
-                ScholarshipAmount = activeScholarship?.Amount,
-                Iban = sso.iban,
-                IsActive = sso.IsActive
+                Id = p.Id,
+                FirstName = p.FirstName,
+                LastName = p.LastName,
+                MiddleName = p.MiddleName,
+                IIN = p.IIN,
+                Faculty = p.Faculty,
+                Speciality = p.Speciality,
+                Course = p.Course,
+                GrantName = p.GrantName,
+                GrantAmount = p.GrantAmount,
+                ScholarshipName = p.ScholarshipName,
+                ScholarshipAmount = p.ScholarshipAmount,
+                Iban = p.iban,
+                IsActive = p.IsActive
             };
 
-            if (!epvoMap.TryGetValue(sso.IIN, out var epvo))
+            if (!epvoMap.TryGetValue(p.IIN, out var epvo))
             {
                 items.Add(new SsoEpvoComparisonItemDto
                 {
-                    IIN = sso.IIN,
+                    IIN = p.IIN,
                     SsoData = ssoData,
                     EpvoData = null,
                     OnlyInSso = true,
@@ -83,7 +91,7 @@ public class GetSsoEpvoComparisonQueryHandler : IRequestHandler<GetSsoEpvoCompar
             var differences = DetectDifferences(ssoData, epvoData);
             items.Add(new SsoEpvoComparisonItemDto
             {
-                IIN = sso.IIN,
+                IIN = p.IIN,
                 SsoData = ssoData,
                 EpvoData = epvoData,
                 Differences = differences,
@@ -91,10 +99,10 @@ public class GetSsoEpvoComparisonQueryHandler : IRequestHandler<GetSsoEpvoCompar
             });
         }
 
-        // EPVO students not present in SSO
+        // Студенты только в ЕПВО
         foreach (var epvo in epvoStudents)
         {
-            if (!ssoIINs.Contains(epvo.IIN))
+            if (!posrednikIINs.Contains(epvo.IIN))
             {
                 items.Add(new SsoEpvoComparisonItemDto
                 {
@@ -131,6 +139,63 @@ public class GetSsoEpvoComparisonQueryHandler : IRequestHandler<GetSsoEpvoCompar
             OnlyInSso = items.Count(i => i.OnlyInSso),
             OnlyInEpvo = items.Count(i => i.OnlyInEpvo)
         };
+    }
+
+    /// <summary>
+    /// Обновляет таблицу-посредник данными из ССО (Student + Grants + Scholarships).
+    /// </summary>
+    private async Task RefreshPosrednikFromSso(CancellationToken cancellationToken)
+    {
+        var ssoStudents = await _unitOfWork.Students.GetAllWithDetailsAsync(cancellationToken);
+
+        foreach (var sso in ssoStudents)
+        {
+            var activeGrant = sso.Grants?.FirstOrDefault(g => g.IsActive);
+            var activeScholarship = sso.Scholarships?.FirstOrDefault(s => s.IsActive);
+
+            var existing = await _posrednikRepository.GetByIINAsync(sso.IIN, cancellationToken);
+
+            if (existing is null)
+            {
+                var posrednik = new EpvoPosrednik
+                {
+                    FirstName = sso.FirstName,
+                    LastName = sso.LastName,
+                    MiddleName = sso.MiddleName,
+                    IIN = sso.IIN,
+                    DateOfBirth = sso.DateOfBirth,
+                    Faculty = sso.Faculty,
+                    Speciality = sso.Speciality,
+                    Course = sso.Course,
+                    GrantName = activeGrant?.Name,
+                    GrantAmount = activeGrant?.Amount,
+                    ScholarshipName = activeScholarship?.Name,
+                    ScholarshipAmount = activeScholarship?.Amount,
+                    iban = sso.iban,
+                    IsActive = sso.IsActive,
+                    SyncDate = DateTime.UtcNow
+                };
+                await _posrednikRepository.AddAsync(posrednik, cancellationToken);
+            }
+            else
+            {
+                existing.FirstName = sso.FirstName;
+                existing.LastName = sso.LastName;
+                existing.MiddleName = sso.MiddleName;
+                existing.DateOfBirth = sso.DateOfBirth;
+                existing.Faculty = sso.Faculty;
+                existing.Speciality = sso.Speciality;
+                existing.Course = sso.Course;
+                existing.GrantName = activeGrant?.Name;
+                existing.GrantAmount = activeGrant?.Amount;
+                existing.ScholarshipName = activeScholarship?.Name;
+                existing.ScholarshipAmount = activeScholarship?.Amount;
+                existing.iban = sso.iban;
+                existing.IsActive = sso.IsActive;
+                existing.SyncDate = DateTime.UtcNow;
+                await _posrednikRepository.UpdateAsync(existing, cancellationToken);
+            }
+        }
     }
 
     private static List<FieldDifferenceDto> DetectDifferences(StudentSsoDataDto sso, StudentEpvoDataDto epvo)
