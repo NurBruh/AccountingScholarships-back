@@ -4,4 +4,4 @@ using MediatR;
 
 namespace AccountingScholarships.Application.Queries.Epvo;
 
-public record GetAllEpvoStudentsQuery : IRequest<IReadOnlyList<EpvoStudentDto>>;
+public record GetAllEpvoStudentsQuery : IRequest<IReadOnlyList<StudentResponseDto>>;

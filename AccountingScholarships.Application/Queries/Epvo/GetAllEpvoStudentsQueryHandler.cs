@@ -5,7 +5,7 @@ using MediatR;
 
 namespace AccountingScholarships.Application.Queries.Epvo;
 
-public class GetAllEpvoStudentsQueryHandler : IRequestHandler<GetAllEpvoStudentsQuery, IReadOnlyList<EpvoStudentDto>>
+public class GetAllEpvoStudentsQueryHandler : IRequestHandler<GetAllEpvoStudentsQuery, IReadOnlyList<StudentResponseDto>>
 {
     private readonly IEpvoRepository _epvoRepository;
 
@@ -14,11 +14,11 @@ public class GetAllEpvoStudentsQueryHandler : IRequestHandler<GetAllEpvoStudents
         _epvoRepository = epvoRepository;
     }
 
-    public async Task<IReadOnlyList<EpvoStudentDto>> Handle(GetAllEpvoStudentsQuery request, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<StudentResponseDto>> Handle(GetAllEpvoStudentsQuery request, CancellationToken cancellationToken)
     {
         var students = await _epvoRepository.GetAllAsync(cancellationToken);
 
-        return students.Select(s => new EpvoStudentDto
+        return students.Select(s => new StudentResponseDto
         {
             Id = s.Id,
             FirstName = s.FirstName,
@@ -29,11 +29,13 @@ public class GetAllEpvoStudentsQueryHandler : IRequestHandler<GetAllEpvoStudents
             Faculty = s.Faculty,
             Speciality = s.Speciality,
             Course = s.Course,
+            EducationForm = null,   //в EPVO этого поля нет
+            IsActive = s.IsActive,
             GrantName = s.GrantName,
             GrantAmount = s.GrantAmount,
             ScholarshipName = s.ScholarshipName,
             ScholarshipAmount = s.ScholarshipAmount,
-            IsActive = s.IsActive,
+            HasScholarship = s.ScholarshipName != null,
             SyncDate = s.SyncDate
         }).ToList().AsReadOnly();
     }

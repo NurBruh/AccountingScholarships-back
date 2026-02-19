@@ -30,12 +30,12 @@ public class EpvoController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("sync")]
-    public async Task<IActionResult> SyncFromEpvo(CancellationToken cancellationToken)
-    {
-        var syncedCount = await _mediator.Send(new SyncStudentsFromEpvoCommand(), cancellationToken);
-        return Ok(new { SyncedCount = syncedCount, Message = $"Синхронизировано {syncedCount} студентов из ЕПВО." });
-    }
+    //[HttpPost("sync")]
+    //public async Task<IActionResult> SyncFromEpvo(CancellationToken cancellationToken)
+    //{
+    //    var syncedCount = await _mediator.Send(new SyncStudentsFromEpvoCommand(), cancellationToken);
+    //    return Ok(new { SyncedCount = syncedCount, Message = $"Синхронизировано {syncedCount} студентов из ЕПВО." });
+    //}
 
     [HttpPost("sync-to-epvo")]
     public async Task<IActionResult> SyncToEpvo(CancellationToken cancellationToken)

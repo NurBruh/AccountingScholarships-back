@@ -1,6 +1,6 @@
-namespace AccountingScholarships.Domain.DTO;
+﻿namespace AccountingScholarships.Domain.DTO;
 
-public class StudentResponesDto
+public class StudentResponseDto
 {
     public int Id { get; set; }
     public string FirstName { get; set; } = string.Empty;
@@ -11,10 +11,12 @@ public class StudentResponesDto
     public string? Faculty { get; set; }
     public string? Speciality { get; set; }
     public int Course { get; set; }
+    public string? EducationForm { get; set; }  // null если из EPVO
+    public bool IsActive { get; set; }
     public string? GrantName { get; set; }
     public decimal? GrantAmount { get; set; }
     public string? ScholarshipName { get; set; }
     public decimal? ScholarshipAmount { get; set; }
-    public bool IsActive { get; set; }
-    public DateTime SyncDate { get; set; }
+    public bool HasScholarship { get; set; }
+    public DateTime? SyncDate { get; set; }
 }
