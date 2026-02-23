@@ -58,4 +58,16 @@ public class EpvoController : ControllerBase
         if (!result) return NotFound(new { Message = $"Студент с ИИН {iin} не найден в посреднике." });
         return Ok(new { Message = $"Студент с ИИН {iin} успешно синхронизирован в ЕПВО." });
     }
+
+    [HttpPatch("students/{iin}/iban")]
+    public async Task<IActionResult> UpdateStudentIban(string iin, [FromBody] UpdateIbanRequest request, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(request.NewIban))
+            return BadRequest(new { Message = "Новый расчётный счёт не может быть пустым." });
+
+        var result = await _mediator.Send(new UpdateStudentIbanCommand(iin, request.NewIban.Trim()), cancellationToken);
+        if (!result) return NotFound(new { Message = $"Студент с ИИН {iin} не найден." });
+
+        return Ok(new { Message = "Расчётный счёт успешно обновлён." });
+    }
 }
