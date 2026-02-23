@@ -77,8 +77,8 @@ public class EpvoController : ControllerBase
     public async Task<IActionResult> UpdateStudentIban(string iin, [FromBody] UpdateIbanRequest request, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new UpdateStudentIbanCommand(iin, request.NewIban), cancellationToken);
-        if (!result) return NotFound(new { Message = $"Студент с ИИН {iin} не найден в ЕПВО." });
-        return Ok(new { Message = $"Расчётный счёт студента с ИИН {iin} успешно обновлён (отправлен в ЕПВО как массив из 1 записи)." });
+        if (!result) return NotFound(new { Message = $"Студент с ИИН {iin} не найден." });
+        return Ok(new { Message = $"Расчётный счёт студента с ИИН {iin} обновлён в ССО. Актуализируйте данные в ССО vs ЕПВО." });
     }
 }
 
