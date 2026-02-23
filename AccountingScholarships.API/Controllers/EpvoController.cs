@@ -59,15 +59,28 @@ public class EpvoController : ControllerBase
         return Ok(new { Message = $"Студент с ИИН {iin} успешно синхронизирован в ЕПВО." });
     }
 
+    [HttpPost("sync-batch")]
+    public async Task<IActionResult> SyncBatchToEpvo([FromBody] SyncBatchRequest request, CancellationToken cancellationToken)
+    {
+        var syncedCount = await _mediator.Send(new SendSelectedStudentsToEpvoCommand(request.IINs), cancellationToken);
+        return Ok(new { SyncedCount = syncedCount, Message = $"Синхронизировано {syncedCount} студентов в ЕПВО." });
+    }
+
+    [HttpPost("sync-changed")]
+    public async Task<IActionResult> SyncChangedToEpvo(CancellationToken cancellationToken)
+    {
+        var syncedCount = await _mediator.Send(new SyncChangedStudentsToEpvoCommand(), cancellationToken);
+        return Ok(new { SyncedCount = syncedCount, Message = $"Синхронизировано {syncedCount} изменённых студентов в ЕПВО (массив)." });
+    }
+
     [HttpPatch("students/{iin}/iban")]
     public async Task<IActionResult> UpdateStudentIban(string iin, [FromBody] UpdateIbanRequest request, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(request.NewIban))
-            return BadRequest(new { Message = "Новый расчётный счёт не может быть пустым." });
-
-        var result = await _mediator.Send(new UpdateStudentIbanCommand(iin, request.NewIban.Trim()), cancellationToken);
-        if (!result) return NotFound(new { Message = $"Студент с ИИН {iin} не найден." });
-
-        return Ok(new { Message = "Расчётный счёт успешно обновлён." });
+        var result = await _mediator.Send(new UpdateStudentIbanCommand(iin, request.NewIban), cancellationToken);
+        if (!result) return NotFound(new { Message = $"Студент с ИИН {iin} не найден в ЕПВО." });
+        return Ok(new { Message = $"Расчётный счёт студента с ИИН {iin} успешно обновлён (отправлен в ЕПВО как массив из 1 записи)." });
     }
 }
+
+public record SyncBatchRequest(List<string> IINs);
+public record UpdateIbanRequest(string NewIban);

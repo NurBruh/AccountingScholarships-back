@@ -56,6 +56,8 @@ public static class ServiceCollectionExtensions
             };
         });
 
+        services.AddScoped<IEpvoApiClient, EpvoApiClient>();
+
         return services;
     }
 }
