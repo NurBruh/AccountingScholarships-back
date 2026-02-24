@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AccountingScholarships.API.Controllers;
 
+/// <summary>
+/// Контроллер для управления аутентификацией и регистрацией пользователей.
+/// </summary>
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
@@ -20,6 +23,14 @@ public class AuthController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <summary>
+    /// Авторизация пользователя.
+    /// </summary>
+    /// <param name="dto">Данные для входа (логин и пароль).</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    /// <returns>JWT токен при успешной авторизации.</returns>
+    /// <response code="200">Успешная авторизация, возвращает токен.</response>
+    /// <response code="401">Неверное имя пользователя или пароль.</response>
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest dto, CancellationToken cancellationToken)
     {
@@ -31,6 +42,14 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Регистрация нового пользователя.
+    /// </summary>
+    /// <param name="dto">Данные для регистрации.</param>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    /// <returns>Данные созданного пользователя.</returns>
+    /// <response code="201">Пользователь успешно зарегистрирован.</response>
+    /// <response code="400">Ошибки валидации или неверные данные.</response>
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest dto, CancellationToken cancellationToken)
     {
