@@ -19,6 +19,7 @@ public class StudentRepository : Repository<Student>, IStudentRepository
         return await _dbSet
             .Include(s => s.Grants)
             .Include(s => s.Scholarships)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
@@ -27,6 +28,7 @@ public class StudentRepository : Repository<Student>, IStudentRepository
         return await _dbSet
             .Include(s => s.Grants)
             .Include(s => s.Scholarships)
+            .AsSplitQuery()
             .ToListAsync(cancellationToken);
     }
 }
