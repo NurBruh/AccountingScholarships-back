@@ -20,6 +20,28 @@ public class GlobalExceptionHandlerMiddleware
         {
             await _next(context);
         }
+        catch (FluentValidation.ValidationException ex)
+        {
+            _logger.LogWarning(ex, "Ошибка валидации: {Errors}", string.Join(", ", ex.Errors.Select(e => e.ErrorMessage)));
+            
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+            var response = new
+            {
+                StatusCode = (int)HttpStatusCode.BadRequest,
+                Message = "Ошибка валидации",
+                Errors = ex.Errors.Select(e => new { Field = e.PropertyName, Error = e.ErrorMessage }),
+                CorrelationId = context.Items["CorrelationId"]?.ToString()
+            };
+
+            var json = JsonSerializer.Serialize(response, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            await context.Response.WriteAsync(json);
+        }
         catch (InvalidOperationException ex)
         {
             _logger.LogWarning(ex, "Бизнес-ошибка: {Message}", ex.Message);
