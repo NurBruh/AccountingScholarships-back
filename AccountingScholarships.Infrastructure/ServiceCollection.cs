@@ -18,12 +18,23 @@ public static class ServiceCollectionExtensions
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         var epvoConnectionString = configuration.GetConnectionString("EpvoConnection");
+        var conmssql = configuration.GetConnectionString("MSSQLConnection");
+        var conepvomssql = configuration.GetConnectionString("EPVOConnection");
 
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
         services.AddDbContext<EpvoDbContext>(options =>
             options.UseMySql(epvoConnectionString, ServerVersion.AutoDetect(epvoConnectionString)));
+
+        //#region MSSQLConnection
+
+        //services.AddDbContext<ApplicationDbContext>(options => 
+        //    options.UseSqlServer(connectionString));
+        //services.AddDbContext<EpvoDbContext>(options => 
+        //    options.UseSqlServer(epvoConnectionString));
+
+        //#endregion
 
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IStudentRepository, StudentRepository>();
