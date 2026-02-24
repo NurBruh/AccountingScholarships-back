@@ -40,5 +40,9 @@ public class CreateStudentDtoValidator : AbstractValidator<CreateStudentDto>
         RuleFor(x => x.Course)
             .GreaterThan(0).WithMessage("Курс должен быть больше 0")
             .LessThanOrEqualTo(6).WithMessage("Курс не должен превышать 6");
+        RuleFor(x => x.iban)
+            .NotEmpty().WithMessage("IBAN объязателен")
+            .Length(20).WithMessage("IBAN должен содержать 20 символов");
+
     }
 }

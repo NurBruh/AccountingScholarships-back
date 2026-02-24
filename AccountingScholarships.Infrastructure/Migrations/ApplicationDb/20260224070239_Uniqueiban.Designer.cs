@@ -4,6 +4,7 @@ using AccountingScholarships.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccountingScholarships.Infrastructure.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260224070239_Uniqueiban")]
+    partial class Uniqueiban
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,7 +58,6 @@ namespace AccountingScholarships.Infrastructure.Migrations.ApplicationDb
                         .HasColumnType("int");
 
                     b.Property<string>("Type")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
@@ -172,7 +174,6 @@ namespace AccountingScholarships.Infrastructure.Migrations.ApplicationDb
                         .HasColumnType("varchar(100)");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)");
 
@@ -193,9 +194,6 @@ namespace AccountingScholarships.Infrastructure.Migrations.ApplicationDb
                     b.HasIndex("Email");
 
                     b.HasIndex("IIN")
-                        .IsUnique();
-
-                    b.HasIndex("iban")
                         .IsUnique();
 
                     b.ToTable("Students");
@@ -316,9 +314,6 @@ namespace AccountingScholarships.Infrastructure.Migrations.ApplicationDb
                     b.HasKey("Id");
 
                     b.HasIndex("IIN")
-                        .IsUnique();
-
-                    b.HasIndex("iban")
                         .IsUnique();
 
                     b.ToTable("EpvoPosredniki");
