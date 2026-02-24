@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+//using Microsoft.EntityFrameworkCore.SqlServer;
 
 namespace AccountingScholarships.Infrastructure;
 
@@ -16,6 +17,7 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        #region MySQL
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         var epvoConnectionString = configuration.GetConnectionString("EpvoConnection");
 
@@ -24,6 +26,19 @@ public static class ServiceCollectionExtensions
 
         services.AddDbContext<EpvoDbContext>(options =>
             options.UseMySql(epvoConnectionString, ServerVersion.AutoDetect(epvoConnectionString)));
+        #endregion
+
+        #region MSSQL
+
+        var conmssql = configuration.GetConnectionString("MSSQLConnection");
+        var conepvomssql = configuration.GetConnectionString("EPVOConnection1");
+
+        //services.AddDbContext<ApplicationDbContext>(options =>
+        //    options.UseSqlServer(connectionString));
+        //services.AddDbContext<EpvoDbContext>(options =>
+        //    options.UseSqlServer(epvoConnectionString));
+
+        #endregion
 
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IStudentRepository, StudentRepository>();
