@@ -16,7 +16,22 @@ public class PosrednikRepository : IPosrednikRepository
 
     public async Task<IReadOnlyList<EpvoPosrednik>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await _context.EpvoPosredniki.ToListAsync(cancellationToken);
+        return await _context.EpvoPosredniki
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<Dictionary<string, EpvoPosrednik>> GetAllAsDictionaryByIINAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.EpvoPosredniki
+            .ToDictionaryAsync(s => s.IIN, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<EpvoPosrednik>> FindByIINsAsync(IList<string> iins, CancellationToken cancellationToken = default)
+    {
+        return await _context.EpvoPosredniki
+            .Where(s => iins.Contains(s.IIN))
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<EpvoPosrednik?> GetByIINAsync(string iin, CancellationToken cancellationToken = default)
@@ -27,13 +42,17 @@ public class PosrednikRepository : IPosrednikRepository
     public async Task<EpvoPosrednik> AddAsync(EpvoPosrednik entity, CancellationToken cancellationToken = default)
     {
         await _context.EpvoPosredniki.AddAsync(entity, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
         return entity;
     }
 
-    public async Task UpdateAsync(EpvoPosrednik entity, CancellationToken cancellationToken = default)
+    public Task UpdateAsync(EpvoPosrednik entity, CancellationToken cancellationToken = default)
     {
         _context.EpvoPosredniki.Update(entity);
-        await _context.SaveChangesAsync(cancellationToken);
+        return Task.CompletedTask;
+    }
+
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.SaveChangesAsync(cancellationToken);
     }
 }

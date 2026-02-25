@@ -35,6 +35,7 @@ public class UpdateStudentIbanCommandHandler : IRequestHandler<UpdateStudentIban
         {
             posrednik.iban = newIban;
             await _posrednikRepository.UpdateAsync(posrednik, cancellationToken);
+            await _posrednikRepository.SaveChangesAsync(cancellationToken);
         }
 
         // В ЕПВО НЕ отправляем — пользователь сам актуализирует через "ССО vs ЕПВО"

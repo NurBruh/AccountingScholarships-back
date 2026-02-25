@@ -29,6 +29,13 @@ public class StudentRepository : Repository<Student>, IStudentRepository
             .Include(s => s.Grants)
             .Include(s => s.Scholarships)
             .AsSplitQuery()
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<Dictionary<string, Student>> GetAllAsDictionaryByIINAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbSet
+            .ToDictionaryAsync(s => s.IIN, cancellationToken);
     }
 }
