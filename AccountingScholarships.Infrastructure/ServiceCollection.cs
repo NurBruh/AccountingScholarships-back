@@ -47,6 +47,15 @@ public static class ServiceCollectionExtensions
 
         #endregion
 
+        //#region MSSQLConnection
+
+        //services.AddDbContext<ApplicationDbContext>(options => 
+        //    options.UseSqlServer(connectionString));
+        //services.AddDbContext<EpvoDbContext>(options => 
+        //    options.UseSqlServer(epvoConnectionString));
+
+        //#endregion
+
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IStudentRepository, StudentRepository>();
         services.AddScoped<IGrantRepository, GrantRepository>();
