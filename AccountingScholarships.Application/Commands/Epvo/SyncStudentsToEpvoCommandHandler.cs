@@ -19,17 +19,18 @@ public class SyncStudentsToEpvoCommandHandler : IRequestHandler<SyncStudentsToEp
     {
         // Получаем всех студентов из SSO с грантами и стипендиями
         var ssoStudents = await _unitOfWork.Students.GetAllWithDetailsAsync(cancellationToken);
+
+        // Предзагрузка ВСЕХ записей ЕПВО одним запросом (вместо N+1)
+        var epvoMap = await _epvoRepository.GetAllAsDictionaryByIINAsync(cancellationToken);
         var syncedCount = 0;
 
         foreach (var sso in ssoStudents)
         {
-            var existing = await _epvoRepository.GetByIINAsync(sso.IIN, cancellationToken);
-
             // Берём первый активный грант и стипендию (если есть)
             var activeGrant = sso.Grants?.FirstOrDefault(g => g.IsActive);
             var activeScholarship = sso.Scholarships?.FirstOrDefault(s => s.IsActive);
 
-            if (existing is null)
+            if (!epvoMap.TryGetValue(sso.IIN, out var existing))
             {
                 // Создаём новую запись в ЕПВО
                 var epvoStudent = new EpvoStudent
@@ -76,6 +77,9 @@ public class SyncStudentsToEpvoCommandHandler : IRequestHandler<SyncStudentsToEp
                 syncedCount++;
             }
         }
+
+        // Один SaveChanges в конце — вместо отдельного на каждую запись
+        await _epvoRepository.SaveChangesAsync(cancellationToken);
 
         return syncedCount;
     }

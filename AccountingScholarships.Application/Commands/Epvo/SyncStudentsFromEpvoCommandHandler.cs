@@ -18,6 +18,9 @@ public class SyncStudentsFromEpvoCommandHandler : IRequestHandler<SyncStudentsFr
     public async Task<int> Handle(SyncStudentsFromEpvoCommand request, CancellationToken cancellationToken)
     {
         var epvoStudents = await _epvoRepository.GetAllAsync(cancellationToken);
+
+        // Предзагрузка ВСЕХ студентов SSO одним запросом (вместо N+1)
+        var ssoMap = await _unitOfWork.Students.GetAllAsDictionaryByIINAsync(cancellationToken);
         var syncedCount = 0;
 
         await _unitOfWork.BeginTransactionAsync(cancellationToken);
@@ -26,9 +29,7 @@ public class SyncStudentsFromEpvoCommandHandler : IRequestHandler<SyncStudentsFr
         {
             foreach (var epvo in epvoStudents)
             {
-                var existing = await _unitOfWork.Students.GetByIINAsync(epvo.IIN, cancellationToken);
-
-                if (existing is null)
+                if (!ssoMap.TryGetValue(epvo.IIN, out var existing))
                 {
                     var student = new Student
                     {

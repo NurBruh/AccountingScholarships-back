@@ -27,11 +27,12 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.LastName).HasMaxLength(100).IsRequired();
             entity.Property(e => e.MiddleName).HasMaxLength(100);
             entity.Property(e => e.IIN).HasMaxLength(12).IsRequired();
-            entity.Property(e => e.Email).HasMaxLength(200);
-            entity.Property(e => e.Phone).HasMaxLength(20);
+            entity.Property(e => e.Email).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.Phone).HasMaxLength(20).IsRequired();
             entity.Property(e => e.GroupName).HasMaxLength(50);
             entity.Property(e => e.Faculty).HasMaxLength(200);
-            entity.Property(e => e.iban).HasMaxLength(20);
+            entity.Property(e => e.iban).HasMaxLength(20).IsRequired();
+            entity.HasIndex(e => e.iban).IsUnique();
             entity.Property(e => e.Speciality).HasMaxLength(200);
             entity.Property(e => e.EducationForm).HasMaxLength(50);
         });
@@ -41,7 +42,7 @@ public class ApplicationDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.StudentId);
             entity.Property(e => e.Name).HasMaxLength(200).IsRequired();
-            entity.Property(e => e.Type).HasMaxLength(100);
+            entity.Property(e => e.Type).HasMaxLength(100).IsRequired();
             entity.Property(e => e.Amount).HasPrecision(18, 2);
             entity.HasOne(e => e.Student)
                   .WithMany(s => s.Grants)
@@ -87,7 +88,8 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.GrantAmount).HasPrecision(18, 2);
             entity.Property(e => e.ScholarshipName).HasMaxLength(200);
             entity.Property(e => e.ScholarshipAmount).HasPrecision(18, 2);
-            entity.Property(e => e.iban).HasMaxLength(20);
+            entity.Property(e => e.iban).HasMaxLength(20).IsRequired();
+            entity.HasIndex(e => e.iban).IsUnique();
         });
     }
 }

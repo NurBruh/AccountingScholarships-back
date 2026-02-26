@@ -55,6 +55,7 @@ namespace AccountingScholarships.Infrastructure.Migrations.ApplicationDb
                         .HasColumnType("int");
 
                     b.Property<string>("Type")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
@@ -171,6 +172,7 @@ namespace AccountingScholarships.Infrastructure.Migrations.ApplicationDb
                         .HasColumnType("varchar(100)");
 
                     b.Property<string>("Phone")
+                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("varchar(20)");
 
@@ -191,6 +193,9 @@ namespace AccountingScholarships.Infrastructure.Migrations.ApplicationDb
                     b.HasIndex("Email");
 
                     b.HasIndex("IIN")
+                        .IsUnique();
+
+                    b.HasIndex("iban")
                         .IsUnique();
 
                     b.ToTable("Students");
@@ -311,6 +316,9 @@ namespace AccountingScholarships.Infrastructure.Migrations.ApplicationDb
                     b.HasKey("Id");
 
                     b.HasIndex("IIN")
+                        .IsUnique();
+
+                    b.HasIndex("iban")
                         .IsUnique();
 
                     b.ToTable("EpvoPosredniki");

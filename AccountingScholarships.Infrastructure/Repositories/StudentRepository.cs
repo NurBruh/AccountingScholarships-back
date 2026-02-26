@@ -19,6 +19,7 @@ public class StudentRepository : Repository<Student>, IStudentRepository
         return await _dbSet
             .Include(s => s.Grants)
             .Include(s => s.Scholarships)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 
@@ -27,6 +28,14 @@ public class StudentRepository : Repository<Student>, IStudentRepository
         return await _dbSet
             .Include(s => s.Grants)
             .Include(s => s.Scholarships)
+            .AsSplitQuery()
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<Dictionary<string, Student>> GetAllAsDictionaryByIINAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbSet
+            .ToDictionaryAsync(s => s.IIN, cancellationToken);
     }
 }

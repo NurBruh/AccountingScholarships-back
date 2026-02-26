@@ -65,6 +65,9 @@ public class SyncStudentToEpvoCommandHandler : IRequestHandler<SyncStudentToEpvo
             await _epvoRepository.UpdateAsync(existing, cancellationToken);
         }
 
+        // Сохраняем изменения одним вызовом
+        await _epvoRepository.SaveChangesAsync(cancellationToken);
+
         return true;
     }
 }

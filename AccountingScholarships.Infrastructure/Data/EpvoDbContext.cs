@@ -27,7 +27,8 @@ public class EpvoDbContext : DbContext
             entity.Property(e => e.GrantAmount).HasPrecision(18, 2);
             entity.Property(e => e.ScholarshipName).HasMaxLength(200);
             entity.Property(e => e.ScholarshipAmount).HasPrecision(18, 2);
-            entity.Property(e => e.iban).HasMaxLength(20);
+            entity.Property(e => e.iban).HasMaxLength(20).IsRequired();
+            entity.HasIndex(e => e.iban).IsUnique();
         });
     }
 }

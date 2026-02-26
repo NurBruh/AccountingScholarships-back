@@ -20,30 +20,26 @@ namespace AccountingScholarships.Application.Commands.Epvo
             {
                 return 0;
             }
-            var payload = new List<EpvoSendPayloadDto>();
 
-            foreach (var iin in request.IINs)
+            // Загружаем все нужные записи одним запросом (вместо N запросов по одному)
+            var posrednikStudents = await _posrednikRepository.FindByIINsAsync(request.IINs, cancellationToken);
+
+            var payload = posrednikStudents.Select(posrednik => new EpvoSendPayloadDto
             {
-                var posrednik = await _posrednikRepository.GetByIINAsync(iin);
-                if (posrednik is null) continue;
-
-                payload.Add(new EpvoSendPayloadDto
-                {
-                    IIN = posrednik.IIN,
-                    FirstName = posrednik.FirstName,
-                    LastName = posrednik.LastName,
-                    MiddleName = posrednik.MiddleName,
-                    Faculty = posrednik.Faculty,
-                    Speciality = posrednik.Speciality,
-                    Course = posrednik.Course,
-                    GrantName = posrednik.GrantName,
-                    GrantAmount = posrednik.GrantAmount ?? 0,
-                    ScholarshipName = posrednik.ScholarshipName,
-                    ScholarshipAmount = posrednik.ScholarshipAmount,
-                    iban = posrednik.iban,
-                    isActive = posrednik.IsActive
-                });
-            }
+                IIN = posrednik.IIN,
+                FirstName = posrednik.FirstName,
+                LastName = posrednik.LastName,
+                MiddleName = posrednik.MiddleName,
+                Faculty = posrednik.Faculty,
+                Speciality = posrednik.Speciality,
+                Course = posrednik.Course,
+                GrantName = posrednik.GrantName,
+                GrantAmount = posrednik.GrantAmount ?? 0,
+                ScholarshipName = posrednik.ScholarshipName,
+                ScholarshipAmount = posrednik.ScholarshipAmount,
+                iban = posrednik.iban,
+                isActive = posrednik.IsActive
+            }).ToList();
 
             if(payload.Count == 0) 
             {

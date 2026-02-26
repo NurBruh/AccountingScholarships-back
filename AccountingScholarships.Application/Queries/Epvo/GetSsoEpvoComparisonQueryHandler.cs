@@ -143,19 +143,21 @@ public class GetSsoEpvoComparisonQueryHandler : IRequestHandler<GetSsoEpvoCompar
 
     /// <summary>
     /// Обновляет таблицу-посредник данными из ССО (Student + Grants + Scholarships).
+    /// Оптимизировано: предзагрузка всех posrednik записей одним запросом.
     /// </summary>
     private async Task RefreshPosrednikFromSso(CancellationToken cancellationToken)
     {
         var ssoStudents = await _unitOfWork.Students.GetAllWithDetailsAsync(cancellationToken);
+
+        // Предзагрузка ВСЕХ записей посредника одним запросом (вместо N+1)
+        var posrednikMap = await _posrednikRepository.GetAllAsDictionaryByIINAsync(cancellationToken);
 
         foreach (var sso in ssoStudents)
         {
             var activeGrant = sso.Grants?.FirstOrDefault(g => g.IsActive);
             var activeScholarship = sso.Scholarships?.FirstOrDefault(s => s.IsActive);
 
-            var existing = await _posrednikRepository.GetByIINAsync(sso.IIN, cancellationToken);
-
-            if (existing is null)
+            if (!posrednikMap.TryGetValue(sso.IIN, out var existing))
             {
                 var posrednik = new EpvoPosrednik
                 {
@@ -196,6 +198,9 @@ public class GetSsoEpvoComparisonQueryHandler : IRequestHandler<GetSsoEpvoCompar
                 await _posrednikRepository.UpdateAsync(existing, cancellationToken);
             }
         }
+
+        // Один SaveChanges в конце вместо отдельного на каждую запись
+        await _posrednikRepository.SaveChangesAsync(cancellationToken);
     }
 
     private static List<FieldDifferenceDto> DetectDifferences(StudentSsoDataDto sso, StudentEpvoDataDto epvo)

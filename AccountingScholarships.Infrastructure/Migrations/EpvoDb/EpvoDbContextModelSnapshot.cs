@@ -95,6 +95,9 @@ namespace AccountingScholarships.Infrastructure.Migrations.EpvoDb
                     b.HasIndex("IIN")
                         .IsUnique();
 
+                    b.HasIndex("iban")
+                        .IsUnique();
+
                     b.ToTable("EpvoStudents");
                 });
 #pragma warning restore 612, 618

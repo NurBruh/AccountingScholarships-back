@@ -29,15 +29,16 @@ public class SyncChangedStudentsToEpvoCommandHandler : IRequestHandler<SyncChang
         // 1. Получаем все записи из посредника (актуальные данные SSO)
         var posrednikStudents = await _posrednikRepository.GetAllAsync(cancellationToken);
 
-        // 2. Формируем массив изменённых записей
+        // 2. Предзагрузка ВСЕХ записей ЕПВО одним запросом (вместо N+1)
+        var epvoMap = await _epvoRepository.GetAllAsDictionaryByIINAsync(cancellationToken);
+
+        // 3. Формируем массив изменённых записей
         var changedPayload = new List<EpvoSendPayloadDto>();
 
         foreach (var pos in posrednikStudents)
         {
-            var epvo = await _epvoRepository.GetByIINAsync(pos.IIN, cancellationToken);
-
             // Если нет в ЕПВО — значит новый, добавляем
-            if (epvo is null)
+            if (!epvoMap.TryGetValue(pos.IIN, out var epvo))
             {
                 changedPayload.Add(MapToPayload(pos));
                 continue;
@@ -53,7 +54,7 @@ public class SyncChangedStudentsToEpvoCommandHandler : IRequestHandler<SyncChang
         if (changedPayload.Count == 0)
             return 0;
 
-        // 3. Один POST-запрос с массивом всех изменённых студентов
+        // 4. Один POST-запрос с массивом всех изменённых студентов
         await _epvoApiClient.SendStudentsAsync(changedPayload, cancellationToken);
 
         return changedPayload.Count;
