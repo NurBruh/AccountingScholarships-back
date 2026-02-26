@@ -23,16 +23,18 @@ public static class ServiceCollectionExtensions
         var localeConnectionString = configuration.GetConnectionString("LocaleConnection");
         var localeEpvoConnectionString = configuration.GetConnectionString("EpvoLocaleConnection");
 
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-
-        services.AddDbContext<EpvoDbContext>(options =>
-            options.UseMySql(epvoConnectionString, ServerVersion.AutoDetect(epvoConnectionString)));
         //services.AddDbContext<ApplicationDbContext>(options =>
-        //    options.UseMySql(localeConnectionString, ServerVersion.AutoDetect(localeConnectionString)));
+        //    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
         //services.AddDbContext<EpvoDbContext>(options =>
-        //    options.UseMySql(localeEpvoConnectionString, ServerVersion.AutoDetect(localeEpvoConnectionString)));
+        //    options.UseMySql(epvoConnectionString, ServerVersion.AutoDetect(epvoConnectionString)));
+
+
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseMySql(localeConnectionString, ServerVersion.AutoDetect(localeConnectionString)));
+
+        services.AddDbContext<EpvoDbContext>(options =>
+            options.UseMySql(localeEpvoConnectionString, ServerVersion.AutoDetect(localeEpvoConnectionString)));
         #endregion
 
         #region MSSQL
