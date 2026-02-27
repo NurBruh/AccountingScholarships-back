@@ -33,6 +33,7 @@ public class StudentSsoDataDto
     public decimal? GrantAmount { get; set; }
     public string? ScholarshipName { get; set; }
     public decimal? ScholarshipAmount { get; set; }
+    public string? ScholarshipNotes { get; set; }
     public string Iban { get; set; } = string.Empty;
     public bool IsActive { get; set; }
 }
@@ -51,6 +52,7 @@ public class StudentEpvoDataDto
     public decimal? GrantAmount { get; set; }
     public string? ScholarshipName { get; set; }
     public decimal? ScholarshipAmount { get; set; }
+    public string? ScholarshipNotes { get; set; }
     public string Iban { get; set; } = string.Empty;
     public bool IsActive { get; set; }
     public DateTime SyncDate { get; set; }

@@ -17,27 +17,30 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        #region MySQL
+        //MySQL
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         var epvoConnectionString = configuration.GetConnectionString("EpvoConnection");
         var localeConnectionString = configuration.GetConnectionString("LocaleConnection");
         var localeEpvoConnectionString = configuration.GetConnectionString("EpvoLocaleConnection");
-
-        //services.AddDbContext<ApplicationDbContext>(options =>
-        //    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-
-        //services.AddDbContext<EpvoDbContext>(options =>
-        //    options.UseMySql(epvoConnectionString, ServerVersion.AutoDetect(epvoConnectionString)));
-
+        
+        //ServerDb
 
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseMySql(localeConnectionString, ServerVersion.AutoDetect(localeConnectionString)));
+            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
         services.AddDbContext<EpvoDbContext>(options =>
-            options.UseMySql(localeEpvoConnectionString, ServerVersion.AutoDetect(localeEpvoConnectionString)));
-        #endregion
+            options.UseMySql(epvoConnectionString, ServerVersion.AutoDetect(epvoConnectionString)));
+        
+        //LocalDB
 
-        #region MSSQL
+        //services.AddDbContext<ApplicationDbContext>(options =>
+        //    options.UseMySql(localeConnectionString, ServerVersion.AutoDetect(localeConnectionString)));
+
+        //services.AddDbContext<EpvoDbContext>(options =>
+        //    options.UseMySql(localeEpvoConnectionString, ServerVersion.AutoDetect(localeEpvoConnectionString)));
+     
+
+        //MSSQL
 
         var conmssql = configuration.GetConnectionString("MSSQLConnection");
         var conepvomssql = configuration.GetConnectionString("EPVOConnection1");
@@ -47,7 +50,7 @@ public static class ServiceCollectionExtensions
         //services.AddDbContext<EpvoDbContext>(options =>
         //    options.UseSqlServer(epvoConnectionString));
 
-        #endregion
+        
 
         //#region MSSQLConnection
 
@@ -64,6 +67,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IScholarshipRepository, ScholarshipRepository>();
         services.AddScoped<IEpvoRepository, EpvoRepository>();
         services.AddScoped<IPosrednikRepository, PosrednikRepository>();
+        services.AddScoped<IScholarshipLossRepository, ScholarshipLossRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
 

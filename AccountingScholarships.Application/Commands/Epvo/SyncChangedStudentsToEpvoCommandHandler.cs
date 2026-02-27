@@ -75,6 +75,10 @@ public class SyncChangedStudentsToEpvoCommandHandler : IRequestHandler<SyncChang
             || pos.GrantAmount != epvo.GrantAmount
             || pos.ScholarshipName != epvo.ScholarshipName
             || pos.ScholarshipAmount != epvo.ScholarshipAmount
+            || pos.ScholarshipLostDate != epvo.ScholarshipLostDate
+            || pos.ScholarshipOrderLostDate != epvo.ScholarshipOrderLostDate
+            || pos.ScholarshipOrderCandidateDate != epvo.ScholarshipOrderCandidateDate
+            || pos.ScholarshipNotes != epvo.ScholarshipNotes
             || pos.iban != epvo.iban
             || pos.IsActive != epvo.IsActive;
     }
@@ -97,6 +101,10 @@ public class SyncChangedStudentsToEpvoCommandHandler : IRequestHandler<SyncChang
             GrantAmount = pos.GrantAmount ?? 0,
             ScholarshipName = pos.ScholarshipName,
             ScholarshipAmount = pos.ScholarshipAmount,
+            ScholarshipLostDate = pos.ScholarshipLostDate,
+            ScholarshipOrderLostDate = pos.ScholarshipOrderLostDate,
+            ScholarshipOrderCandidateDate = pos.ScholarshipOrderCandidateDate,
+            ScholarshipNotes = pos.ScholarshipNotes,
             iban = pos.iban,
             isActive = pos.IsActive
         };

@@ -58,7 +58,11 @@ public class GetStudentByIdQueryHandler : IRequestHandler<GetStudentByIdQuery, S
                 Type = s.Type,
                 Amount = s.Amount,
                 StartDate = s.StartDate,
-                EndDate = s.EndDate,
+                //EndDate = s.EndDate,
+                LostDate = s.LostDate,
+                OrderLostDate = s.OrderLostDate,
+                OrderCandidateDate = s.OrderCandidateDate,
+                Notes = s.Notes,
                 IsActive = s.IsActive,
                 StudentId = s.StudentId
             }).ToList()

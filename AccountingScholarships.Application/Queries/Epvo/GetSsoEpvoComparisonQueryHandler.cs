@@ -52,6 +52,7 @@ public class GetSsoEpvoComparisonQueryHandler : IRequestHandler<GetSsoEpvoCompar
                 GrantAmount = p.GrantAmount,
                 ScholarshipName = p.ScholarshipName,
                 ScholarshipAmount = p.ScholarshipAmount,
+                ScholarshipNotes = p.ScholarshipNotes,
                 Iban = p.iban,
                 IsActive = p.IsActive
             };
@@ -83,6 +84,7 @@ public class GetSsoEpvoComparisonQueryHandler : IRequestHandler<GetSsoEpvoCompar
                 GrantAmount = epvo.GrantAmount,
                 ScholarshipName = epvo.ScholarshipName,
                 ScholarshipAmount = epvo.ScholarshipAmount,
+                ScholarshipNotes = epvo.ScholarshipNotes,
                 Iban = epvo.iban,
                 IsActive = epvo.IsActive,
                 SyncDate = epvo.SyncDate
@@ -156,6 +158,7 @@ public class GetSsoEpvoComparisonQueryHandler : IRequestHandler<GetSsoEpvoCompar
         {
             var activeGrant = sso.Grants?.FirstOrDefault(g => g.IsActive);
             var activeScholarship = sso.Scholarships?.FirstOrDefault(s => s.IsActive);
+            var latestScholarship = sso.Scholarships?.OrderByDescending(s => s.CreatedAt).FirstOrDefault();
 
             if (!posrednikMap.TryGetValue(sso.IIN, out var existing))
             {
@@ -173,6 +176,10 @@ public class GetSsoEpvoComparisonQueryHandler : IRequestHandler<GetSsoEpvoCompar
                     GrantAmount = activeGrant?.Amount,
                     ScholarshipName = activeScholarship?.Name,
                     ScholarshipAmount = activeScholarship?.Amount,
+                    ScholarshipLostDate = latestScholarship?.LostDate,
+                    ScholarshipOrderLostDate = latestScholarship?.OrderLostDate,
+                    ScholarshipOrderCandidateDate = latestScholarship?.OrderCandidateDate,
+                    ScholarshipNotes = latestScholarship?.Notes,
                     iban = sso.iban,
                     IsActive = sso.IsActive,
                     SyncDate = DateTime.UtcNow
@@ -192,6 +199,10 @@ public class GetSsoEpvoComparisonQueryHandler : IRequestHandler<GetSsoEpvoCompar
                 existing.GrantAmount = activeGrant?.Amount;
                 existing.ScholarshipName = activeScholarship?.Name;
                 existing.ScholarshipAmount = activeScholarship?.Amount;
+                existing.ScholarshipLostDate = latestScholarship?.LostDate;
+                existing.ScholarshipOrderLostDate = latestScholarship?.OrderLostDate;
+                existing.ScholarshipOrderCandidateDate = latestScholarship?.OrderCandidateDate;
+                existing.ScholarshipNotes = latestScholarship?.Notes;
                 existing.iban = sso.iban;
                 existing.IsActive = sso.IsActive;
                 existing.SyncDate = DateTime.UtcNow;
@@ -223,6 +234,7 @@ public class GetSsoEpvoComparisonQueryHandler : IRequestHandler<GetSsoEpvoCompar
         Check("grantAmount", "Сумма гранта", sso.GrantAmount?.ToString("F2"), epvo.GrantAmount?.ToString("F2"));
         Check("scholarshipName", "Стипендия", sso.ScholarshipName, epvo.ScholarshipName);
         Check("scholarshipAmount", "Сумма стипендии", sso.ScholarshipAmount?.ToString("F2"), epvo.ScholarshipAmount?.ToString("F2"));
+        Check("scholarshipNotes", "Примечания стипендии", sso.ScholarshipNotes, epvo.ScholarshipNotes);
         Check("iban", "IBAN", sso.Iban, epvo.Iban);
         Check("isActive", "Активен", sso.IsActive.ToString(), epvo.IsActive.ToString());
 

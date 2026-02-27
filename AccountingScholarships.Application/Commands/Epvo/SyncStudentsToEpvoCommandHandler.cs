@@ -29,6 +29,8 @@ public class SyncStudentsToEpvoCommandHandler : IRequestHandler<SyncStudentsToEp
             // Берём первый активный грант и стипендию (если есть)
             var activeGrant = sso.Grants?.FirstOrDefault(g => g.IsActive);
             var activeScholarship = sso.Scholarships?.FirstOrDefault(s => s.IsActive);
+            // Notes и даты лишения берём из последней стипендии (даже неактивной)
+            var latestScholarship = sso.Scholarships?.OrderByDescending(s => s.CreatedAt).FirstOrDefault();
 
             if (!epvoMap.TryGetValue(sso.IIN, out var existing))
             {
@@ -47,6 +49,10 @@ public class SyncStudentsToEpvoCommandHandler : IRequestHandler<SyncStudentsToEp
                     GrantAmount = activeGrant?.Amount,
                     ScholarshipName = activeScholarship?.Name,
                     ScholarshipAmount = activeScholarship?.Amount,
+                    ScholarshipLostDate = latestScholarship?.LostDate,
+                    ScholarshipOrderLostDate = latestScholarship?.OrderLostDate,
+                    ScholarshipOrderCandidateDate = latestScholarship?.OrderCandidateDate,
+                    ScholarshipNotes = latestScholarship?.Notes,
                     iban = sso.iban,
                     IsActive = sso.IsActive,
                     SyncDate = DateTime.UtcNow
@@ -69,6 +75,10 @@ public class SyncStudentsToEpvoCommandHandler : IRequestHandler<SyncStudentsToEp
                 existing.GrantAmount = activeGrant?.Amount;
                 existing.ScholarshipName = activeScholarship?.Name;
                 existing.ScholarshipAmount = activeScholarship?.Amount;
+                existing.ScholarshipLostDate = latestScholarship?.LostDate;
+                existing.ScholarshipOrderLostDate = latestScholarship?.OrderLostDate;
+                existing.ScholarshipOrderCandidateDate = latestScholarship?.OrderCandidateDate;
+                existing.ScholarshipNotes = latestScholarship?.Notes;
                 existing.IsActive = sso.IsActive;
                 existing.iban = sso.iban;
                 existing.SyncDate = DateTime.UtcNow;

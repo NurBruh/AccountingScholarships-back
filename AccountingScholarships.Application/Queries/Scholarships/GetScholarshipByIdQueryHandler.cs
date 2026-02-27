@@ -28,7 +28,11 @@ public class GetScholarshipByIdQueryHandler : IRequestHandler<GetScholarshipById
             Type = scholarship.Type,
             Amount = scholarship.Amount,
             StartDate = scholarship.StartDate,
-            EndDate = scholarship.EndDate,
+            //EndDate = scholarship.EndDate,
+            LostDate = scholarship.LostDate,
+            OrderLostDate = scholarship.OrderLostDate,
+            OrderCandidateDate = scholarship.OrderCandidateDate,
+            Notes = scholarship.Notes,
             IsActive = scholarship.IsActive,
             StudentId = scholarship.StudentId
         };

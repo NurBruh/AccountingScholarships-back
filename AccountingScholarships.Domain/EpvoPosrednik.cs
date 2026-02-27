@@ -21,6 +21,10 @@ namespace AccountingScholarships.Domain
         public decimal? GrantAmount { get; set; }
         public string? ScholarshipName { get; set; }
         public decimal? ScholarshipAmount { get; set; }
+        public DateTime? ScholarshipLostDate { get; set; }
+        public DateTime? ScholarshipOrderLostDate { get; set; }
+        public DateTime? ScholarshipOrderCandidateDate { get; set; }
+        public string? ScholarshipNotes { get; set; }
         public string iban { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
         public DateTime SyncDate { get; set; } = DateTime.UtcNow;
@@ -40,6 +44,10 @@ namespace AccountingScholarships.Domain
         public decimal? GrantAmount { get; set; }
         public string? ScholarshipName { get; set; }
         public decimal? ScholarshipAmount { get; set; }
+        public DateTime? ScholarshipLostDate { get; set; }
+        public DateTime? ScholarshipOrderLostDate { get; set; }
+        public DateTime? ScholarshipOrderCandidateDate { get; set; }
+        public string? ScholarshipNotes { get; set; }
         public string iban { get; set; } = string.Empty;
         public bool IsActive { get; set; }
         public DateTime SyncDate { get; set; }

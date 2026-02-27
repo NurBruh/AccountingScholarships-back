@@ -12,6 +12,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Grant> Grants => Set<Grant>();
     public DbSet<Scholarship> Scholarships => Set<Scholarship>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<ScholarshipLossRecord> ScholarshipLossRecords => Set<ScholarshipLossRecord>();
     public DbSet<EpvoPosrednik> EpvoPosredniki => Set<EpvoPosrednik>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -61,6 +62,23 @@ public class ApplicationDbContext : DbContext
                   .WithMany(s => s.Scholarships)
                   .HasForeignKey(e => e.StudentId)
                   .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<ScholarshipLossRecord>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.IIN);
+            entity.Property(e => e.FirstName).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.LastName).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.MiddleName).HasMaxLength(100);
+            entity.Property(e => e.IIN).HasMaxLength(12).IsRequired();
+            entity.Property(e => e.OrderNumber).HasMaxLength(100);
+            entity.Property(e => e.Reason).HasMaxLength(500);
+            entity.Property(e => e.ScholarshipName).HasMaxLength(200);
+            entity.HasOne(e => e.Student)
+                  .WithMany()
+                  .HasForeignKey(e => e.StudentId)
+                  .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<User>(entity =>

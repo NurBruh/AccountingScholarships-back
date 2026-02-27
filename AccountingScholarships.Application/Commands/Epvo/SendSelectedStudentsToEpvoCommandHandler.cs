@@ -37,6 +37,10 @@ namespace AccountingScholarships.Application.Commands.Epvo
                 GrantAmount = posrednik.GrantAmount ?? 0,
                 ScholarshipName = posrednik.ScholarshipName,
                 ScholarshipAmount = posrednik.ScholarshipAmount,
+                ScholarshipLostDate = posrednik.ScholarshipLostDate,
+                ScholarshipOrderLostDate = posrednik.ScholarshipOrderLostDate,
+                ScholarshipOrderCandidateDate = posrednik.ScholarshipOrderCandidateDate,
+                ScholarshipNotes = posrednik.ScholarshipNotes,
                 iban = posrednik.iban,
                 isActive = posrednik.IsActive
             }).ToList();

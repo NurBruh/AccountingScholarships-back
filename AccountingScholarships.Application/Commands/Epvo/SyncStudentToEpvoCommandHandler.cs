@@ -38,6 +38,10 @@ public class SyncStudentToEpvoCommandHandler : IRequestHandler<SyncStudentToEpvo
                 GrantAmount = posrednik.GrantAmount,
                 ScholarshipName = posrednik.ScholarshipName,
                 ScholarshipAmount = posrednik.ScholarshipAmount,
+                ScholarshipLostDate = posrednik.ScholarshipLostDate,
+                ScholarshipOrderLostDate = posrednik.ScholarshipOrderLostDate,
+                ScholarshipOrderCandidateDate = posrednik.ScholarshipOrderCandidateDate,
+                ScholarshipNotes = posrednik.ScholarshipNotes,
                 iban = posrednik.iban,
                 IsActive = posrednik.IsActive,
                 SyncDate = DateTime.UtcNow
@@ -58,6 +62,10 @@ public class SyncStudentToEpvoCommandHandler : IRequestHandler<SyncStudentToEpvo
             existing.GrantAmount = posrednik.GrantAmount;
             existing.ScholarshipName = posrednik.ScholarshipName;
             existing.ScholarshipAmount = posrednik.ScholarshipAmount;
+            existing.ScholarshipLostDate = posrednik.ScholarshipLostDate;
+            existing.ScholarshipOrderLostDate = posrednik.ScholarshipOrderLostDate;
+            existing.ScholarshipOrderCandidateDate = posrednik.ScholarshipOrderCandidateDate;
+            existing.ScholarshipNotes = posrednik.ScholarshipNotes;
             existing.iban = posrednik.iban;
             existing.IsActive = posrednik.IsActive;
             existing.SyncDate = DateTime.UtcNow;
