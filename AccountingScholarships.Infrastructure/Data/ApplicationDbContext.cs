@@ -1,5 +1,6 @@
 using AccountingScholarships.Domain;
 using AccountingScholarships.Domain.Entities;
+using AccountingScholarships.Domain.Entities.Auth;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountingScholarships.Infrastructure.Data;
@@ -14,6 +15,12 @@ public class ApplicationDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<ScholarshipLossRecord> ScholarshipLossRecords => Set<ScholarshipLossRecord>();
     public DbSet<EpvoPosrednik> EpvoPosredniki => Set<EpvoPosrednik>();
+
+    // RBAC
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<Permission> Permissions => Set<Permission>();
+    public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+    public DbSet<UserRoleAssignment> UserRoleAssignments => Set<UserRoleAssignment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -108,6 +115,55 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.ScholarshipAmount).HasPrecision(18, 2);
             entity.Property(e => e.iban).HasMaxLength(20).IsRequired();
             entity.HasIndex(e => e.iban).IsUnique();
+        });
+
+        // RBAC Configurations
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.Name).IsUnique();
+            entity.Property(e => e.Name).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Description).HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<Permission>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.Name).IsUnique();
+            entity.Property(e => e.Name).HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Description).HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<RolePermission>(entity =>
+        {
+            entity.HasKey(rp => new { rp.RoleId, rp.PermissionId });
+            
+            entity.HasOne(rp => rp.Role)
+                .WithMany(r => r.RolePermissions)
+                .HasForeignKey(rp => rp.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(rp => rp.Permission)
+                .WithMany(p => p.RolePermissions)
+                .HasForeignKey(rp => rp.PermissionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<UserRoleAssignment>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            
+            entity.Property(e => e.ScopeType).HasMaxLength(50).IsRequired();
+
+            entity.HasOne(e => e.User)
+                .WithMany(u => u.UserAssignments)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Role)
+                .WithMany(r => r.UserAssignments)
+                .HasForeignKey(e => e.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }
