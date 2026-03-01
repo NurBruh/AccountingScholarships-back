@@ -66,8 +66,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGrantRepository, GrantRepository>();
         services.AddScoped<IScholarshipRepository, ScholarshipRepository>();
         services.AddScoped<IEpvoRepository, EpvoRepository>();
-        services.AddScoped<IPosrednikRepository, PosrednikRepository>();
         services.AddScoped<IScholarshipLossRepository, ScholarshipLossRepository>();
+        services.AddScoped<IReferenceDataRepository, ReferenceDataRepository>();
+        services.AddScoped<IChangeHistoryRepository, ChangeHistoryRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
 

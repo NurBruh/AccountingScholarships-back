@@ -17,24 +17,21 @@ public class SyncStudentsToEpvoCommandHandler : IRequestHandler<SyncStudentsToEp
 
     public async Task<int> Handle(SyncStudentsToEpvoCommand request, CancellationToken cancellationToken)
     {
-        // Получаем всех студентов из SSO с грантами и стипендиями
         var ssoStudents = await _unitOfWork.Students.GetAllWithDetailsAsync(cancellationToken);
-
-        // Предзагрузка ВСЕХ записей ЕПВО одним запросом (вместо N+1)
         var epvoMap = await _epvoRepository.GetAllAsDictionaryByIINAsync(cancellationToken);
         var syncedCount = 0;
 
         foreach (var sso in ssoStudents)
         {
-            // Берём первый активный грант и стипендию (если есть)
             var activeGrant = sso.Grants?.FirstOrDefault(g => g.IsActive);
             var activeScholarship = sso.Scholarships?.FirstOrDefault(s => s.IsActive);
-            // Notes и даты лишения берём из последней стипендии (даже неактивной)
             var latestScholarship = sso.Scholarships?.OrderByDescending(s => s.CreatedAt).FirstOrDefault();
+
+            var faculty = sso.Speciality?.Department?.Institute?.InstituteName;
+            var speciality = sso.Speciality?.SpecialityName;
 
             if (!epvoMap.TryGetValue(sso.IIN, out var existing))
             {
-                // Создаём новую запись в ЕПВО
                 var epvoStudent = new EpvoStudent
                 {
                     FirstName = sso.FirstName,
@@ -42,8 +39,8 @@ public class SyncStudentsToEpvoCommandHandler : IRequestHandler<SyncStudentsToEp
                     MiddleName = sso.MiddleName,
                     IIN = sso.IIN,
                     DateOfBirth = sso.DateOfBirth,
-                    Faculty = sso.Faculty,
-                    Speciality = sso.Speciality,
+                    Faculty = faculty,
+                    Speciality = speciality,
                     Course = sso.Course,
                     GrantName = activeGrant?.Name,
                     GrantAmount = activeGrant?.Amount,
@@ -63,13 +60,12 @@ public class SyncStudentsToEpvoCommandHandler : IRequestHandler<SyncStudentsToEp
             }
             else
             {
-                // Обновляем существующую запись в ЕПВО
                 existing.FirstName = sso.FirstName;
                 existing.LastName = sso.LastName;
                 existing.MiddleName = sso.MiddleName;
                 existing.DateOfBirth = sso.DateOfBirth;
-                existing.Faculty = sso.Faculty;
-                existing.Speciality = sso.Speciality;
+                existing.Faculty = faculty;
+                existing.Speciality = speciality;
                 existing.Course = sso.Course;
                 existing.GrantName = activeGrant?.Name;
                 existing.GrantAmount = activeGrant?.Amount;
@@ -88,9 +84,7 @@ public class SyncStudentsToEpvoCommandHandler : IRequestHandler<SyncStudentsToEp
             }
         }
 
-        // Один SaveChanges в конце — вместо отдельного на каждую запись
         await _epvoRepository.SaveChangesAsync(cancellationToken);
-
         return syncedCount;
     }
 }

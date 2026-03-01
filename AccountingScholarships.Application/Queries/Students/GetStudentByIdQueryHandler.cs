@@ -1,6 +1,6 @@
-
 using AccountingScholarships.Domain.DTO;
 using AccountingScholarships.Domain.Interfaces;
+using AccountingScholarships.Application.Commands.Students;
 using MediatR;
 
 namespace AccountingScholarships.Application.Queries.Students;
@@ -21,51 +21,6 @@ public class GetStudentByIdQueryHandler : IRequestHandler<GetStudentByIdQuery, S
         if (student is null)
             return null;
 
-        return new StudentDto
-        {
-            Id = student.Id,
-            FirstName = student.FirstName,
-            LastName = student.LastName,
-            MiddleName = student.MiddleName,
-            IIN = student.IIN,
-            DateOfBirth = student.DateOfBirth,
-            Email = student.Email,
-            Phone = student.Phone,
-            GroupName = student.GroupName,
-            Faculty = student.Faculty,
-            Speciality = student.Speciality,
-            Course = student.Course,
-            EducationForm = student.EducationForm,
-            IsActive = student.IsActive,
-            iban = student.iban,
-            CreatedAt = student.CreatedAt,
-            UpdatedAt = student.UpdatedAt,
-            Grants = student.Grants.Select(g => new GrantDto
-            {
-                Id = g.Id,
-                Name = g.Name,
-                Type = g.Type,
-                Amount = g.Amount,
-                StartDate = g.StartDate,
-                EndDate = g.EndDate,
-                IsActive = g.IsActive,
-                StudentId = g.StudentId
-            }).ToList(),
-            Scholarships = student.Scholarships.Select(s => new ScholarshipDto
-            {
-                Id = s.Id,
-                Name = s.Name,
-                Type = s.Type,
-                Amount = s.Amount,
-                StartDate = s.StartDate,
-                //EndDate = s.EndDate,
-                LostDate = s.LostDate,
-                OrderLostDate = s.OrderLostDate,
-                OrderCandidateDate = s.OrderCandidateDate,
-                Notes = s.Notes,
-                IsActive = s.IsActive,
-                StudentId = s.StudentId
-            }).ToList()
-        };
+        return CreateStudentCommandHandler.MapToDto(student);
     }
 }

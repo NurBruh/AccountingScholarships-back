@@ -1,4 +1,3 @@
-
 using AccountingScholarships.Domain.DTO;
 using AccountingScholarships.Domain.Interfaces;
 using AccountingScholarships.Domain.Entities;
@@ -29,11 +28,14 @@ public class CreateStudentCommandHandler : IRequestHandler<CreateStudentCommand,
             Email = dto.Email,
             Phone = dto.Phone,
             GroupName = dto.GroupName,
-            Faculty = dto.Faculty,
-            Speciality = dto.Speciality,
             Course = dto.Course,
-            EducationForm = dto.EducationForm,
             iban = dto.iban,
+            Description = dto.Description,
+            Sex = dto.Sex,
+            SpecialityId = dto.SpecialityId,
+            StudyFormId = dto.StudyFormId,
+            DegreeLevelId = dto.DegreeLevelId,
+            BankId = dto.BankId,
             IsActive = true,
             CreatedAt = DateTime.UtcNow
         };
@@ -41,25 +43,68 @@ public class CreateStudentCommandHandler : IRequestHandler<CreateStudentCommand,
         await _unitOfWork.Students.AddAsync(student, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+        // Перезагружаем с навигационными свойствами
+        var loaded = await _unitOfWork.Students.GetWithDetailsAsync(student.Id, cancellationToken);
+        return MapToDto(loaded ?? student);
+    }
+
+    internal static StudentDto MapToDto(Student s)
+    {
         return new StudentDto
         {
-            Id = student.Id,
-            FirstName = student.FirstName,
-            LastName = student.LastName,
-            MiddleName = student.MiddleName,
-            IIN = student.IIN,
-            DateOfBirth = student.DateOfBirth,
-            Email = student.Email,
-            Phone = student.Phone,
-            GroupName = student.GroupName,
-            Faculty = student.Faculty,
-            Speciality = student.Speciality,
-            Course = student.Course,
-            EducationForm = student.EducationForm,
-            IsActive = student.IsActive,
-            iban = student.iban,
-            CreatedAt = student.CreatedAt,
-            UpdatedAt = student.UpdatedAt
+            Id = s.Id,
+            FirstName = s.FirstName,
+            LastName = s.LastName,
+            MiddleName = s.MiddleName,
+            IIN = s.IIN,
+            DateOfBirth = s.DateOfBirth,
+            Email = s.Email,
+            Phone = s.Phone,
+            GroupName = s.GroupName,
+            Course = s.Course,
+            IsActive = s.IsActive,
+            iban = s.iban,
+            Description = s.Description,
+            Sex = s.Sex,
+            CreatedAt = s.CreatedAt,
+            UpdatedAt = s.UpdatedAt,
+            // Resolved names
+            Faculty = s.Speciality?.Department?.Institute?.InstituteName,
+            Speciality = s.Speciality?.SpecialityName,
+            DepartmentName = s.Speciality?.Department?.DepartmentName,
+            EducationForm = s.StudyForm?.StudyFormName,
+            DegreeLevel = s.DegreeLevel?.DegreeName,
+            BankName = s.Bank?.RecipientBank,
+            // FK IDs
+            SpecialityId = s.SpecialityId,
+            StudyFormId = s.StudyFormId,
+            DegreeLevelId = s.DegreeLevelId,
+            BankId = s.BankId,
+            Grants = s.Grants?.Select(g => new GrantDto
+            {
+                Id = g.Id,
+                Name = g.Name,
+                Type = g.Type,
+                Amount = g.Amount,
+                StartDate = g.StartDate,
+                EndDate = g.EndDate,
+                IsActive = g.IsActive,
+                StudentId = g.StudentId
+            }).ToList() ?? new(),
+            Scholarships = s.Scholarships?.Select(sc => new ScholarshipDto
+            {
+                Id = sc.Id,
+                Name = sc.Name,
+                Type = sc.Type,
+                Amount = sc.Amount,
+                StartDate = sc.StartDate,
+                LostDate = sc.LostDate,
+                OrderLostDate = sc.OrderLostDate,
+                OrderCandidateDate = sc.OrderCandidateDate,
+                Notes = sc.Notes,
+                IsActive = sc.IsActive,
+                StudentId = sc.StudentId
+            }).ToList() ?? new()
         };
     }
 }

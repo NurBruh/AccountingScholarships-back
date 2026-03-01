@@ -6,19 +6,26 @@ namespace AccountingScholarships.Application.Commands.Epvo;
 
 public class SyncStudentToEpvoCommandHandler : IRequestHandler<SyncStudentToEpvoCommand, bool>
 {
-    private readonly IPosrednikRepository _posrednikRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IEpvoRepository _epvoRepository;
 
-    public SyncStudentToEpvoCommandHandler(IPosrednikRepository posrednikRepository, IEpvoRepository epvoRepository)
+    public SyncStudentToEpvoCommandHandler(IUnitOfWork unitOfWork, IEpvoRepository epvoRepository)
     {
-        _posrednikRepository = posrednikRepository;
+        _unitOfWork = unitOfWork;
         _epvoRepository = epvoRepository;
     }
 
     public async Task<bool> Handle(SyncStudentToEpvoCommand request, CancellationToken cancellationToken)
     {
-        var posrednik = await _posrednikRepository.GetByIINAsync(request.IIN, cancellationToken);
-        if (posrednik is null) return false;
+        var sso = await _unitOfWork.Students.GetByIINAsync(request.IIN, cancellationToken);
+        if (sso is null) return false;
+
+        var activeGrant = sso.Grants?.FirstOrDefault(g => g.IsActive);
+        var activeScholarship = sso.Scholarships?.FirstOrDefault(s => s.IsActive);
+        var latestScholarship = sso.Scholarships?.OrderByDescending(s => s.CreatedAt).FirstOrDefault();
+
+        var faculty = sso.Speciality?.Department?.Institute?.InstituteName;
+        var speciality = sso.Speciality?.SpecialityName;
 
         var existing = await _epvoRepository.GetByIINAsync(request.IIN, cancellationToken);
 
@@ -26,24 +33,24 @@ public class SyncStudentToEpvoCommandHandler : IRequestHandler<SyncStudentToEpvo
         {
             var epvoStudent = new EpvoStudent
             {
-                FirstName = posrednik.FirstName,
-                LastName = posrednik.LastName,
-                MiddleName = posrednik.MiddleName,
-                IIN = posrednik.IIN,
-                DateOfBirth = posrednik.DateOfBirth,
-                Faculty = posrednik.Faculty,
-                Speciality = posrednik.Speciality,
-                Course = posrednik.Course,
-                GrantName = posrednik.GrantName,
-                GrantAmount = posrednik.GrantAmount,
-                ScholarshipName = posrednik.ScholarshipName,
-                ScholarshipAmount = posrednik.ScholarshipAmount,
-                ScholarshipLostDate = posrednik.ScholarshipLostDate,
-                ScholarshipOrderLostDate = posrednik.ScholarshipOrderLostDate,
-                ScholarshipOrderCandidateDate = posrednik.ScholarshipOrderCandidateDate,
-                ScholarshipNotes = posrednik.ScholarshipNotes,
-                iban = posrednik.iban,
-                IsActive = posrednik.IsActive,
+                FirstName = sso.FirstName,
+                LastName = sso.LastName,
+                MiddleName = sso.MiddleName,
+                IIN = sso.IIN,
+                DateOfBirth = sso.DateOfBirth,
+                Faculty = faculty,
+                Speciality = speciality,
+                Course = sso.Course,
+                GrantName = activeGrant?.Name,
+                GrantAmount = activeGrant?.Amount,
+                ScholarshipName = activeScholarship?.Name,
+                ScholarshipAmount = activeScholarship?.Amount,
+                ScholarshipLostDate = latestScholarship?.LostDate,
+                ScholarshipOrderLostDate = latestScholarship?.OrderLostDate,
+                ScholarshipOrderCandidateDate = latestScholarship?.OrderCandidateDate,
+                ScholarshipNotes = latestScholarship?.Notes,
+                iban = sso.iban,
+                IsActive = sso.IsActive,
                 SyncDate = DateTime.UtcNow
             };
 
@@ -51,29 +58,28 @@ public class SyncStudentToEpvoCommandHandler : IRequestHandler<SyncStudentToEpvo
         }
         else
         {
-            existing.FirstName = posrednik.FirstName;
-            existing.LastName = posrednik.LastName;
-            existing.MiddleName = posrednik.MiddleName;
-            existing.DateOfBirth = posrednik.DateOfBirth;
-            existing.Faculty = posrednik.Faculty;
-            existing.Speciality = posrednik.Speciality;
-            existing.Course = posrednik.Course;
-            existing.GrantName = posrednik.GrantName;
-            existing.GrantAmount = posrednik.GrantAmount;
-            existing.ScholarshipName = posrednik.ScholarshipName;
-            existing.ScholarshipAmount = posrednik.ScholarshipAmount;
-            existing.ScholarshipLostDate = posrednik.ScholarshipLostDate;
-            existing.ScholarshipOrderLostDate = posrednik.ScholarshipOrderLostDate;
-            existing.ScholarshipOrderCandidateDate = posrednik.ScholarshipOrderCandidateDate;
-            existing.ScholarshipNotes = posrednik.ScholarshipNotes;
-            existing.iban = posrednik.iban;
-            existing.IsActive = posrednik.IsActive;
+            existing.FirstName = sso.FirstName;
+            existing.LastName = sso.LastName;
+            existing.MiddleName = sso.MiddleName;
+            existing.DateOfBirth = sso.DateOfBirth;
+            existing.Faculty = faculty;
+            existing.Speciality = speciality;
+            existing.Course = sso.Course;
+            existing.GrantName = activeGrant?.Name;
+            existing.GrantAmount = activeGrant?.Amount;
+            existing.ScholarshipName = activeScholarship?.Name;
+            existing.ScholarshipAmount = activeScholarship?.Amount;
+            existing.ScholarshipLostDate = latestScholarship?.LostDate;
+            existing.ScholarshipOrderLostDate = latestScholarship?.OrderLostDate;
+            existing.ScholarshipOrderCandidateDate = latestScholarship?.OrderCandidateDate;
+            existing.ScholarshipNotes = latestScholarship?.Notes;
+            existing.iban = sso.iban;
+            existing.IsActive = sso.IsActive;
             existing.SyncDate = DateTime.UtcNow;
 
             await _epvoRepository.UpdateAsync(existing, cancellationToken);
         }
 
-        // Сохраняем изменения одним вызовом
         await _epvoRepository.SaveChangesAsync(cancellationToken);
 
         return true;
