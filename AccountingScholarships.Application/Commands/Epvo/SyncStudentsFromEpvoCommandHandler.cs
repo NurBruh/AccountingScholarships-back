@@ -18,8 +18,6 @@ public class SyncStudentsFromEpvoCommandHandler : IRequestHandler<SyncStudentsFr
     public async Task<int> Handle(SyncStudentsFromEpvoCommand request, CancellationToken cancellationToken)
     {
         var epvoStudents = await _epvoRepository.GetAllAsync(cancellationToken);
-
-        // Предзагрузка ВСЕХ студентов SSO одним запросом (вместо N+1)
         var ssoMap = await _unitOfWork.Students.GetAllAsDictionaryByIINAsync(cancellationToken);
         var syncedCount = 0;
 
@@ -38,8 +36,6 @@ public class SyncStudentsFromEpvoCommandHandler : IRequestHandler<SyncStudentsFr
                         MiddleName = epvo.MiddleName,
                         IIN = epvo.IIN,
                         DateOfBirth = epvo.DateOfBirth,
-                        Faculty = epvo.Faculty,
-                        Speciality = epvo.Speciality,
                         Course = epvo.Course,
                         IsActive = epvo.IsActive,
                         iban = epvo.iban,
@@ -54,8 +50,6 @@ public class SyncStudentsFromEpvoCommandHandler : IRequestHandler<SyncStudentsFr
                     existing.FirstName = epvo.FirstName;
                     existing.LastName = epvo.LastName;
                     existing.MiddleName = epvo.MiddleName;
-                    existing.Faculty = epvo.Faculty;
-                    existing.Speciality = epvo.Speciality;
                     existing.Course = epvo.Course;
                     existing.IsActive = epvo.IsActive;
                     existing.iban = epvo.iban;

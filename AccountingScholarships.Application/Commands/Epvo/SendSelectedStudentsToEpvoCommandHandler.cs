@@ -1,4 +1,4 @@
-﻿using AccountingScholarships.Domain.DTO;
+using AccountingScholarships.Domain.DTO;
 using AccountingScholarships.Domain.Interfaces;
 using MediatR;
 
@@ -6,11 +6,12 @@ namespace AccountingScholarships.Application.Commands.Epvo
 {
     public class SendSelectedStudentsToEpvoCommandHandler : IRequestHandler<SendSelectedStudentsToEpvoCommand, int>
     {
-        private readonly IPosrednikRepository _posrednikRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IEpvoApiClient _epvoApiClient;
-        public SendSelectedStudentsToEpvoCommandHandler(IPosrednikRepository posrednikRepository, IEpvoApiClient epvoApiClient)
+
+        public SendSelectedStudentsToEpvoCommandHandler(IUnitOfWork unitOfWork, IEpvoApiClient epvoApiClient)
         {
-            _posrednikRepository = posrednikRepository;
+            _unitOfWork = unitOfWork;
             _epvoApiClient = epvoApiClient;
         }
 
@@ -21,32 +22,41 @@ namespace AccountingScholarships.Application.Commands.Epvo
                 return 0;
             }
 
-            // Загружаем все нужные записи одним запросом (вместо N запросов по одному)
-            var posrednikStudents = await _posrednikRepository.FindByIINsAsync(request.IINs, cancellationToken);
+            var ssoStudents = await _unitOfWork.Students.FindByIINsAsync(request.IINs, cancellationToken);
 
-            var payload = posrednikStudents.Select(posrednik => new EpvoSendPayloadDto
+            var payload = ssoStudents.Select(sso =>
             {
-                IIN = posrednik.IIN,
-                FirstName = posrednik.FirstName,
-                LastName = posrednik.LastName,
-                MiddleName = posrednik.MiddleName,
-                Faculty = posrednik.Faculty,
-                Speciality = posrednik.Speciality,
-                Course = posrednik.Course,
-                GrantName = posrednik.GrantName,
-                GrantAmount = posrednik.GrantAmount ?? 0,
-                ScholarshipName = posrednik.ScholarshipName,
-                ScholarshipAmount = posrednik.ScholarshipAmount,
-                iban = posrednik.iban,
-                isActive = posrednik.IsActive
+                var activeGrant = sso.Grants?.FirstOrDefault(g => g.IsActive);
+                var activeScholarship = sso.Scholarships?.FirstOrDefault(s => s.IsActive);
+                var latestScholarship = sso.Scholarships?.OrderByDescending(s => s.CreatedAt).FirstOrDefault();
+
+                return new EpvoSendPayloadDto
+                {
+                    IIN = sso.IIN,
+                    FirstName = sso.FirstName,
+                    LastName = sso.LastName,
+                    MiddleName = sso.MiddleName,
+                    Faculty = sso.Speciality?.Department?.Institute?.InstituteName,
+                    Speciality = sso.Speciality?.SpecialityName,
+                    Course = sso.Course,
+                    GrantName = activeGrant?.Name,
+                    GrantAmount = activeGrant?.Amount ?? 0,
+                    ScholarshipName = activeScholarship?.Name,
+                    ScholarshipAmount = activeScholarship?.Amount,
+                    ScholarshipLostDate = latestScholarship?.LostDate,
+                    ScholarshipOrderLostDate = latestScholarship?.OrderLostDate,
+                    ScholarshipOrderCandidateDate = latestScholarship?.OrderCandidateDate,
+                    ScholarshipNotes = latestScholarship?.Notes,
+                    iban = sso.iban,
+                    isActive = sso.IsActive
+                };
             }).ToList();
 
-            if(payload.Count == 0) 
+            if (payload.Count == 0) 
             {
                 return 0;
             }
 
-            //один запрос с массивом всех выбранных студентов 
             await _epvoApiClient.SendStudentsAsync(payload, cancellationToken);
 
             return payload.Count;

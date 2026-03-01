@@ -19,6 +19,10 @@ namespace AccountingScholarships.Domain.DTO
         public decimal GrantAmount { get; set;  }
         public string? ScholarshipName { get; set; }
         public decimal? ScholarshipAmount { get; set; }
+        public DateTime? ScholarshipLostDate { get; set; }
+        public DateTime? ScholarshipOrderLostDate { get; set; }
+        public DateTime? ScholarshipOrderCandidateDate { get; set; }
+        public string? ScholarshipNotes { get; set; }
         public string iban { get; set; } = string.Empty;
         public bool isActive { get; set; }  
     }

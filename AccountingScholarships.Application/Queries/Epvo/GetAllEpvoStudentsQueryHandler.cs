@@ -35,6 +35,10 @@ public class GetAllEpvoStudentsQueryHandler : IRequestHandler<GetAllEpvoStudents
             GrantAmount = s.GrantAmount,
             ScholarshipName = s.ScholarshipName,
             ScholarshipAmount = s.ScholarshipAmount,
+            ScholarshipLostDate = s.ScholarshipLostDate,
+            ScholarshipOrderLostDate = s.ScholarshipOrderLostDate,
+            ScholarshipOrderCandidateDate = s.ScholarshipOrderCandidateDate,
+            ScholarshipNotes = s.ScholarshipNotes,
             HasScholarship = s.ScholarshipName != null,
             iban = s.iban,
             SyncDate = s.SyncDate

@@ -27,7 +27,11 @@ public class UpdateScholarshipCommandHandler : IRequestHandler<UpdateScholarship
         scholarship.Type = request.Dto.Type;
         scholarship.Amount = request.Dto.Amount;
         scholarship.StartDate = request.Dto.StartDate;
-        scholarship.EndDate = request.Dto.EndDate;
+        //scholarship.EndDate = request.Dto.EndDate;
+        scholarship.LostDate = request.Dto.LostDate;
+        scholarship.OrderLostDate = request.Dto.OrderLostDate;
+        scholarship.OrderCandidateDate = request.Dto.OrderCandidateDate;
+        scholarship.Notes = request.Dto.Notes;
         scholarship.IsActive = request.Dto.IsActive;
         scholarship.UpdatedAt = DateTime.UtcNow;
 
@@ -41,7 +45,11 @@ public class UpdateScholarshipCommandHandler : IRequestHandler<UpdateScholarship
             Type = scholarship.Type,
             Amount = scholarship.Amount,
             StartDate = scholarship.StartDate,
-            EndDate = scholarship.EndDate,
+            //EndDate = scholarship.EndDate,
+            LostDate = scholarship.LostDate,
+            OrderLostDate = scholarship.OrderLostDate,
+            OrderCandidateDate = scholarship.OrderCandidateDate,
+            Notes = scholarship.Notes,
             IsActive = scholarship.IsActive,
             StudentId = scholarship.StudentId
         };

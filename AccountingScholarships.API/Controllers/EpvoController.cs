@@ -138,6 +138,57 @@ public class EpvoController : ControllerBase
         if (!result) return NotFound(new { Message = $"Студент с ИИН {iin} не найден." });
         return Ok(new { Message = $"Расчётный счёт студента с ИИН {iin} обновлён в ССО. Актуализируйте данные в ССО vs ЕПВО." });
     }
+
+    /// <summary>
+    /// Получить список лишённых стипендии (Вариант 1 — из полей EPVO).
+    /// </summary>
+    [HttpGet("lost-scholarships")]
+    public async Task<IActionResult> GetLostScholarshipsV1(CancellationToken cancellationToken)
+    {
+        var allStudents = await _mediator.Send(new GetAllEpvoStudentsQuery(), cancellationToken);
+        var lost = allStudents
+            .Where(s => !s.HasScholarship && (s.ScholarshipLostDate != null || !string.IsNullOrEmpty(s.ScholarshipNotes)))
+            .Select(s => new
+            {
+                s.Id,
+                s.LastName,
+                s.FirstName,
+                s.MiddleName,
+                s.IIN,
+                s.ScholarshipName,
+                s.ScholarshipLostDate,
+                s.ScholarshipOrderLostDate,
+                s.ScholarshipOrderCandidateDate,
+                s.ScholarshipNotes,
+                s.Faculty,
+                s.Course
+            })
+            .ToList();
+        return Ok(lost);
+    }
+
+    /// <summary>
+    /// Получить список лишённых стипендии (Вариант 2 — отдельная таблица).
+    /// </summary>
+    [HttpGet("loss-records")]
+    public async Task<IActionResult> GetLossRecords(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new Application.Queries.ScholarshipLoss.GetScholarshipLossRecordsQuery(), cancellationToken);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Добавить запись о лишении стипендии (Вариант 2).
+    /// </summary>
+    [HttpPost("loss-records")]
+    public async Task<IActionResult> CreateLossRecord(
+        [FromBody] CreateScholarshipLossRecordDto dto, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new Application.Commands.ScholarshipLoss.CreateScholarshipLossRecordCommand(dto), cancellationToken);
+        return Ok(result);
+    }
 }
 
 public record SyncBatchRequest(List<string> IINs);

@@ -1,4 +1,3 @@
-
 using AccountingScholarships.Domain.DTO;
 using AccountingScholarships.Domain.Interfaces;
 using MediatR;
@@ -31,36 +30,21 @@ public class UpdateStudentCommandHandler : IRequestHandler<UpdateStudentCommand,
         student.Email = dto.Email;
         student.Phone = dto.Phone;
         student.GroupName = dto.GroupName;
-        student.Faculty = dto.Faculty;
-        student.Speciality = dto.Speciality;
         student.Course = dto.Course;
-        student.EducationForm = dto.EducationForm;
         student.iban = dto.iban;
+        student.Description = dto.Description;
+        student.Sex = dto.Sex;
         student.IsActive = dto.IsActive;
+        student.SpecialityId = dto.SpecialityId;
+        student.StudyFormId = dto.StudyFormId;
+        student.DegreeLevelId = dto.DegreeLevelId;
+        student.BankId = dto.BankId;
         student.UpdatedAt = DateTime.UtcNow;
 
         await _unitOfWork.Students.UpdateAsync(student, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new StudentDto
-        {
-            Id = student.Id,
-            FirstName = student.FirstName,
-            LastName = student.LastName,
-            MiddleName = student.MiddleName,
-            IIN = student.IIN,
-            DateOfBirth = student.DateOfBirth,
-            Email = student.Email,
-            Phone = student.Phone,
-            GroupName = student.GroupName,
-            Faculty = student.Faculty,
-            Speciality = student.Speciality,
-            Course = student.Course,
-            EducationForm = student.EducationForm,
-            iban = student.iban,
-            IsActive = student.IsActive,
-            CreatedAt = student.CreatedAt,
-            UpdatedAt = student.UpdatedAt
-        };
+        var loaded = await _unitOfWork.Students.GetWithDetailsAsync(student.Id, cancellationToken);
+        return CreateStudentCommandHandler.MapToDto(loaded ?? student);
     }
 }

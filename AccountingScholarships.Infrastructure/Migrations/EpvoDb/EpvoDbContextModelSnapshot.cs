@@ -74,9 +74,21 @@ namespace AccountingScholarships.Infrastructure.Migrations.EpvoDb
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateTime?>("ScholarshipLostDate")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("ScholarshipName")
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
+
+                    b.Property<string>("ScholarshipNotes")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("ScholarshipOrderCandidateDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("ScholarshipOrderLostDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Speciality")
                         .HasMaxLength(200)
