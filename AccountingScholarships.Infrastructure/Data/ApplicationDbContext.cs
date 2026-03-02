@@ -494,5 +494,12 @@ public class ApplicationDbContext : DbContext
             new StatusType { Id = 4, StatusName = "Выпускник" },
             new StatusType { Id = 5, StatusName = "Переведён" }
         );
+
+        // Роли RBAC
+        modelBuilder.Entity<Role>().HasData(
+            new Role { Id = 1, Name = "manager_or", Description = "Менеджер ОР — полный доступ, синхронизация" },
+            new Role { Id = 2, Name = "department_head", Description = "Заведующий кафедры — просмотр своей кафедры" },
+            new Role { Id = 3, Name = "institute_director", Description = "Директор института — просмотр института" }
+        );
     }
 }

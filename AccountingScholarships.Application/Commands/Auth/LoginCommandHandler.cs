@@ -30,14 +30,27 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResponseDto
         if (!BCrypt.Net.BCrypt.Verify(request.Login.Password, user.PasswordHash))
             return null;
 
-        var token = _jwtTokenService.GenerateToken(user.Id.ToString(), user.Username, user.Role);
+        // Загружаем назначение роли со scope
+        var assignment = await _unitOfWork.GetUserRoleAssignmentAsync(user.Id, cancellationToken);
+
+        var role = assignment?.Role?.Name ?? user.Role;
+        var scopeType = assignment?.ScopeType;
+        var scopeId = assignment?.ScopeId;
+
+        // Определяем имя scope (кафедра или институт)
+        var scopeName = await _unitOfWork.GetScopeNameAsync(scopeType, scopeId, cancellationToken);
+
+        var token = _jwtTokenService.GenerateToken(user.Id.ToString(), user.Username, role, scopeType, scopeId);
 
         return new AuthResponseDto
         {
             Token = token,
             Username = user.Username,
-            Role = user.Role,
-            ExpiresAt = DateTime.UtcNow.AddHours(24)
+            Role = role,
+            ExpiresAt = DateTime.UtcNow.AddHours(24),
+            ScopeType = scopeType,
+            ScopeId = scopeId,
+            ScopeName = scopeName
         };
     }
 }
