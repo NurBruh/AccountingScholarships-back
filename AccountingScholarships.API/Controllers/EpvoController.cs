@@ -3,10 +3,12 @@
 using AccountingScholarships.Domain.DTO;
 using AccountingScholarships.Application.Commands.Epvo;
 using AccountingScholarships.Application.Queries.Epvo;
+using AccountingScholarships.Domain.Interfaces;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AccountingScholarships.API.Controllers;
 
@@ -20,10 +22,63 @@ namespace AccountingScholarships.API.Controllers;
 public class EpvoController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public EpvoController(IMediator mediator)
+    public EpvoController(IMediator mediator, IUnitOfWork unitOfWork)
     {
         _mediator = mediator;
+        _unitOfWork = unitOfWork;
+    }
+
+    /// <summary>
+    /// Извлечь scope из JWT claims
+    /// </summary>
+    private (string? scopeType, int? scopeId, string role) GetScope()
+    {
+        var role = User.FindFirst(ClaimTypes.Role)?.Value ?? "User";
+        var scopeType = User.FindFirst("scope_type")?.Value;
+        var scopeIdStr = User.FindFirst("scope_id")?.Value;
+        int? scopeId = int.TryParse(scopeIdStr, out var sid) ? sid : null;
+        return (scopeType, scopeId, role);
+    }
+
+    /// <summary>
+    /// Фильтрация студентов по scope роли
+    /// </summary>
+    private async Task<List<StudentResponseDto>> FilterByScope(
+        IReadOnlyList<StudentResponseDto> students, CancellationToken ct)
+    {
+        var (scopeType, scopeId, role) = GetScope();
+
+        // Менеджер ОР — видит всё
+        if (role == "manager_or" || scopeType == "global" || scopeType == null)
+            return students.ToList();
+
+        // Заведующий кафедры — видит только свою кафедру (по специальностям)
+        if (role == "department_head" && scopeType == "department" && scopeId.HasValue)
+        {
+            var specs = await _unitOfWork.GetSpecialityNamesByDepartmentAsync(scopeId.Value, ct);
+            return students.Where(s =>
+                !string.IsNullOrEmpty(s.Speciality) &&
+                specs.Any(sp => s.Speciality.Contains(sp, StringComparison.OrdinalIgnoreCase)
+                             || sp.Contains(s.Speciality, StringComparison.OrdinalIgnoreCase))
+            ).ToList();
+        }
+
+        // Директор института — видит все кафедры своего института (по Faculty)
+        if (role == "institute_director" && scopeType == "institute" && scopeId.HasValue)
+        {
+            var instName = await _unitOfWork.GetScopeNameAsync("institute", scopeId.Value, ct);
+            if (instName != null)
+            {
+                return students.Where(s =>
+                    !string.IsNullOrEmpty(s.Faculty) &&
+                    s.Faculty.Contains(instName, StringComparison.OrdinalIgnoreCase)
+                ).ToList();
+            }
+        }
+
+        return students.ToList();
     }
 
     /// <summary>
@@ -37,7 +92,8 @@ public class EpvoController : ControllerBase
     public async Task<IActionResult> GetAllEpvoStudents(CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new GetAllEpvoStudentsQuery(), cancellationToken);
-        return Ok(result);
+        var filtered = await FilterByScope(result, cancellationToken);
+        return Ok(filtered);
     }
 
     //[HttpPost("sync")]
@@ -146,7 +202,8 @@ public class EpvoController : ControllerBase
     public async Task<IActionResult> GetLostScholarshipsV1(CancellationToken cancellationToken)
     {
         var allStudents = await _mediator.Send(new GetAllEpvoStudentsQuery(), cancellationToken);
-        var lost = allStudents
+        var filteredStudents = await FilterByScope(allStudents, cancellationToken);
+        var lost = filteredStudents
             .Where(s => !s.HasScholarship && (s.ScholarshipLostDate != null || !string.IsNullOrEmpty(s.ScholarshipNotes)))
             .Select(s => new
             {
