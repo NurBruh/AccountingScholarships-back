@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
         //MySQL
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         var epvoConnectionString = configuration.GetConnectionString("EpvoConnection");
+        var ssoConnectionString = configuration.GetConnectionString("SsoConnection");
         var localeConnectionString = configuration.GetConnectionString("LocaleConnection");
         var localeEpvoConnectionString = configuration.GetConnectionString("EpvoLocaleConnection");
         
@@ -30,6 +31,9 @@ public static class ServiceCollectionExtensions
 
         services.AddDbContext<EpvoDbContext>(options =>
             options.UseMySql(epvoConnectionString, ServerVersion.AutoDetect(epvoConnectionString)));
+
+        services.AddDbContext<SsoDbContext>(options =>
+            options.UseMySql(ssoConnectionString, ServerVersion.AutoDetect(ssoConnectionString)));
         
         //LocalDB
 
@@ -93,6 +97,8 @@ public static class ServiceCollectionExtensions
                 IssuerSigningKey = new SymmetricSecurityKey(key)
             };
         });
+
+        services.AddScoped<IEduStudentRepository, EduStudentRepository>();
 
         services.AddScoped<IEpvoApiClient, EpvoApiClient>();
 
