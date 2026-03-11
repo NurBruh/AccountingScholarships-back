@@ -11,7 +11,7 @@ namespace AccountingScholarships.Domain.Entities.university
         public int ID { get; set; }
         public string Title { get; set; }
         public string? ShortTitle { get; set; }
-        public string? NoBDId { get; set; }
+        public string? NoBDIId { get; set; }
 
         // FK свойства
         public int LevelID { get; set; }

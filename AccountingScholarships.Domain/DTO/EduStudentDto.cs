@@ -18,10 +18,10 @@ public class EduStudentDto
 
     // Академические данные (EduStudents)
     public int Year { get; set; }
-    public float? GPA { get; set; }
-    public float? GPA_Y { get; set; }
-    public float? EctsGPA { get; set; }
-    public float? EctsGPA_Y { get; set; }
+    public double? GPA { get; set; }
+    public double? GPA_Y { get; set; }
+    public double? EctsGPA { get; set; }
+    public double? EctsGPA_Y { get; set; }
     public bool NeedsDorm { get; set; }
     public bool AltynBelgi { get; set; }
     public bool? IsScholarship { get; set; }

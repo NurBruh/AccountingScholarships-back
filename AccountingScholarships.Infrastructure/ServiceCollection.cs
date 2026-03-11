@@ -49,12 +49,12 @@ public static class ServiceCollectionExtensions
         var conmssql = configuration.GetConnectionString("MSSQLConnection");
         var conepvomssql = configuration.GetConnectionString("EPVOConnection1");
 
-        //services.AddDbContext<ApplicationDbContext>(options =>
-        //    options.UseSqlServer(connectionString));
+        services.AddDbContext<SsoDbContext>(options =>
+            options.UseSqlServer(conmssql));
         //services.AddDbContext<EpvoDbContext>(options =>
         //    options.UseSqlServer(epvoConnectionString));
 
-        
+
 
         //#region MSSQLConnection
 
