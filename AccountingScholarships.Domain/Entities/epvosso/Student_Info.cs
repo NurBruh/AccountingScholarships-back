@@ -1,0 +1,69 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace AccountingScholarships.Domain.Entities.epvosso
+{
+    public class Student_Info
+    {
+        public int UniversityId { get; set; }
+        public int StudentId { get; set; }
+        public int? EndHighSchoolType { get; set; }
+        public double PreviousGpa { get; set; }
+        public int EducationConditionId { get; set; }
+        public string? ForeignLangCertMark { get; set; }
+        public int? EntranceExamFinalMark { get; set; }
+        public int? CenterUniversityId { get; set; }
+        public string? CenterProfessionCode { get; set; }
+        public string? EntCertSeries { get; set; }
+        public DateOnly? EntCertDatePrint { get; set; }
+        public int? EntPassedLang { get; set; }
+        public string? EntIndividualCode { get; set; }
+        public bool ConditionallyEnrolled { get; set; }
+        public string? GraduateDiplomaNumber { get; set; }
+        public string? GraduateDiplomaSeries { get; set; }
+        public string? NostrificationSeries { get; set; }
+        public DateOnly? NostrificationDate { get; set; }
+        public int? OtherBornCountryId { get; set; }
+        public int? BornInAnotherCountry { get; set; }
+        public int? ForeignLangCertSubjectId { get; set; }
+        public int? ExamBySpecialitySubjectId { get; set; }
+        public bool ForeignLangCertExists { get; set; }
+        public int? ForeignLangCertId { get; set; }
+        public int? HighSchoolType { get; set; }
+        public int GraduatedCountryId { get; set; }
+        public bool ByProfile { get; set; }
+        public int DegreeId { get; set; }
+        public int? EntranceExamLanguageId { get; set; }
+        public int? InstitutionId { get; set; }
+        public int? IcDepartmentId { get; set; }
+        public string? DomesticHighSchoolName { get; set; }
+        public string? DomesticHighSchoolProfession { get; set; }
+        public string? CertificateSeries { get; set; }
+        public DateOnly? AwardedDate { get; set; }
+        public bool HasCreativeExam { get; set; }
+        public bool SpecialExamProvided { get; set; }
+        public bool SpecialExamAdmission { get; set; }
+        public int? DomesticHighSchoolType { get; set; }
+        public int? InterviewProtocolId { get; set; }
+        public bool TrilingualEducation { get; set; }
+        public bool InNationalStudentLeague { get; set; }
+        public string? StudiedForeignLangId { get; set; }
+        public bool IntergovernmentalGrant { get; set; }
+        public int? PublicAuthorityGrant { get; set; }
+        public int? BenefitQuotaId { get; set; }
+        public int? AddEntranceExamAdmission { get; set; }
+        public DateTime? AddEntranceExamDate { get; set; }
+        public string? Iic { get; set; }
+        public string? Bic { get; set; }
+        public int? BankId { get; set; }
+        public bool WinterAdmission { get; set; }
+        public int? ProgramId { get; set; }
+        public DateOnly? UpdateDate { get; set; }
+        public string? FhighSchool { get; set; }
+        public string? FhighSchoolProfession { get; set; }
+        public string TypeCode { get; set; }
+    }
+}
