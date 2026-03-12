@@ -32,8 +32,8 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<EpvoDbContext>(options =>
             options.UseMySql(epvoConnectionString, ServerVersion.AutoDetect(epvoConnectionString)));
 
-        services.AddDbContext<SsoDbContext>(options =>
-            options.UseMySql(ssoConnectionString, ServerVersion.AutoDetect(ssoConnectionString)));
+        //services.AddDbContext<SsoDbContext>(options =>
+        //    options.UseMySql(ssoConnectionString, ServerVersion.AutoDetect(ssoConnectionString)));
         
         //LocalDB
 
@@ -51,8 +51,8 @@ public static class ServiceCollectionExtensions
 
         services.AddDbContext<SsoDbContext>(options =>
             options.UseSqlServer(conmssql));
-        //services.AddDbContext<EpvoDbContext>(options =>
-        //    options.UseSqlServer(epvoConnectionString));
+        services.AddDbContext<EpvoSsoDbContext>(options =>
+            options.UseSqlServer(epvoConnectionString));
 
 
 
@@ -74,6 +74,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IReferenceDataRepository, ReferenceDataRepository>();
         services.AddScoped<IChangeHistoryRepository, ChangeHistoryRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IEpvoProfessionRepository, EpvoProfessionRepository>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
 
         var jwtSettings = configuration.GetSection("JwtSettings");
