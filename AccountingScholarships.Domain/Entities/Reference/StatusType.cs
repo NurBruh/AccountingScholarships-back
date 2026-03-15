@@ -1,4 +1,6 @@
-namespace AccountingScholarships.Domain.Entities;
+namespace AccountingScholarships.Domain.Entities.Reference;
+
+using AccountingScholarships.Domain.Entities.Students;
 
 public class StatusType
 {

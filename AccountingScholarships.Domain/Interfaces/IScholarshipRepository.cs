@@ -1,4 +1,4 @@
-using AccountingScholarships.Domain.Entities;
+using AccountingScholarships.Domain.Entities.Scholarships;
 
 namespace AccountingScholarships.Domain.Interfaces;
 

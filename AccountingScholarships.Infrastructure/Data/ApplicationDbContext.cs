@@ -1,4 +1,8 @@
-using AccountingScholarships.Domain.Entities;
+using AccountingScholarships.Domain.Entities.Students;
+using AccountingScholarships.Domain.Entities.Scholarships;
+using AccountingScholarships.Domain.Entities.Grants;
+using AccountingScholarships.Domain.Entities.Users;
+using AccountingScholarships.Domain.Entities.Reference;
 using AccountingScholarships.Domain.Entities.Auth;
 using AccountingScholarships.Domain.Entities.StudentData;
 using Microsoft.EntityFrameworkCore;

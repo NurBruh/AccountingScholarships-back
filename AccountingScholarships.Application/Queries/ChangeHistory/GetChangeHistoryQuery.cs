@@ -1,4 +1,4 @@
-using AccountingScholarships.Domain.Entities;
+using AccountingScholarships.Domain.Entities.Reference;
 using MediatR;
 
 namespace AccountingScholarships.Application.Queries.ChangeHistory;

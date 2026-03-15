@@ -1,6 +1,7 @@
-using AccountingScholarships.Domain.Common;
+namespace AccountingScholarships.Domain.Entities.Students;
 
-namespace AccountingScholarships.Domain.Entities;
+using AccountingScholarships.Domain.Common;
+using AccountingScholarships.Domain.Entities.Reference;
 
 public class StatusStudentHistory : BaseEntity
 {

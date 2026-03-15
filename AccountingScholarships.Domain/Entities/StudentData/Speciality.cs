@@ -1,3 +1,5 @@
+using AccountingScholarships.Domain.Entities.Students;
+
 namespace AccountingScholarships.Domain.Entities.StudentData;
 
 public class Speciality

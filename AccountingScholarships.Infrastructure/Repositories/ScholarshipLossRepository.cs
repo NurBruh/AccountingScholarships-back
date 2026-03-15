@@ -1,4 +1,4 @@
-using AccountingScholarships.Domain.Entities;
+using AccountingScholarships.Domain.Entities.Scholarships;
 using AccountingScholarships.Domain.Interfaces;
 using AccountingScholarships.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

@@ -1,7 +1,10 @@
-namespace AccountingScholarships.Domain.Entities;
+namespace AccountingScholarships.Domain.Entities.Students;
 
 using AccountingScholarships.Domain.Common;
 using AccountingScholarships.Domain.Entities.StudentData;
+using AccountingScholarships.Domain.Entities.Grants;
+using AccountingScholarships.Domain.Entities.Scholarships;
+using AccountingScholarships.Domain.Entities.Reference;
 
 public class Student : BaseEntity
 {
