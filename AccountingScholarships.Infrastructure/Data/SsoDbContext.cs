@@ -7,13 +7,11 @@ public class SsoDbContext : DbContext
 {
     public SsoDbContext(DbContextOptions<SsoDbContext> options) : base(options) { }
 
-    // Основные таблицы
     public DbSet<EduUsers> EduUsers => Set<EduUsers>();
     public DbSet<EduStudents> EduStudents => Set<EduStudents>();
     public DbSet<EduEmployees> EduEmployees => Set<EduEmployees>();
     public DbSet<EduEmployeePositions> EduEmployeePositions => Set<EduEmployeePositions>();
 
-    // Справочники
     public DbSet<EduAcademicStatuses> EduAcademicStatuses => Set<EduAcademicStatuses>();
     public DbSet<EduCitizenCategories> EduCitizenCategories => Set<EduCitizenCategories>();
     public DbSet<EduCountries> EduCountries => Set<EduCountries>();
@@ -35,7 +33,6 @@ public class SsoDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // ==================== EduUsers ====================
         modelBuilder.Entity<EduUsers>(entity =>
         {
             entity.HasKey(e => e.ID);
@@ -65,9 +62,7 @@ public class SsoDbContext : DbContext
                   .HasForeignKey(e => e.CitizenCategoryID)
                   .OnDelete(DeleteBehavior.SetNull);
         });
-
-        // ==================== EduStudents ====================
-        // StudentID — и PK, и FK к EduUsers.ID (shared primary key / table-per-type)
+        //StudentID — и PK, и FK к EduUsers.ID (shared primary key / table-per-type)
         modelBuilder.Entity<EduStudents>(entity =>
         {
             entity.HasKey(e => e.StudentID);
@@ -113,8 +108,6 @@ public class SsoDbContext : DbContext
                   .OnDelete(DeleteBehavior.SetNull);
         });
 
-        // ==================== EduEmployees ====================
-        // ID — и PK, и FK к EduUsers.ID
         modelBuilder.Entity<EduEmployees>(entity =>
         {
             entity.HasKey(e => e.ID);
@@ -125,7 +118,6 @@ public class SsoDbContext : DbContext
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // ==================== EduEmployeePositions ====================
         modelBuilder.Entity<EduEmployeePositions>(entity =>
         {
             entity.HasKey(e => e.ID);
@@ -146,7 +138,6 @@ public class SsoDbContext : DbContext
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // ==================== EduEducationDurations ====================
         modelBuilder.Entity<EduEducationDurations>(entity =>
         {
             entity.HasKey(e => e.ID);
@@ -157,7 +148,6 @@ public class SsoDbContext : DbContext
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // ==================== EduPositions ====================
         modelBuilder.Entity<EduPositions>(entity =>
         {
             entity.HasKey(e => e.ID);
@@ -168,7 +158,6 @@ public class SsoDbContext : DbContext
                   .OnDelete(DeleteBehavior.SetNull);
         });
 
-        // ==================== Edu_OrgUnits ====================
         modelBuilder.Entity<Edu_OrgUnits>(entity =>
         {
             entity.HasKey(e => e.ID);
@@ -178,14 +167,12 @@ public class SsoDbContext : DbContext
                   .HasForeignKey(e => e.TypeID)
                   .OnDelete(DeleteBehavior.Cascade);
 
-            // Self-referencing (Parent -> Children)
             entity.HasOne(e => e.Parent)
                   .WithMany(p => p.Children)
                   .HasForeignKey(e => e.ParentID)
                   .OnDelete(DeleteBehavior.Restrict);
         });
 
-        // ==================== Простые справочники (только PK) ====================
         modelBuilder.Entity<EduAcademicStatuses>(e => e.HasKey(x => x.ID));
         modelBuilder.Entity<EduCitizenCategories>(e => e.HasKey(x => x.ID));
         modelBuilder.Entity<EduCountries>(e => e.HasKey(x => x.ID));
@@ -200,7 +187,6 @@ public class SsoDbContext : DbContext
         modelBuilder.Entity<EduSpecialityLevels>(e => e.HasKey(x => x.ID));
         modelBuilder.Entity<Edu_OrgUnitTypes>(e => e.HasKey(x => x.ID));
 
-        // ==================== Названия таблиц (соответствие SSODB) ====================
         modelBuilder.Entity<EduUsers>().ToTable("Edu_Users");
         modelBuilder.Entity<EduStudents>().ToTable("Edu_Students");
         modelBuilder.Entity<EduEmployees>().ToTable("Edu_Employees");

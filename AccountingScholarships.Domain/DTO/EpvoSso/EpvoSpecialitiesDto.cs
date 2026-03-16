@@ -3,7 +3,7 @@ namespace AccountingScholarships.Domain.DTO.EpvoSso;
 public class EpvoSpecialitiesDto
 {
     public double? UniversityId { get; set; }
-    public float? Id { get; set; }
+    public double? Id { get; set; }
     public double? ProfCafId { get; set; }
     public string? NameRu { get; set; }
     public string? NameKz { get; set; }
