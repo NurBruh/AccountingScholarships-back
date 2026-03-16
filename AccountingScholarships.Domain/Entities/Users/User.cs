@@ -1,7 +1,6 @@
 using AccountingScholarships.Domain.Entities.Auth;
-using System.Collections.Generic;
 
-namespace AccountingScholarships.Domain.Entities;
+namespace AccountingScholarships.Domain.Entities.Users;
 
 using AccountingScholarships.Domain.Common;
 

@@ -1,6 +1,6 @@
 ﻿using AccountingScholarships.Domain.DTO;
 using AccountingScholarships.Domain.Interfaces;
-using AccountingScholarships.Domain.Entities;
+using AccountingScholarships.Domain.Entities.Users;
 using MediatR;
 
 namespace AccountingScholarships.Application.Commands.Auth;

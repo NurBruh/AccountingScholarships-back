@@ -1,4 +1,4 @@
-namespace AccountingScholarships.Domain.Entities;
+namespace AccountingScholarships.Domain.Entities.Scholarships;
 
 public class ScholarshipType
 {

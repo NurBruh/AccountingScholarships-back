@@ -1,6 +1,6 @@
-using AccountingScholarships.Domain.Common;
+namespace AccountingScholarships.Domain.Entities.Users;
 
-namespace AccountingScholarships.Domain.Entities;
+using AccountingScholarships.Domain.Common;
 
 public class UserActionHistory : BaseEntity
 {

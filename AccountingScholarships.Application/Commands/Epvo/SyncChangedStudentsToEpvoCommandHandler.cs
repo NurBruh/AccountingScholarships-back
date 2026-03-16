@@ -1,5 +1,5 @@
 using AccountingScholarships.Domain.DTO;
-using AccountingScholarships.Domain.Entities;
+using AccountingScholarships.Domain.Entities.Students;
 using AccountingScholarships.Domain.Interfaces;
 using MediatR;
 

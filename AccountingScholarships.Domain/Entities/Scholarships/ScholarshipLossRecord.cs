@@ -1,6 +1,7 @@
-namespace AccountingScholarships.Domain.Entities;
+namespace AccountingScholarships.Domain.Entities.Scholarships;
 
 using AccountingScholarships.Domain.Common;
+using AccountingScholarships.Domain.Entities.Students;
 
 /// <summary>
 /// Запись о лишении стипендии (Сценарий 2 — отдельная таблица).

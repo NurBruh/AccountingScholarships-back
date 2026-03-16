@@ -1,3 +1,5 @@
+using AccountingScholarships.Domain.Entities.Users;
+
 namespace AccountingScholarships.Domain.Entities.Auth;
 
 /// <summary>

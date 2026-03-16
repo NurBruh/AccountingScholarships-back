@@ -14,11 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AccountingScholarships.Application\AccountingScholarships.Application.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Data\" />
+    <ProjectReference Include="..\AccountingScholarships.Domain\AccountingScholarships.Domain.csproj" />
   </ItemGroup>
 
 </Project>

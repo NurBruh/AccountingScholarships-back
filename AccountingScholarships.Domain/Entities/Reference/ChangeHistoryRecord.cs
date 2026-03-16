@@ -1,6 +1,6 @@
 using AccountingScholarships.Domain.Common;
 
-namespace AccountingScholarships.Domain.Entities;
+namespace AccountingScholarships.Domain.Entities.Reference;
 
 /// <summary>
 /// Запись об изменении данных студента (при синхронизации SSO↔EPVO).

@@ -1,6 +1,7 @@
-namespace AccountingScholarships.Domain.Entities;
+namespace AccountingScholarships.Domain.Entities.Grants;
 
 using AccountingScholarships.Domain.Common;
+using AccountingScholarships.Domain.Entities.Students;
 
 public class Grant : BaseEntity
 {

@@ -1,5 +1,5 @@
 using AccountingScholarships.Domain.Interfaces;
-using AccountingScholarships.Domain.Entities;
+using AccountingScholarships.Domain.Entities.Students;
 using MediatR;
 
 namespace AccountingScholarships.Application.Commands.Epvo;
