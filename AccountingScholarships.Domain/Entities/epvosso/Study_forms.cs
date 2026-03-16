@@ -14,9 +14,9 @@ namespace AccountingScholarships.Domain.Entities.epvosso
         public string? NameRu { get; set; }
         public string? NameKz { get; set; }
         public string? NameEn { get; set; }
-        public string? CourseCount { get; set; }
-        public string? CreditsCount { get; set; }
-        public string? TermsCount { get; set; }
+        public int? CourseCount { get; set; }
+        public int? CreditsCount { get; set; }
+        public int? TermsCount { get; set; }
         public int? DepartmentId { get; set; }
         public int? BaseEducationId { get; set; }
         public bool? DistanceLearning { get; set; }
