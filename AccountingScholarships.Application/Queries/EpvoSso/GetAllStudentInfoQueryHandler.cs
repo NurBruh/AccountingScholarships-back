@@ -42,7 +42,7 @@ public class GetAllStudentInfoQueryHandler
             OtherBornCountryId = s.OtherBornCountryId,
             BornInAnotherCountry = s.BornInAnotherCountry,
             ForeignLangCertSubjectId = s.ForeignLangCertSubjectId,
-            ExamBySpecialitySubjectId = s.ExamBySpecialitySubjectId,
+            ExamBySpecialtySubjectId = s.ExamBySpecialtySubjectId,
             ForeignLangCertExists = s.ForeignLangCertExists,
             ForeignLangCertId = s.ForeignLangCertId,
             HighSchoolType = s.HighSchoolType,

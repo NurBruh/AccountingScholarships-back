@@ -12,7 +12,6 @@ namespace AccountingScholarships.Infrastructure.Data
     {
         public EpvoSsoDbContext(DbContextOptions<EpvoSsoDbContext> options)
             : base(options) { }
-        // ─── DbSet для каждой модели ──────────────────────────────────
         public DbSet<Profession> Professions => Set<Profession>();
         public DbSet<Student> Students => Set<Student>();
         public DbSet<Student_Info> StudentsInfo => Set<Student_Info>();
@@ -26,32 +25,32 @@ namespace AccountingScholarships.Infrastructure.Data
         public DbSet<Studycalendar> Studycalendars => Set<Studycalendar>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder); 
             modelBuilder.Entity<Profession>(e =>
             {
-                e.HasKey(x => x.ProfessionId);
+                e.HasKey(x => x.ProfessionId); 
                 e.ToTable("PROFESSION");
             });
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Student_Info>(e =>
+            modelBuilder.Entity<Student_Info>(e => 
             {
                 e.HasKey(x => x.UniversityId);
                 e.ToTable("STUDENT_INFO");
             });
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder); 
             modelBuilder.Entity<Student>(e =>
             {
                 e.HasKey(x => x.StudentId);
                 e.ToTable("STUDENT");
             });
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder); 
             modelBuilder.Entity<Scholarship>(e =>
             {
                 e.HasKey(x => x.Id);
                 e.ToTable("SCHOLARSHIP");
             });
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Scholarship_new>(e =>
+            modelBuilder.Entity<Scholarship_new>(e => 
             {
                 e.HasKey(x => x.Id);
                 e.ToTable("SCHOLARSHIP_NEW");
@@ -61,6 +60,36 @@ namespace AccountingScholarships.Infrastructure.Data
             {
                 e.HasKey(x => x.UniversityId);
                 e.ToTable("UNIVERSITY");
+            });
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Studycalendar>(e =>
+            {
+                e.HasKey(x => x.StudyCalendarId);
+                e.ToTable("STUDYCALENDAR");
+            });
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Specializations>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.ToTable("SPECIALIZATIONS");
+            });
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Study_forms>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.ToTable("STUDY_FORMS");
+            });
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<SpecialitiesEpvoNew>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.ToTable("SPECIALITIES_EPVO_2025");
+            });
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<SpecialitiesEpvo>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.ToTable("SPECIALITIES_EPVO");
             });
         }
     }

@@ -23,7 +23,7 @@ public class EpvoStudentInfoDto
     public int? OtherBornCountryId { get; set; }
     public int? BornInAnotherCountry { get; set; }
     public int? ForeignLangCertSubjectId { get; set; }
-    public int? ExamBySpecialitySubjectId { get; set; }
+    public int? ExamBySpecialtySubjectId { get; set; }
     public bool ForeignLangCertExists { get; set; }
     public int? ForeignLangCertId { get; set; }
     public int? HighSchoolType { get; set; }

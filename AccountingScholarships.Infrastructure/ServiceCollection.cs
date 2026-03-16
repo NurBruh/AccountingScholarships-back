@@ -52,7 +52,7 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<SsoDbContext>(options =>
             options.UseSqlServer(conmssql));
         services.AddDbContext<EpvoSsoDbContext>(options =>
-            options.UseSqlServer(epvoConnectionString));
+            options.UseSqlServer(conepvomssql));
 
 
 

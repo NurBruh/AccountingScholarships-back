@@ -9,7 +9,7 @@ public class EpvoStudycalendarDto
     public int? Year { get; set; }
     public int? CalendarTypeId { get; set; }
     public int? ProfessionId { get; set; }
-    public int? Specialization { get; set; }
+    public int? SpecializationId { get; set; }
     public int? Status { get; set; }
     public int? EntranceYear { get; set; }
     public string? TypeCode { get; set; }

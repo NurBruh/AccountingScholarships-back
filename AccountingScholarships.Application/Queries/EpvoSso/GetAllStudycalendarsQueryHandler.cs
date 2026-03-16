@@ -21,14 +21,14 @@ public class GetAllStudycalendarsQueryHandler
         var entities = await _repository.GetAllAsync(cancellationToken);
         return entities.Select(s => new EpvoStudycalendarDto
         {
-            StudyCalendarId = s.studyCalendarId,
+            StudyCalendarId = s.StudyCalendarId,
             UniversityId = s.UniversityId,
             Name = s.Name,
             StudyFormId = s.StudyFormId,
             Year = s.Year,
             CalendarTypeId = s.CalendarTypeId,
             ProfessionId = s.ProfessionId,
-            Specialization = s.Specialization,
+            SpecializationId = s.SpecializationId,
             Status = s.Status,
             EntranceYear = s.EntranceYear,
             TypeCode = s.TypeCode,
