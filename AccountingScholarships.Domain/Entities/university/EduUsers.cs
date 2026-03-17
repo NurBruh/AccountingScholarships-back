@@ -51,5 +51,7 @@ namespace AccountingScholarships.Domain.Entities.university
         public EduCitizenCategories? CitizenCategory { get; set; }
         public EduStudents? Student { get; set; }
         public EduEmployees? Employee { get; set; }
+
+        public ICollection<EduUsers> Edu_Users { get; set; } = new List<EduUsers>();
     }
 }
