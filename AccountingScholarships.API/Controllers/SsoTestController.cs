@@ -1,5 +1,7 @@
 using AccountingScholarships.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using MediatR;
+using AccountingScholarships.Application.Queries.University.Students;
 
 namespace AccountingScholarships.API.Controllers;
 
@@ -11,10 +13,12 @@ namespace AccountingScholarships.API.Controllers;
 public class SsoTestController : ControllerBase
 {
     private readonly IEduStudentRepository _repo;
+    private readonly IMediator _mediator;
 
-    public SsoTestController(IEduStudentRepository repo)
+    public SsoTestController(IEduStudentRepository repo, IMediator mediator)
     {
         _repo = repo;
+        _mediator = mediator;
     }
 
     /// <summary>
@@ -51,5 +55,18 @@ public class SsoTestController : ControllerBase
             return NotFound(new { message = $"Студент с ИИН={iin} не найден в SSO БД." });
 
         return Ok(student);
+    }
+
+    /// <summary>
+    /// Пример CQRS: Получить список студентов (JOIN c EduUsers) из локальной SSO базы, как просил пользователь.
+    /// </summary>
+    /// <param name="cancellationToken">Токен отмены.</param>
+    /// <returns>Список студентов.</returns>
+    [HttpGet("sso-top")]
+    public async Task<IActionResult> GetAllSsoStudents(CancellationToken cancellationToken)
+    {
+        
+        var result = await _mediator.Send(new GetAllSsoStudentsQuery(), cancellationToken);
+        return Ok(result);
     }
 }

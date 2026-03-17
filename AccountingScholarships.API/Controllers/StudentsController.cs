@@ -40,19 +40,7 @@ public class StudentsController : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Пример CQRS: Получить список студентов (JOIN c EduUsers) из локальной SSO базы, как просил пользователь.
-    /// </summary>
-    /// <param name="count">Количество записей (TOP).</param>
-    /// <param name="cancellationToken">Токен отмены.</param>
-    /// <returns>Список студентов.</returns>
-    [HttpGet("sso-top")]
-    public async Task<IActionResult> GetTopSsoStudents([FromQuery] int count = 1000, CancellationToken cancellationToken = default)
-    {
-        var query = new AccountingScholarships.Application.Queries.University.Students.GetTopStudentsQuery { TopCount = count };
-        var result = await _mediator.Send(query, cancellationToken);
-        return Ok(result);
-    }
+    
 
     /// <summary>
     /// Получить данные студента по ID.
