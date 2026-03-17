@@ -118,4 +118,54 @@ public class EduStudentRepository : SsoRepository<EduStudents>, IEduStudentRepos
             CitizenshipCountry   = u?.CitizenshipCountry?.Title,
         };
     }
+
+    public async Task<List<AccountingScholarships.Domain.DTO.University.StudentWithUserDto>> GetTopStudentsWithUserAsync(int count, CancellationToken cancellationToken = default)
+    {
+        return await _context.EduStudents
+            .AsNoTracking()
+            .Include(s => s.User)
+            .Select(s => new AccountingScholarships.Domain.DTO.University.StudentWithUserDto
+            {
+                StudentID = s.StudentID,
+                FullName = s.User != null ? s.User.FullName : "Неизвестно",
+                SpecialityID = s.SpecialityID,
+                StatusID = s.StatusID,
+                CategoryID = s.CategoryID,
+                NeedsDorm = s.NeedsDorm,
+                AltynBelgi = s.AltynBelgi,
+                EducationTypeID = s.EducationTypeID,
+                EducationPaymentTypeID = s.EducationPaymentTypeID,
+                GrantTypeID = s.GrantTypeID,
+                EducationDurationID = s.EducationDurationID,
+                Year = s.Year,
+                StudyLanguageID = s.StudyLanguageID,
+                RupID = s.RupID,
+                EntryDate = s.EntryDate,
+                GPA = s.GPA,
+                LastUpdatedBy = s.LastUpdatedBy,
+                LastUpdatedOn = s.LastUpdatedOn,
+                AdvisorID = s.AdvisorID,
+                AcademicStatusID = s.AcademicStatusID,
+                GraduatedOn = s.GraduatedOn,
+                AcademicStatusEndsOn = s.AcademicStatusEndsOn,
+                AcademicStatusStartsOn = s.AcademicStatusStartsOn,
+                GPA_Y = s.GPA_Y,
+                IsPersonalDataComplete = s.IsPersonalDataComplete,
+                HosterPrivelegeID = s.HosterPrivelegeID,
+                MinorSpecialityID = s.MinorSpecialityID,
+                EnrollmentTypeId = s.EnrollmentTypeId,
+                EctsGPA = s.EctsGPA,
+                EctsGPA_Y = s.EctsGPA_Y,
+                IsScholarship = s.IsScholarship,
+                ScholarshipTypeID = s.ScholarshipTypeID,
+                ScholarshipOrderNumber = s.ScholarshipOrderNumber,
+                ScholarshipOrderDate = s.ScholarshipOrderDate,
+                ScholarshipDateStart = s.ScholarshipDateStart,
+                ScholarshipDateEnd = s.ScholarshipDateEnd,
+                FundingID = s.FundingID,
+                IsKNB = s.IsKNB
+            })
+            .Take(count)
+            .ToListAsync(cancellationToken);
+    }
 }

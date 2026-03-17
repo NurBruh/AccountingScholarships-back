@@ -8,9 +8,9 @@ namespace AccountingScholarships.Application.Queries.EpvoSso;
 public class GetAllUniversitiesQueryHandler
     : IRequestHandler<GetAllUniversitiesQuery, IReadOnlyList<EpvoUniversityDto>>
 {
-    private readonly IEpvoSsoRepository<University> _repository;
+    private readonly IEpvoSsoRepository<AccountingScholarships.Domain.Entities.epvosso.University> _repository;
 
-    public GetAllUniversitiesQueryHandler(IEpvoSsoRepository<University> repository)
+    public GetAllUniversitiesQueryHandler(IEpvoSsoRepository<AccountingScholarships.Domain.Entities.epvosso.University> repository)
     {
         _repository = repository;
     }
