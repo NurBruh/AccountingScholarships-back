@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,12 +9,13 @@ namespace AccountingScholarships.Domain.Entities.university
     public class Edu_UserDocuments
     {
         public int ID { get; set; }
-        //UserID (FK, int, not null)
+
+        // FK свойства
         public int UserID { get; set; }
-        //DocumentID (FK, int, not null)
-        public int? DocumentID { get; set; }
-        //IssuedByID (FK, int, null)
+        public int DocumentTypeID { get; set; }
         public int? IssuedByID { get; set; }
+
+        // Обычные свойства
         public string? IssuedByText { get; set; }
         public DateOnly? IssuedOn { get; set; }
         public string? Number { get; set; }
@@ -23,11 +24,9 @@ namespace AccountingScholarships.Domain.Entities.university
         public byte[]? FileData { get; set; }
         public string? DescriptionText { get; set; }
 
-        //FK_Edu_UserDocuments_Edu_DocumentIssueOrgs
-        public Edu_DocumentIssueOrgs? Edu_DocumentIssueOrgs { get; set; }
-        //FK_Edu_UserDocuments_Edu_UserDocumentTypes
-        public Edu_UserDocumentTypes? Edu_DocumentTypes { get; set; }
-        //FK_Edu_UserDocuments_Edu_Users
-        public EduUsers? Edu_Users { get; set; }
+        // Navigation Properties
+        public EduUsers User { get; set; }
+        public Edu_UserDocumentTypes? DocumentType { get; set; }
+        public Edu_DocumentIssueOrgs? IssuedByOrg { get; set; }
     }
 }

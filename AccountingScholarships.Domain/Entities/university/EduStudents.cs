@@ -27,7 +27,7 @@ namespace AccountingScholarships.Domain.Entities.university
         public bool? IsPersonalDataComplete { get; set; }
         public int? HosterPrivelegeID { get; set; }
         public int? MinorSpecialityID { get; set; }
-        public int? EnrollmentTypeID { get; set; }
+        public int? EnrollmentTypeId { get; set; }
         public double? EctsGPA { get; set; }
         public double? EctsGPA_Y { get; set; }
         public bool? IsScholarship { get; set; }
@@ -57,5 +57,9 @@ namespace AccountingScholarships.Domain.Entities.university
         public EduLanguages? StudyLanguage { get; set; }
         public EduAcademicStatuses? AcademicStatus { get; set; }
         public EduEmployees? Advisor { get; set; }
+        public Edu_Specialities? Speciality { get; set; }
+        public Edu_Rups? Rup { get; set; }
+        public Edu_StudentStatuses? Status { get; set; }
+        public Edu_StudentCategories? Category { get; set; }
     }
 }

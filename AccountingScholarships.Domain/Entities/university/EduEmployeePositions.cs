@@ -13,7 +13,7 @@ namespace AccountingScholarships.Domain.Entities.university
         public DateOnly? EndedOn { get; set; }
         public string LastUpdatedBy { get; set; }
         public DateTime LastUpdatedOn { get; set; }
-        public float? Rate { get; set; }
+        public double? Rate { get; set; }
         public bool? IsMainPosition { get; set; }
         public int? HrOrderId { get; set; }
 

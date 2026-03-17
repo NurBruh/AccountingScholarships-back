@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace AccountingScholarships.Domain.Entities.university
 {
-    public class Edu_DocumentIssueOrgs
+    public class Edu_RupAlgorithms
     {
         public int ID { get; set; }
         public string? Title { get; set; }
 
-        public ICollection<Edu_UserDocuments> Documents { get; set; } = new List<Edu_UserDocuments>();
+        // Navigation Properties
+        public ICollection<Edu_Rups> Rups { get; set; } = new List<Edu_Rups>();
     }
 }

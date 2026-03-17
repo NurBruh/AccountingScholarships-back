@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +11,6 @@ namespace AccountingScholarships.Domain.Entities.university
         public int ID { get; set; }
         public string Title { get; set; }
 
-        public ICollection<Edu_UserDocuments> Edu_UserDocuments { get; set; } = new List<Edu_UserDocuments>();
+        public ICollection<Edu_UserDocuments> Documents { get; set; } = new List<Edu_UserDocuments>();
     }
 }

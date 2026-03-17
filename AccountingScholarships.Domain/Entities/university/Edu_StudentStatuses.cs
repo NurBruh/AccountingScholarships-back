@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace AccountingScholarships.Domain.Entities.university
 {
-    public class Edu_DocumentIssueOrgs
+    public class Edu_StudentStatuses
     {
         public int ID { get; set; }
         public string? Title { get; set; }
+        public string? NOBDID { get; set; }
 
-        public ICollection<Edu_UserDocuments> Documents { get; set; } = new List<Edu_UserDocuments>();
+        // Navigation Properties
+        public ICollection<EduStudents> Students { get; set; } = new List<EduStudents>();
     }
 }

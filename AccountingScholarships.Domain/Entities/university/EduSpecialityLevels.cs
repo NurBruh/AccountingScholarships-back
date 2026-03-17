@@ -14,5 +14,6 @@ namespace AccountingScholarships.Domain.Entities.university
 
         // Navigation Properties
         public ICollection<EduEducationDurations> EducationDurations { get; set; } = new List<EduEducationDurations>();
+        public ICollection<Edu_Specialities> Specialities { get; set; } = new List<Edu_Specialities>();
     }
 }

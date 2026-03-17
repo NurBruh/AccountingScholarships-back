@@ -100,6 +100,7 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddScoped<IEduStudentRepository, EduStudentRepository>();
+        services.AddScoped(typeof(ISsoRepository<>), typeof(SsoRepository<>));
 
         services.AddScoped<IEpvoApiClient, EpvoApiClient>();
 

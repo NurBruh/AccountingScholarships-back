@@ -1,0 +1,443 @@
+Вот все таблицы из PDF в текстовом виде:
+
+---
+
+**dbo.Edu_DocumentIssueOrgs**
+- ID (PK, int, He NULL)
+- Title (nvarchar(512), NULL)
+- Ключи: PK_Edu_DocumentIssueOrgs
+
+---
+
+**dbo.Edu_OrgUnits**
+- ID (PK, int, He NULL)
+- ParentID (int, NULL)
+- TypeID (FK, int, He NULL)
+- Title (nvarchar(150), He NULL)
+- Deleted (bit, He NULL)
+- ShortTitle (nvarchar(150), NULL)
+- Ключи: PK_Edu_OrgUnits, FK_Edu_OrgUnits_Edu_OrgUnitTypes
+
+---
+
+**dbo.Edu_OrgUnitTypes**
+- ID (PK, int, He NULL)
+- Title (nvarchar(512), NULL)
+- Ключи: PK_Edu_OrgUnitTypes
+
+---
+
+**dbo.Edu_SchoolSubjects**
+- ID (PK, int, He NULL)
+- Title (nvarchar(100), He NULL)
+- Number (nvarchar(50), He NULL)
+- IsRequired (bit, NULL)
+- Ключи: PK_Edu_SchoolSubjects
+
+---
+
+**dbo.Edu_Specialities**
+- ID (PK, int, He NULL)
+- LevelID (FK, int, He NULL)
+- Code (nvarchar(50), He NULL)
+- Title (nvarchar(150), He NULL)
+- YearsOfStudy (int, NULL)
+- Diaspora (bit, NULL)
+- VillageQuota (bit, NULL)
+- PrimarySubjectID (FK, int, NULL)
+- FithSubjectID (FK, int, NULL)
+- RupEditorOrgUnitID (FK, int, NULL)
+- Deleted (bit, He NULL)
+- ShortTitle (nvarchar(150), NULL)
+- Description (nvarchar(1024), NULL)
+- ESUVOID (int, NULL)
+- Classifier (bit, NULL)
+- EducationalProgramStatus (int, NULL)
+- EducationalProgramType (int, NULL)
+- Classifier2 (int, NULL)
+- NoBDID (nvarchar(100), NULL)
+- ReadyToSendESUVO (bit, He NULL)
+- DoubleDiploma (bit, NULL)
+- Jointep (bit, NULL)
+- Is_interdisciplinary (bit, NULL)
+- is_not_active (bit, NULL)
+- EducationDuration (decimal(4,1), NULL)
+- isPrikladnoy (bit, NULL)
+- Ключи: PK_Edu_Specialities_1, FK_Edu_Specialities_Edu_OrgUnits, FK_Edu_Specialities_Edu_SchoolSubjects2, FK_Edu_Specialities_Edu_SchoolSubjects3, FK_Edu_Specialities_Edu_SpecialityLevels1, UQ_Edu_Spec_A25C5AA7A661AF03
+
+---
+
+**dbo.Edu_SpecialityLevels**
+- ID (PK, int, He NULL)
+- Title (nvarchar(50), He NULL)
+- NoBDID (nvarchar(100), NULL)
+- Ключи: PK_Edu_SpecialityLevels
+
+---
+
+**dbo.Edu_UserDocuments**
+- ID (PK, int, He NULL)
+- UserID (FK, int, He NULL)
+- DocumentTypeID (FK, int, He NULL)
+- IssuedByID (FK, int, NULL)
+- IssuedByText (nvarchar(50), NULL)
+- IssuedOn (date, NULL)
+- Number (nvarchar(50), NULL)
+- Description (nvarchar(50), NULL)
+- FileName (nvarchar(128), NULL)
+- FileData (varbinary(max), NULL)
+- DescriptionText (nvarchar(50), NULL)
+- Ключи: PK_Edu_UserDocuments, FK_Edu_UserDocuments_Edu_DocumentIssueOrgs, FK_Edu_UserDocuments_Edu_UserDocumentTypes, FK_Edu_UserDocuments_Edu_Users
+
+---
+
+**dbo.Edu_UserDocumentTypes**
+- ID (PK, int, He NULL)
+- Title (nvarchar(150), He NULL)
+- Ключи: PK_Edu_PersonDocumentTypes
+
+---
+
+**dbo.Edu_AcademicStatuses**
+- ID (PK, int, He NULL)
+- Title (nvarchar(50), He NULL)
+- Ключи: PK_Edu_AcademicStatuses
+
+---
+
+**dbo.Edu_CitizenCategories**
+- ID (PK, int, He NULL)
+- Title (nvarchar(512), NULL)
+- Ключи: PK_Edu_CitizenCategories
+
+---
+
+**dbo.Edu_Countries**
+- ID (PK, int, He NULL)
+- Title (nvarchar(512), NULL)
+- ESUVOCitizenshipCountryID (int, NULL)
+- Ключи: PK_Edu_Countries
+
+---
+
+**dbo.Edu_EducationDurations**
+- ID (PK, int, He NULL)
+- LevelID (FK, int, He NULL)
+- Title (nvarchar(100), He NULL)
+- ShortTitle (nvarchar(100), NULL)
+- NoBDIId (nchar(100), NULL)
+- Ключи: PK_Edu_EducationDurations, FK_Edu_EducationDurations_Edu_SpecialityLevels
+
+---
+
+**dbo.Edu_EducationPaymentTypes**
+- ID (PK, int, He NULL)
+- Title (nvarchar(512), He NULL)
+- ESUVOGrantTypeId (int, NULL)
+- NoBDID (nchar(50), NULL)
+- Ключи: PK_Edu_EducationPaymentTypes
+
+---
+
+**dbo.Edu_EducationTypes**
+- ID (PK, int, He NULL)
+- Title (nvarchar(512), NULL)
+- NoBDID (nvarchar(100), NULL)
+- Ключи: PK_Edu_EducationTypes
+
+---
+
+**dbo.Edu_EmployeePositions**
+- ID (PK, int, He NULL)
+- OrgUnitID (FK, int, He NULL)
+- PositionID (FK, int, He NULL)
+- EmployeeID (FK, int, He NULL)
+- StartedOn (date, He NULL)
+- EndedOn (date, NULL)
+- LastUpdatedBy (nvarchar(128), He NULL)
+- LastUpdatedOn (datetime, He NULL)
+- Rate (float, NULL)
+- IsMainPosition (bit, NULL)
+- HrOrderId (int, NULL)
+- Ключи: PK_Edu_EmployeePositions, FK_Edu_EmployeePositions_Edu_Employees, FK_Edu_EmployeePositions_Edu_OrgUnits, FK_Edu_EmployeePositions_Edu_Positions
+
+---
+
+**dbo.Edu_Employees**
+- ID (PK, FK, int, He NULL)
+- IsAdvisor (bit, He NULL)
+- RoleGroupId (int, NULL)
+- Ключи: PK_Edu_Employees, FK_Edu_Employees_Edu_Users
+
+---
+
+**dbo.Edu_GrantTypes**
+- ID (PK, int, He NULL)
+- Title (nvarchar(512), NULL)
+- ESUVOGrantTypeId (int, NULL)
+- Deleted (bit, NULL)
+- Ключи: PK_Edu_GrantTypes_N
+
+---
+
+**dbo.Edu_Languages**
+- ID (PK, int, He NULL)
+- Title (nvarchar(512), NULL)
+- NoBDID (nvarchar(100), NULL)
+- Ключи: PK_Edu_Languages
+
+---
+
+**dbo.Edu_MaritalStatuses**
+- ID (PK, int, He NULL)
+- Title (nvarchar(512), NULL)
+- Ключи: PK_Edu_MaritalStatuses
+
+---
+
+**dbo.Edu_Messengers**
+- ID (PK, int, He NULL)
+- Title (nvarchar(50), He NULL)
+- Ключи: PK_Edu_Messengers
+
+---
+
+**dbo.Edu_Nationalities**
+- ID (PK, int, He NULL)
+- Title (nvarchar(512), NULL)
+- Ключи: PK_Edu_Nationalities
+
+---
+
+**dbo.Edu_Positions**
+- ID (PK, int, He NULL)
+- Title (nvarchar(512), NULL)
+- Deleted (bit, He NULL)
+- Description (nvarchar(512), NULL)
+- Lectures (int, He NULL)
+- Practices (int, He NULL)
+- Labs (int, He NULL)
+- CategoryID (FK, int, NULL)
+- Ключи: PK_Edu_Positions, FK_Edu_Positions_Edu_PositionCategories
+
+---
+
+**dbo.Edu_PositionCategories**
+- ID (PK, int, He NULL)
+- Title (nvarchar(50), He NULL)
+- Ключи: PK_Edu_PositionCategories
+
+---
+
+**dbo.Edu_SpecialityLevels** *(повторяется на стр. 6)*
+- ID (PK, int, He NULL)
+- Title (nvarchar(50), He NULL)
+- NoBDID (nvarchar(100), NULL)
+- Ключи: PK_Edu_SpecialityLevels
+
+---
+
+**dbo.Edu_Students**
+- StudentID (PK, FK, int, He NULL)
+- SpecialityID (FK, int, NULL)
+- StatusID (FK, int, NULL)
+- CategoryID (FK, int, NULL)
+- NeedsDorm (bit, He NULL)
+- AltynBelgi (bit, He NULL)
+- EducationTypeID (FK, int, NULL)
+- EducationPaymentTypeID (FK, int, NULL)
+- GrantTypeID (FK, int, NULL)
+- EducationDurationID (FK, int, NULL)
+- Year (int, He NULL)
+- StudyLanguageID (FK, int, NULL)
+- RupID (FK, int, NULL)
+- EntryDate (date, NULL)
+- GPA (float, NULL)
+- LastUpdatedBy (nvarchar(128), He NULL)
+- LastUpdatedOn (datetime, He NULL)
+- AdvisorID (FK, int, NULL)
+- AcademicStatusID (FK, int, NULL)
+- GraduatedOn (datetime, NULL)
+- AcademicStatusEndsOn (date, NULL)
+- AcademicStatusStartsOn (date, NULL)
+- GPA_Y (float, NULL)
+- IsPersonalDataComplete (bit, NULL)
+- HosterPrivelegeID (int, NULL)
+- MinorSpecialityID (int, NULL)
+- EnrollmentTypeId (int, NULL)
+- EctsGPA (float, NULL)
+- EctsGPA_Y (float, NULL)
+- IsScholarship (bit, NULL)
+- ScholarshipTypeID (int, NULL)
+- ScholarshipOrderNumber (nvarchar(500), NULL)
+- ScholarshipOrderDate (date, NULL)
+- ScholarshipDateStart (date, NULL)
+- ScholarshipDateEnd (date, NULL)
+- FundingID (int, NULL)
+- IsKNB (bit, NULL)
+- Ключи: PK_Edu_Students, FK_Edu_Students_Edu_AcademicStatuses, FK_Edu_Students_Edu_EducationDurations, FK_Edu_Students_Edu_EducationPaymentTypes, FK_Edu_Students_Edu_EducationTypes, FK_Edu_Students_Edu_Employees, FK_Edu_Students_Edu_GrantTypes, FK_Edu_Students_Edu_Languages, FK_Edu_Students_Edu_Rups, FK_Edu_Students_Edu_Specialities, FK_Edu_Students_Edu_StudentCategories, FK_Edu_Students_Edu_StudentStatuses, FK_Edu_Students_Edu_Users
+
+---
+
+**dbo.Edu_Users**
+- ID (PK, int, He NULL)
+- LastName (nvarchar(50), He NULL)
+- FirstName (nvarchar(50), NULL)
+- MiddleName (nvarchar(50), NULL)
+- Email (nvarchar(50), NULL)
+- PersonalEmail (nvarchar(50), NULL)
+- DOB (date, NULL)
+- PlaceOfBirth (nvarchar(50), NULL)
+- NationalityID (FK, int, NULL)
+- Male (bit, NULL)
+- MaritalStatusID (FK, int, NULL)
+- HomePhone (nvarchar(50), NULL)
+- MobilePhone (nvarchar(50), NULL)
+- MessengerTypeID (FK, int, NULL)
+- CitizenshipCountryID (FK, int, NULL)
+- IIN (nvarchar(12), NULL)
+- PhotoFileName (varchar(255), NULL)
+- PhotoFileData (varbinary(max), NULL)
+- LastUpdatedBy (nvarchar(128), He NULL)
+- LastUpdatedOn (datetime, He NULL)
+- FileContainerID (uniqueidentifier, NULL)
+- CitizenCategoryID (FK, int, NULL)
+- MobilePushID (nvarchar(1000), NULL)
+- oldId (int, NULL)
+- FullName (Вычисляемый, nvarchar(152), He NULL)
+- ShortName (Вычисляемый, nvarchar(55), He NULL)
+- ESUVOID (int, NULL)
+- ExtraFileContainerID (uniqueidentifier, NULL)
+- Resident (bit, He NULL)
+- Hero_Person_ID (int, NULL)
+- IsReadTeamsNotif (bit, NULL)
+- Ключи: PK_Edu_Users, FK_Edu_Users_Edu_CitizenCategories, FK_Edu_Users_Edu_Countries, FK_Edu_Users_Edu_MaritalStatuses, FK_Edu_Users_Edu_Messengers, FK_Edu_Users_Edu_Nationalities
+
+dbo.Edu_StudentStatuses
+
+Столбцы:
+
+    ID (PK, int, He NULL)
+
+    Title (nvarchar(512), NULL)
+
+    NOBDID (nvarchar(500), NULL)
+
+Ключи:
+
+    PK_Edu_StudentStatuses
+    
+    
+    
+dbo.Edu_StudentCategories
+
+Столбцы:
+
+    ID (PK, int, He NULL)
+
+    Title (nvarchar(100), He NULL)
+
+Ключи:
+
+    PK_Edu_StudentCategories
+    
+    
+Вот текстовое представление таблицы из последнего скриншота:
+dbo.Edu_Rups
+
+Столбцы:
+
+    ID (PK, int, He NULL)
+
+    SpecialityID (int, He NULL)
+
+    SpecialisationID (int, NULL)
+
+    Year (int, He NULL)
+
+    SemesterCount (int, He NULL)
+
+    AlgorithmID (FK, int, NULL)
+
+    CreditsLimitId (int, NULL)
+
+    IsModular (bit, He NULL)
+
+    ApprovedByChair (bit, He NULL)
+
+    ApprovedByChairUserID (nvarchar(128), NULL)
+
+    ApprovedByChairOn (datetime, NULL)
+
+    ApprovedByOR (bit, He NULL)
+
+    ApprovedByORUserID (nvarchar(128), NULL)
+
+    ApprovedByOROn (datetime, NULL)
+
+    Locked (bit, He NULL)
+
+    EducationDurationID (FK, int, NULL)
+
+    RejectionReason (nvarchar(256), NULL)
+
+    LastUpdatedBy (nvarchar(128), He NULL)
+
+    LastUpdatedOn (datetime, He NULL)
+
+    AcademicDegreeId (int, NULL)
+
+    RupTitle (nvarchar(255), NULL)
+
+    IncludeToRegOp (bit, NULL)
+
+    EducationalProgram (bit, NULL)
+
+    EducationalProgramId (int, NULL)
+
+    DualProgram (bit, NULL)
+
+    Hero_WEP_ID (int, NULL)
+
+    RupPrivateSignerRU (nvarchar(500), NULL)
+
+    RupPrivateSignerEN (nvarchar(500), NULL)
+
+    RupPrivateSignerKZ (nvarchar(500), NULL)
+
+    AcademCouncilDate (datetime, NULL)
+
+    AcademCouncilNum (nvarchar(256), NULL)
+
+    EducCouncilDate (datetime, NULL)
+
+    EducCouncilNum (nvarchar(256), NULL)
+
+    AcademCouncilInstDate (datetime, NULL)
+
+    AcademCouncilInstNum (nvarchar(256), NULL)
+
+    EducationDirectionId (int, NULL)
+
+Ключи:
+
+    PK_Edu_Rups
+
+    FK_Edu_Rups_Edu_EducationDurations
+
+    FK_Edu_Rups_Edu_RupAlgorithms
+    
+    
+    
+    
+dbo.Edu_RupAlgorithms
+
+Столбцы:
+
+    ID (PK, int, He NULL)
+
+    Title (nvarchar(50), NULL)
+
+Ключи:
+
+    PK_Edu_RupAlgorithms            
