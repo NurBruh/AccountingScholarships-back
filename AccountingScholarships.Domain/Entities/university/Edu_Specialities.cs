@@ -10,14 +10,18 @@ namespace AccountingScholarships.Domain.Entities.university
     {
         public int ID { get; set; }
         //FK LevelID (FK, int, not null)
+        public int LevelID { get; set; }
         public string Code { get; set; }
         public string Title { get; set; }
         public int? YearsOfStudy { get; set; }
         public bool? Diaspora { get; set; }
         public bool VillageQuota { get; set; }
         //FK PrimarySubjectID (FK, int, null)
+        public int? PrimarySubjectID { get; set; }
         //FK FithSubjectID (FK, int, null)
+        public int? FithSubjectID { get; set; }
         //FK RupEditorOrgUnitID (FK, int, null)
+        public int? RupEditorOrgUnitID { get; set; }
         public bool Deleted { get; set; }
         public string? ShortTitle { get; set; }
         public string? Description { get; set; }
@@ -37,9 +41,12 @@ namespace AccountingScholarships.Domain.Entities.university
 
 
         //FK_Edu_Specialities_Edu_OrgUnits
+        public Edu_OrgUnits? Edu_OrgUnits { get; set; }
         //FK_Edu_Specialities_Edu_SchoolSubjects2
         //FK_Edu_Specialities_Edu_SchoolSubjects3
-        //FK_Edu_Specialities_Edu_SchoolLevels1
+        public Edu_SchoolSubjects? SchoolSubjects { get; set; }
+        //FK_Edu_Specialities_Edu_SpecialityLevels1
+        public EduSpecialityLevels? EduSpecialityLevels { get; set; }
 
     }
 }

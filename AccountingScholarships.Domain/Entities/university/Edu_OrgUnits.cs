@@ -21,6 +21,7 @@ namespace AccountingScholarships.Domain.Entities.university
         public Edu_OrgUnitTypes Type { get; set; }
         public Edu_OrgUnits? Parent { get; set; }
         public ICollection<Edu_OrgUnits> Children { get; set; } = new List<Edu_OrgUnits>();
-        public ICollection<EduEmployeePositions> EmployeePositions { get; set; } = new List<EduEmployeePositions>();
+        public ICollection<EduEmployeePositions> Edu_EmployeePositions { get; set; } = new List<EduEmployeePositions>();
+        public ICollection<Edu_Specialities> Edu_Specialities { get; set; } = new List<Edu_Specialities>();
     }
 }

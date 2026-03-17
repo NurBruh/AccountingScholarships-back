@@ -23,6 +23,7 @@ namespace AccountingScholarships.Infrastructure.Data
         public DbSet<Specializations> Specializations => Set<Specializations>();
         public DbSet<Study_forms> StudyForms => Set<Study_forms>();
         public DbSet<Studycalendar> Studycalendars => Set<Studycalendar>();
+        public DbSet<Faculties> Faculties => Set<Faculties>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder); 
@@ -90,6 +91,12 @@ namespace AccountingScholarships.Infrastructure.Data
             {
                 e.HasKey(x => x.Id);
                 e.ToTable("SPECIALITIES_EPVO");
+            });
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Faculties>(e =>
+            {
+                e.HasKey(x => x.FacultyId);
+                e.ToTable("FACULTIES");
             });
         }
     }

@@ -10,8 +10,11 @@ namespace AccountingScholarships.Domain.Entities.university
     {
         public int ID { get; set; }
         //UserID (FK, int, not null)
+        public int UserID { get; set; }
         //DocumentID (FK, int, not null)
+        public int? DocumentID { get; set; }
         //IssuedByID (FK, int, null)
+        public int? IssuedByID { get; set; }
         public string? IssuedByText { get; set; }
         public DateOnly? IssuedOn { get; set; }
         public string? Number { get; set; }
@@ -21,7 +24,10 @@ namespace AccountingScholarships.Domain.Entities.university
         public string? DescriptionText { get; set; }
 
         //FK_Edu_UserDocuments_Edu_DocumentIssueOrgs
-        //FK_Edu_UserDocuments_Edu_DocumentTypes
+        public Edu_DocumentIssueOrgs? Edu_DocumentIssueOrgs { get; set; }
+        //FK_Edu_UserDocuments_Edu_UserDocumentTypes
+        public Edu_UserDocumentTypes? Edu_DocumentTypes { get; set; }
         //FK_Edu_UserDocuments_Edu_Users
+        public EduUsers? Edu_Users { get; set; }
     }
 }

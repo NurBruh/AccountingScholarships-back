@@ -6,15 +6,12 @@ using System.Threading.Tasks;
 
 namespace AccountingScholarships.Domain.Entities.university
 {
-    public class Edu_SchoolSubjects
+    public class Edu_SpecialityLevels
     {
         public int ID { get; set; }
         public string Title { get; set; }
-        public string Number { get; set; }
-        public bool IsRequired { get; set; }
+        public string? NoBDID { get; set; }
 
-        //PK_Edu_SchoolSubjects
-
-        public ICollection<Edu_Specialities> Edu_Specialities { get; set; } = new List<Edu_Specialities>();
+        public ICollection<Edu_Specialities> Specialities { get; set; } = new List<Edu_Specialities>();
     }
 }
