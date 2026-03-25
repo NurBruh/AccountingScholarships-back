@@ -10,5 +10,5 @@ public interface IEduStudentRepository : ISsoRepository<Edu_Students>
     Task<IReadOnlyList<Edu_Students>> GetAllWithDetailsAsync(CancellationToken cancellationToken = default);
     Task<EduStudentDto?> GetAsDtoAsync(int studentId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<EduStudentDto>> GetAllAsDtoAsync(CancellationToken cancellationToken = default);
-    Task<List<AccountingScholarships.Domain.DTO.University.StudentWithUserDto>> GetTopStudentsWithUserAsync(int count, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<StudentWithUserDto>> GetAllSsoStudents(CancellationToken cancellationToken = default);
 }

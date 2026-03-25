@@ -3,6 +3,7 @@ using AccountingScholarships.Domain.Entities.Real.university;
 using AccountingScholarships.Domain.Interfaces;
 using AccountingScholarships.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using AccountingScholarships.Domain.DTO.University;
 
 namespace AccountingScholarships.Infrastructure.Repositories;
 
@@ -119,12 +120,12 @@ public class EduStudentRepository : SsoRepository<Edu_Students>, IEduStudentRepo
         };
     }
 
-    public async Task<List<AccountingScholarships.Domain.DTO.University.StudentWithUserDto>> GetTopStudentsWithUserAsync(int count, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<StudentWithUserDto>> GetAllSsoStudents(CancellationToken cancellationToken = default)
     {
         return await _context.Edu_Students
             .AsNoTracking()
             .Include(s => s.User)
-            .Select(s => new AccountingScholarships.Domain.DTO.University.StudentWithUserDto
+            .Select(s => new StudentWithUserDto
             {
                 StudentID = s.StudentID,
                 FullName = s.User != null ? s.User.FullName : "Неизвестно",
@@ -165,7 +166,6 @@ public class EduStudentRepository : SsoRepository<Edu_Students>, IEduStudentRepo
                 FundingID = s.FundingID,
                 IsKNB = s.IsKNB
             })
-            .Take(count)
             .ToListAsync(cancellationToken);
     }
 }
