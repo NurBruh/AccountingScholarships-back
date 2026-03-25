@@ -1,18 +1,19 @@
 using AccountingScholarships.Domain.DTO;
-using AccountingScholarships.Domain.Entities.university;
+using AccountingScholarships.Domain.Entities.Real.university;
 using AccountingScholarships.Domain.Interfaces;
 using AccountingScholarships.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using AccountingScholarships.Domain.DTO.University;
 
 namespace AccountingScholarships.Infrastructure.Repositories;
 
-public class EduStudentRepository : SsoRepository<EduStudents>, IEduStudentRepository
+public class EduStudentRepository : SsoRepository<Edu_Students>, IEduStudentRepository
 {
     public EduStudentRepository(SsoDbContext context) : base(context) { }
 
-    public async Task<EduStudents?> GetWithDetailsAsync(int studentId, CancellationToken cancellationToken = default)
+    public async Task<Edu_Students?> GetWithDetailsAsync(int studentId, CancellationToken cancellationToken = default)
     {
-        return await _context.EduStudents
+        return await _context.Edu_Students
             .Include(s => s.User)
                 .ThenInclude(u => u!.Nationality)
             .Include(s => s.User)
@@ -30,17 +31,17 @@ public class EduStudentRepository : SsoRepository<EduStudents>, IEduStudentRepos
             .FirstOrDefaultAsync(s => s.StudentID == studentId, cancellationToken);
     }
 
-    public async Task<EduStudents?> GetByIINAsync(string iin, CancellationToken cancellationToken = default)
+    public async Task<Edu_Students?> GetByIINAsync(string iin, CancellationToken cancellationToken = default)
     {
-        return await _context.EduStudents
+        return await _context.Edu_Students
             .Include(s => s.User)
             .AsNoTracking()
             .FirstOrDefaultAsync(s => s.User.IIN == iin, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<EduStudents>> GetAllWithDetailsAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Edu_Students>> GetAllWithDetailsAsync(CancellationToken cancellationToken = default)
     {
-        return await _context.EduStudents
+        return await _context.Edu_Students
             .Include(s => s.User)
                 .ThenInclude(u => u!.Nationality)
             .Include(s => s.User)
@@ -68,7 +69,7 @@ public class EduStudentRepository : SsoRepository<EduStudents>, IEduStudentRepos
         return students.Select(MapToDto).ToList();
     }
 
-    private static EduStudentDto MapToDto(EduStudents s)
+    private static EduStudentDto MapToDto(Edu_Students s)
     {
         var u = s.User;
         return new EduStudentDto
@@ -117,5 +118,54 @@ public class EduStudentRepository : SsoRepository<EduStudents>, IEduStudentRepos
             Nationality          = u?.Nationality?.Title,
             CitizenshipCountry   = u?.CitizenshipCountry?.Title,
         };
+    }
+
+    public async Task<IReadOnlyList<StudentWithUserDto>> GetAllSsoStudents(CancellationToken cancellationToken = default)
+    {
+        return await _context.Edu_Students
+            .AsNoTracking()
+            .Include(s => s.User)
+            .Select(s => new StudentWithUserDto
+            {
+                StudentID = s.StudentID,
+                FullName = s.User != null ? s.User.FullName : "Неизвестно",
+                SpecialityID = s.SpecialityID,
+                StatusID = s.StatusID,
+                CategoryID = s.CategoryID,
+                NeedsDorm = s.NeedsDorm,
+                AltynBelgi = s.AltynBelgi,
+                EducationTypeID = s.EducationTypeID,
+                EducationPaymentTypeID = s.EducationPaymentTypeID,
+                GrantTypeID = s.GrantTypeID,
+                EducationDurationID = s.EducationDurationID,
+                Year = s.Year,
+                StudyLanguageID = s.StudyLanguageID,
+                RupID = s.RupID,
+                EntryDate = s.EntryDate,
+                GPA = s.GPA,
+                LastUpdatedBy = s.LastUpdatedBy,
+                LastUpdatedOn = s.LastUpdatedOn,
+                AdvisorID = s.AdvisorID,
+                AcademicStatusID = s.AcademicStatusID,
+                GraduatedOn = s.GraduatedOn,
+                AcademicStatusEndsOn = s.AcademicStatusEndsOn,
+                AcademicStatusStartsOn = s.AcademicStatusStartsOn,
+                GPA_Y = s.GPA_Y,
+                IsPersonalDataComplete = s.IsPersonalDataComplete,
+                HosterPrivelegeID = s.HosterPrivelegeID,
+                MinorSpecialityID = s.MinorSpecialityID,
+                EnrollmentTypeId = s.EnrollmentTypeId,
+                EctsGPA = s.EctsGPA,
+                EctsGPA_Y = s.EctsGPA_Y,
+                IsScholarship = s.IsScholarship,
+                ScholarshipTypeID = s.ScholarshipTypeID,
+                ScholarshipOrderNumber = s.ScholarshipOrderNumber,
+                ScholarshipOrderDate = s.ScholarshipOrderDate,
+                ScholarshipDateStart = s.ScholarshipDateStart,
+                ScholarshipDateEnd = s.ScholarshipDateEnd,
+                FundingID = s.FundingID,
+                IsKNB = s.IsKNB
+            })
+            .ToListAsync(cancellationToken);
     }
 }

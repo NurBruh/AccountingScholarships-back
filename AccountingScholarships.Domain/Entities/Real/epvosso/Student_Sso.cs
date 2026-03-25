@@ -1,0 +1,85 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace AccountingScholarships.Domain.Entities.Real.epvosso
+{
+    public class Student_Sso
+    {
+        public int? UniversityId { get; set; }
+        public int StudentId { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? Patronymic { get; set; }
+        public DateOnly? BirthDate { get; set; }
+        public DateOnly? StartDate { get; set; }
+        public string? Address { get; set; }
+        public int? NationId { get; set; } //center_nationalities or nationalities
+        public int? StudyFormId { get; set; }
+        public int? StudyCalendarId { get; set; }
+        public int? PaymentFormId { get; set; } // 1 платник 2 грантник
+        public int? StudyLanguageId { get; set; }
+        public byte[]? Photo { get; set; }
+        public int? ProfessionId { get; set; }
+        public int? CourseNumber { get; set; }
+        public string? TranscriptNumber { get; set; }
+        public string? TranscriptSeries { get; set; }
+        public int? IsMarried { get; set; }
+        public string? IcNumber { get; set; }
+        public DateOnly? IcDate { get; set; }
+        public string? Education { get; set; }
+        public bool? HasExcellent { get; set; }
+        public string? StartOrder { get; set; }
+        public int? IsStudent { get; set; }
+        public string? Certificate { get; set; }
+        public string? GrantNumber { get; set; }
+        public decimal? Gpa { get; set; }
+        public float? CurrentCreditsSum { get; set; }
+        public int? Residence { get; set; }
+        public int? SitizenshipId { get; set; }
+        public int? DormState { get; set; }
+        public bool? IsInRetire { get; set; }
+        public int? FromId { get; set; }
+        public bool? Local { get; set; }
+        public string? City { get; set; }
+        public int? ContractId { get; set; }
+        public int? SpecializationId { get; set; }
+        public string? IinPlt { get; set; }
+        public bool? AltynBelgi { get; set; }
+        public DateOnly? DataVydachiAttestata { get; set; }
+        public DateOnly? DataVydachiDiploma { get; set; }
+        public DateOnly? DateDocEducation { get; set; }
+        public bool? EndCollege { get; set; }
+        public bool? EndHighSchool { get; set; }
+        public bool? EndSchool { get; set; }
+        public string? IcSeries { get; set; }
+        public int? IcType { get; set; }
+        public string? LivingAddress { get; set; }
+        public string? NomerAttestata { get; set; }
+        public string? OtherBirthPlace { get; set; }
+        public string? SeriesNumberDocEducation { get; set; }
+        public string? SeriyaAttestata { get; set; }
+        public string? SeriyaDiploma { get; set; }
+        public string? SchoolName { get; set; }
+        public int? FacultyId { get; set; }
+        public int? SexId { get; set; }
+        public string? Mail { get; set; }
+        public string? Phone { get; set; }
+        public int? SumPoints { get; set; }
+        public int? SumPointsCreative { get; set; }
+        public DateOnly? EnrollOrderDate { get; set; }
+        public string? MobilePhone { get; set; }
+        public int? GrantType { get; set; }
+        public int? AcademicMobility { get; set; }
+        public bool? IncorrectIin { get; set; }
+        public int? BirthPlaceCatoId { get; set; }
+        public int? LivingPlaceCatoId { get; set; }
+        public int? RegistrationPlaceCatoId { get; set; }
+        public int? NaselennyiPunktAttestataCatoId { get; set; }
+        public int? EnterExamType { get; set; }
+        public int? FundingId { get; set; }
+        public string? TypeCode { get; set; }
+    }
+}

@@ -1,5 +1,5 @@
 using AccountingScholarships.Domain.Interfaces;
-using AccountingScholarships.Domain.Entities.Scholarships;
+using AccountingScholarships.Domain.Entities.Testing.Scholarships;
 using AccountingScholarships.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,5 +1,5 @@
 using AccountingScholarships.Domain.Interfaces;
-using AccountingScholarships.Domain.Entities.Epvo;
+using AccountingScholarships.Domain.Entities.Testing.Epvo;
 using AccountingScholarships.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,4 +1,4 @@
-using AccountingScholarships.Domain.Entities.Grants;
+using AccountingScholarships.Domain.Entities.Testing.Grants;
 
 namespace AccountingScholarships.Domain.Interfaces;
 

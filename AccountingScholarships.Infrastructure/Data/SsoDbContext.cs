@@ -1,4 +1,4 @@
-using AccountingScholarships.Domain.Entities.university;
+using AccountingScholarships.Domain.Entities.Real.university;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountingScholarships.Infrastructure.Data;
@@ -8,48 +8,48 @@ public class SsoDbContext : DbContext
     public SsoDbContext(DbContextOptions<SsoDbContext> options) : base(options) { }
 
     // Основные таблицы
-    public DbSet<EduUsers> EduUsers => Set<EduUsers>();
-    public DbSet<EduStudents> EduStudents => Set<EduStudents>();
-    public DbSet<EduEmployees> EduEmployees => Set<EduEmployees>();
-    public DbSet<EduEmployeePositions> EduEmployeePositions => Set<EduEmployeePositions>();
+    public DbSet<Edu_Users> Edu_Users => Set<Edu_Users>();
+    public DbSet<Edu_Students> Edu_Students => Set<Edu_Students>();
+    public DbSet<Edu_Employees> Edu_Employees => Set<Edu_Employees>();
+    public DbSet<Edu_EmployeePositions> Edu_EmployeePositions => Set<Edu_EmployeePositions>();
 
     // Справочники
-    public DbSet<EduAcademicStatuses> EduAcademicStatuses => Set<EduAcademicStatuses>();
-    public DbSet<EduCitizenCategories> EduCitizenCategories => Set<EduCitizenCategories>();
-    public DbSet<EduCountries> EduCountries => Set<EduCountries>();
-    public DbSet<EduEducationDurations> EduEducationDurations => Set<EduEducationDurations>();
-    public DbSet<EduEducationPaymentTypes> EduEducationPaymentTypes => Set<EduEducationPaymentTypes>();
-    public DbSet<EduEducationTypes> EduEducationTypes => Set<EduEducationTypes>();
-    public DbSet<EduGrantTypes> EduGrantTypes => Set<EduGrantTypes>();
-    public DbSet<EduLanguages> EduLanguages => Set<EduLanguages>();
-    public DbSet<EduMaritalStatuses> EduMaritalStatuses => Set<EduMaritalStatuses>();
-    public DbSet<EduMessengers> EduMessengers => Set<EduMessengers>();
-    public DbSet<EduNationalities> EduNationalities => Set<EduNationalities>();
-    public DbSet<EduPositionCategories> EduPositionCategories => Set<EduPositionCategories>();
-    public DbSet<EduPositions> EduPositions => Set<EduPositions>();
-    public DbSet<EduSpecialityLevels> EduSpecialityLevels => Set<EduSpecialityLevels>();
-    public DbSet<Edu_OrgUnitTypes> EduOrgUnitTypes => Set<Edu_OrgUnitTypes>();
-    public DbSet<Edu_OrgUnits> EduOrgUnits => Set<Edu_OrgUnits>();
+    public DbSet<Edu_AcademicStatuses> Edu_AcademicStatuses => Set<Edu_AcademicStatuses>();
+    public DbSet<Edu_CitizenCategories> Edu_CitizenCategories => Set<Edu_CitizenCategories>();
+    public DbSet<Edu_Countries> Edu_Countries => Set<Edu_Countries>();
+    public DbSet<Edu_EducationDurations> Edu_EducationDurations => Set<Edu_EducationDurations>();
+    public DbSet<Edu_EducationPaymentTypes> Edu_EducationPaymentTypes => Set<Edu_EducationPaymentTypes>();
+    public DbSet<Edu_EducationTypes> Edu_EducationTypes => Set<Edu_EducationTypes>();
+    public DbSet<Edu_GrantTypes> Edu_GrantTypes => Set<Edu_GrantTypes>();
+    public DbSet<Edu_Languages> Edu_Languages => Set<Edu_Languages>();
+    public DbSet<Edu_MaritalStatuses> Edu_MaritalStatuses => Set<Edu_MaritalStatuses>();
+    public DbSet<Edu_Messengers> Edu_Messengers => Set<Edu_Messengers>();
+    public DbSet<Edu_Nationalities> Edu_Nationalities => Set<Edu_Nationalities>();
+    public DbSet<Edu_PositionCategories> Edu_PositionCategories => Set<Edu_PositionCategories>();
+    public DbSet<Edu_Positions> Edu_Positions => Set<Edu_Positions>();
+    public DbSet<Edu_SpecialityLevels> Edu_SpecialityLevels => Set<Edu_SpecialityLevels>();
+    public DbSet<Edu_OrgUnitTypes> Edu_OrgUnitTypes => Set<Edu_OrgUnitTypes>();
+    public DbSet<Edu_OrgUnits> Edu_OrgUnits => Set<Edu_OrgUnits>();
 
     // Новые таблицы
-    public DbSet<Edu_DocumentIssueOrgs> EduDocumentIssueOrgs => Set<Edu_DocumentIssueOrgs>();
-    public DbSet<Edu_SchoolSubjects> EduSchoolSubjects => Set<Edu_SchoolSubjects>();
-    public DbSet<Edu_Specialities> EduSpecialities => Set<Edu_Specialities>();
-    public DbSet<Edu_UserDocumentTypes> EduUserDocumentTypes => Set<Edu_UserDocumentTypes>();
-    public DbSet<Edu_UserDocuments> EduUserDocuments => Set<Edu_UserDocuments>();
-    public DbSet<Edu_Rups> EduRups => Set<Edu_Rups>();
-    public DbSet<Edu_RupAlgorithms> EduRupAlgorithms => Set<Edu_RupAlgorithms>();
-    public DbSet<Edu_StudentStatuses> EduStudentStatuses => Set<Edu_StudentStatuses>();
-    public DbSet<Edu_StudentCategories> EduStudentCategories => Set<Edu_StudentCategories>();
+    public DbSet<Edu_DocumentIssueOrgs> Edu_DocumentIssueOrgs => Set<Edu_DocumentIssueOrgs>();
+    public DbSet<Edu_SchoolSubjects> Edu_SchoolSubjects => Set<Edu_SchoolSubjects>();
+    public DbSet<Edu_Specialities> Edu_Specialities => Set<Edu_Specialities>();
+    public DbSet<Edu_UserDocumentTypes> Edu_UserDocumentTypes => Set<Edu_UserDocumentTypes>();
+    public DbSet<Edu_UserDocuments> Edu_UserDocuments => Set<Edu_UserDocuments>();
+    public DbSet<Edu_Rups> Edu_Rups => Set<Edu_Rups>();
+    public DbSet<Edu_RupAlgorithms> Edu_RupAlgorithms => Set<Edu_RupAlgorithms>();
+    public DbSet<Edu_StudentStatuses> Edu_StudentStatuses => Set<Edu_StudentStatuses>();
+    public DbSet<Edu_StudentCategories> Edu_StudentCategories => Set<Edu_StudentCategories>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         // ═══════════════════════════════════════════════════════════════
-        // EduUsers
+        // Edu_Users
         // ═══════════════════════════════════════════════════════════════
-        modelBuilder.Entity<EduUsers>(entity =>
+        modelBuilder.Entity<Edu_Users>(entity =>
         {
             entity.HasKey(e => e.ID);
             entity.Property(e => e.PhotoFileName).HasColumnType("varchar(255)");
@@ -81,15 +81,15 @@ public class SsoDbContext : DbContext
         });
 
         // ═══════════════════════════════════════════════════════════════
-        // EduStudents (StudentID = PK и FK к EduUsers.ID)
+        // Edu_Students (StudentID = PK и FK к Edu_Users.ID)
         // ═══════════════════════════════════════════════════════════════
-        modelBuilder.Entity<EduStudents>(entity =>
+        modelBuilder.Entity<Edu_Students>(entity =>
         {
             entity.HasKey(e => e.StudentID);
 
             entity.HasOne(e => e.User)
                   .WithOne(u => u.Student)
-                  .HasForeignKey<EduStudents>(e => e.StudentID)
+                  .HasForeignKey<Edu_Students>(e => e.StudentID)
                   .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(e => e.EducationType)
@@ -149,22 +149,22 @@ public class SsoDbContext : DbContext
         });
 
         // ═══════════════════════════════════════════════════════════════
-        // EduEmployees (ID = PK и FK к EduUsers.ID)
+        // Edu_Employees (ID = PK и FK к Edu_Users.ID)
         // ═══════════════════════════════════════════════════════════════
-        modelBuilder.Entity<EduEmployees>(entity =>
+        modelBuilder.Entity<Edu_Employees>(entity =>
         {
             entity.HasKey(e => e.ID);
 
             entity.HasOne(e => e.User)
                   .WithOne(u => u.Employee)
-                  .HasForeignKey<EduEmployees>(e => e.ID)
+                  .HasForeignKey<Edu_Employees>(e => e.ID)
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
         // ═══════════════════════════════════════════════════════════════
-        // EduEmployeePositions
+        // Edu_EmployeePositions
         // ═══════════════════════════════════════════════════════════════
-        modelBuilder.Entity<EduEmployeePositions>(entity =>
+        modelBuilder.Entity<Edu_EmployeePositions>(entity =>
         {
             entity.HasKey(e => e.ID);
 
@@ -185,9 +185,9 @@ public class SsoDbContext : DbContext
         });
 
         // ═══════════════════════════════════════════════════════════════
-        // EduEducationDurations
+        // Edu_EducationDurations
         // ═══════════════════════════════════════════════════════════════
-        modelBuilder.Entity<EduEducationDurations>(entity =>
+        modelBuilder.Entity<Edu_EducationDurations>(entity =>
         {
             entity.HasKey(e => e.ID);
             entity.Property(e => e.NoBDIId).HasColumnType("nchar(100)");
@@ -199,9 +199,9 @@ public class SsoDbContext : DbContext
         });
 
         // ═══════════════════════════════════════════════════════════════
-        // EduPositions
+        // Edu_Positions
         // ═══════════════════════════════════════════════════════════════
-        modelBuilder.Entity<EduPositions>(entity =>
+        modelBuilder.Entity<Edu_Positions>(entity =>
         {
             entity.HasKey(e => e.ID);
 
@@ -306,22 +306,22 @@ public class SsoDbContext : DbContext
         // ═══════════════════════════════════════════════════════════════
         // Простые справочники — только Primary Key
         // ═══════════════════════════════════════════════════════════════
-        modelBuilder.Entity<EduAcademicStatuses>(e => e.HasKey(x => x.ID));
-        modelBuilder.Entity<EduCitizenCategories>(e => e.HasKey(x => x.ID));
-        modelBuilder.Entity<EduCountries>(e => e.HasKey(x => x.ID));
-        modelBuilder.Entity<EduEducationPaymentTypes>(e =>
+        modelBuilder.Entity<Edu_AcademicStatuses>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_CitizenCategories>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_Countries>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_EducationPaymentTypes>(e =>
         {
             e.HasKey(x => x.ID);
             e.Property(x => x.NoBDID).HasColumnType("nchar(50)");
         });
-        modelBuilder.Entity<EduEducationTypes>(e => e.HasKey(x => x.ID));
-        modelBuilder.Entity<EduGrantTypes>(e => e.HasKey(x => x.ID));
-        modelBuilder.Entity<EduLanguages>(e => e.HasKey(x => x.ID));
-        modelBuilder.Entity<EduMaritalStatuses>(e => e.HasKey(x => x.ID));
-        modelBuilder.Entity<EduMessengers>(e => e.HasKey(x => x.ID));
-        modelBuilder.Entity<EduNationalities>(e => e.HasKey(x => x.ID));
-        modelBuilder.Entity<EduPositionCategories>(e => e.HasKey(x => x.ID));
-        modelBuilder.Entity<EduSpecialityLevels>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_EducationTypes>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_GrantTypes>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_Languages>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_MaritalStatuses>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_Messengers>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_Nationalities>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_PositionCategories>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_SpecialityLevels>(e => e.HasKey(x => x.ID));
         modelBuilder.Entity<Edu_OrgUnitTypes>(e => e.HasKey(x => x.ID));
         modelBuilder.Entity<Edu_DocumentIssueOrgs>(e => e.HasKey(x => x.ID));
         modelBuilder.Entity<Edu_SchoolSubjects>(e => e.HasKey(x => x.ID));
@@ -333,24 +333,24 @@ public class SsoDbContext : DbContext
         // ═══════════════════════════════════════════════════════════════
         // Имена таблиц в MSSQL базе
         // ═══════════════════════════════════════════════════════════════
-        modelBuilder.Entity<EduUsers>().ToTable("Edu_Users");
-        modelBuilder.Entity<EduStudents>().ToTable("Edu_Students");
-        modelBuilder.Entity<EduEmployees>().ToTable("Edu_Employees");
-        modelBuilder.Entity<EduEmployeePositions>().ToTable("Edu_EmployeePositions");
-        modelBuilder.Entity<EduAcademicStatuses>().ToTable("Edu_AcademicStatuses");
-        modelBuilder.Entity<EduCitizenCategories>().ToTable("Edu_CitizenCategories");
-        modelBuilder.Entity<EduCountries>().ToTable("Edu_Countries");
-        modelBuilder.Entity<EduEducationDurations>().ToTable("Edu_EducationDurations");
-        modelBuilder.Entity<EduEducationPaymentTypes>().ToTable("Edu_EducationPaymentTypes");
-        modelBuilder.Entity<EduEducationTypes>().ToTable("Edu_EducationTypes");
-        modelBuilder.Entity<EduGrantTypes>().ToTable("Edu_GrantTypes");
-        modelBuilder.Entity<EduLanguages>().ToTable("Edu_Languages");
-        modelBuilder.Entity<EduMaritalStatuses>().ToTable("Edu_MaritalStatuses");
-        modelBuilder.Entity<EduMessengers>().ToTable("Edu_Messengers");
-        modelBuilder.Entity<EduNationalities>().ToTable("Edu_Nationalities");
-        modelBuilder.Entity<EduPositionCategories>().ToTable("Edu_PositionCategories");
-        modelBuilder.Entity<EduPositions>().ToTable("Edu_Positions");
-        modelBuilder.Entity<EduSpecialityLevels>().ToTable("Edu_SpecialityLevels");
+        modelBuilder.Entity<Edu_Users>().ToTable("Edu_Users");
+        modelBuilder.Entity<Edu_Students>().ToTable("Edu_Students");
+        modelBuilder.Entity<Edu_Employees>().ToTable("Edu_Employees");
+        modelBuilder.Entity<Edu_EmployeePositions>().ToTable("Edu_EmployeePositions");
+        modelBuilder.Entity<Edu_AcademicStatuses>().ToTable("Edu_AcademicStatuses");
+        modelBuilder.Entity<Edu_CitizenCategories>().ToTable("Edu_CitizenCategories");
+        modelBuilder.Entity<Edu_Countries>().ToTable("Edu_Countries");
+        modelBuilder.Entity<Edu_EducationDurations>().ToTable("Edu_EducationDurations");
+        modelBuilder.Entity<Edu_EducationPaymentTypes>().ToTable("Edu_EducationPaymentTypes");
+        modelBuilder.Entity<Edu_EducationTypes>().ToTable("Edu_EducationTypes");
+        modelBuilder.Entity<Edu_GrantTypes>().ToTable("Edu_GrantTypes");
+        modelBuilder.Entity<Edu_Languages>().ToTable("Edu_Languages");
+        modelBuilder.Entity<Edu_MaritalStatuses>().ToTable("Edu_MaritalStatuses");
+        modelBuilder.Entity<Edu_Messengers>().ToTable("Edu_Messengers");
+        modelBuilder.Entity<Edu_Nationalities>().ToTable("Edu_Nationalities");
+        modelBuilder.Entity<Edu_PositionCategories>().ToTable("Edu_PositionCategories");
+        modelBuilder.Entity<Edu_Positions>().ToTable("Edu_Positions");
+        modelBuilder.Entity<Edu_SpecialityLevels>().ToTable("Edu_SpecialityLevels");
         modelBuilder.Entity<Edu_OrgUnits>().ToTable("Edu_OrgUnits");
         modelBuilder.Entity<Edu_OrgUnitTypes>().ToTable("Edu_OrgUnitTypes");
         modelBuilder.Entity<Edu_DocumentIssueOrgs>().ToTable("Edu_DocumentIssueOrgs");

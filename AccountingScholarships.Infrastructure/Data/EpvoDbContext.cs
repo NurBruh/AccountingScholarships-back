@@ -1,4 +1,4 @@
-using AccountingScholarships.Domain.Entities.Epvo;
+using AccountingScholarships.Domain.Entities.Testing.Epvo;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountingScholarships.Infrastructure.Data;

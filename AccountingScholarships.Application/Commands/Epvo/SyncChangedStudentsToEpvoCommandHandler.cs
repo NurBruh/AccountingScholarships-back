@@ -1,5 +1,5 @@
 using AccountingScholarships.Domain.DTO;
-using AccountingScholarships.Domain.Entities.Students;
+using AccountingScholarships.Domain.Entities.Testing.Students;
 using AccountingScholarships.Domain.Interfaces;
 using MediatR;
 
@@ -56,7 +56,7 @@ public class SyncChangedStudentsToEpvoCommandHandler : IRequestHandler<SyncChang
         return changedPayload.Count;
     }
 
-    private static bool HasDifferences(Student sso, Domain.Entities.Epvo.EpvoStudent epvo)
+    private static bool HasDifferences(Student sso, Domain.Entities.Testing.Epvo.EpvoStudent epvo)
     {
         var faculty = sso.Speciality?.Department?.Institute?.InstituteName;
         var speciality = sso.Speciality?.SpecialityName;

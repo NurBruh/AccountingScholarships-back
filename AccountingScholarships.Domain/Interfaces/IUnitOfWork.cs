@@ -1,5 +1,5 @@
-using AccountingScholarships.Domain.Entities.Users;
-using AccountingScholarships.Domain.Entities.Auth;
+using AccountingScholarships.Domain.Entities.Testing.Users;
+using AccountingScholarships.Domain.Entities.Testing.Auth;
 
 namespace AccountingScholarships.Domain.Interfaces;
 

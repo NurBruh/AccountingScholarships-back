@@ -1,5 +1,5 @@
 using AccountingScholarships.Domain.DTO;
-using AccountingScholarships.Domain.Entities.Epvo;
+using AccountingScholarships.Domain.Entities.Testing.Epvo;
 using AccountingScholarships.Domain.Interfaces;
 
 namespace AccountingScholarships.Infrastructure.Services;
