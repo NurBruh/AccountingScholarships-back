@@ -3,6 +3,7 @@ using AccountingScholarships.API.Contracts.Requests;
 using AccountingScholarships.Domain.DTO;
 using AccountingScholarships.Application.Commands.Students;
 using AccountingScholarships.Application.Queries.Students;
+using AccountingScholarships.Application.Queries.University.Students;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -43,13 +44,12 @@ public class StudentsController : ControllerBase
     /// <summary>
     /// Пример CQRS: Получить список студентов (JOIN c Edu_Users) из локальной SSO базы, как просил пользователь.
     /// </summary>
-    /// <param name="count">Количество записей (TOP).</param>
     /// <param name="cancellationToken">Токен отмены.</param>
     /// <returns>Список студентов.</returns>
     [HttpGet("sso-top")]
-    public async Task<IActionResult> GetTopSsoStudents([FromQuery] int count = 1000, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetTopSsoStudents(CancellationToken cancellationToken = default)
     {
-        var query = new AccountingScholarships.Application.Queries.University.Students.GetTopStudentsQuery { TopCount = count };
+        var query = new GetAllSsoStudentsQuery();
         var result = await _mediator.Send(query, cancellationToken);
         return Ok(result);
     }

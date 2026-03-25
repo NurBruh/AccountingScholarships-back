@@ -14,7 +14,7 @@ public class SsoDbContext : DbContext
     public DbSet<Edu_EmployeePositions> Edu_EmployeePositions => Set<Edu_EmployeePositions>();
 
     // Справочники
-    public DbSet<Edu_AcademicStatuses> EduAcademicStatuses => Set<Edu_AcademicStatuses>();
+    public DbSet<Edu_AcademicStatuses> Edu_AcademicStatuses => Set<Edu_AcademicStatuses>();
     public DbSet<Edu_CitizenCategories> Edu_CitizenCategories => Set<Edu_CitizenCategories>();
     public DbSet<Edu_Countries> Edu_Countries => Set<Edu_Countries>();
     public DbSet<Edu_EducationDurations> Edu_EducationDurations => Set<Edu_EducationDurations>();
@@ -28,19 +28,19 @@ public class SsoDbContext : DbContext
     public DbSet<Edu_PositionCategories> Edu_PositionCategories => Set<Edu_PositionCategories>();
     public DbSet<Edu_Positions> Edu_Positions => Set<Edu_Positions>();
     public DbSet<Edu_SpecialityLevels> Edu_SpecialityLevels => Set<Edu_SpecialityLevels>();
-    public DbSet<Edu_OrgUnitTypes> EduOrgUnitTypes => Set<Edu_OrgUnitTypes>();
-    public DbSet<Edu_OrgUnits> EduOrgUnits => Set<Edu_OrgUnits>();
+    public DbSet<Edu_OrgUnitTypes> Edu_OrgUnitTypes => Set<Edu_OrgUnitTypes>();
+    public DbSet<Edu_OrgUnits> Edu_OrgUnits => Set<Edu_OrgUnits>();
 
     // Новые таблицы
-    public DbSet<Edu_DocumentIssueOrgs> EduDocumentIssueOrgs => Set<Edu_DocumentIssueOrgs>();
-    public DbSet<Edu_SchoolSubjects> EduSchoolSubjects => Set<Edu_SchoolSubjects>();
-    public DbSet<Edu_Specialities> EduSpecialities => Set<Edu_Specialities>();
-    public DbSet<Edu_UserDocumentTypes> EduUserDocumentTypes => Set<Edu_UserDocumentTypes>();
-    public DbSet<Edu_UserDocuments> EduUserDocuments => Set<Edu_UserDocuments>();
-    public DbSet<Edu_Rups> EduRups => Set<Edu_Rups>();
-    public DbSet<Edu_RupAlgorithms> EduRupAlgorithms => Set<Edu_RupAlgorithms>();
-    public DbSet<Edu_StudentStatuses> EduStudentStatuses => Set<Edu_StudentStatuses>();
-    public DbSet<Edu_StudentCategories> EduStudentCategories => Set<Edu_StudentCategories>();
+    public DbSet<Edu_DocumentIssueOrgs> Edu_DocumentIssueOrgs => Set<Edu_DocumentIssueOrgs>();
+    public DbSet<Edu_SchoolSubjects> Edu_SchoolSubjects => Set<Edu_SchoolSubjects>();
+    public DbSet<Edu_Specialities> Edu_Specialities => Set<Edu_Specialities>();
+    public DbSet<Edu_UserDocumentTypes> Edu_UserDocumentTypes => Set<Edu_UserDocumentTypes>();
+    public DbSet<Edu_UserDocuments> Edu_UserDocuments => Set<Edu_UserDocuments>();
+    public DbSet<Edu_Rups> Edu_Rups => Set<Edu_Rups>();
+    public DbSet<Edu_RupAlgorithms> Edu_RupAlgorithms => Set<Edu_RupAlgorithms>();
+    public DbSet<Edu_StudentStatuses> Edu_StudentStatuses => Set<Edu_StudentStatuses>();
+    public DbSet<Edu_StudentCategories> Edu_StudentCategories => Set<Edu_StudentCategories>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

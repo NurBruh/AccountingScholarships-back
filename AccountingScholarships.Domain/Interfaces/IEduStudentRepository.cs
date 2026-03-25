@@ -1,4 +1,5 @@
 using AccountingScholarships.Domain.DTO;
+using AccountingScholarships.Domain.DTO.University;
 using AccountingScholarships.Domain.Entities.Real.university;
 
 namespace AccountingScholarships.Domain.Interfaces;
