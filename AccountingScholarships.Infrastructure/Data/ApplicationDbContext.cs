@@ -1,10 +1,10 @@
-using AccountingScholarships.Domain.Entities.Students;
-using AccountingScholarships.Domain.Entities.Scholarships;
-using AccountingScholarships.Domain.Entities.Grants;
-using AccountingScholarships.Domain.Entities.Users;
-using AccountingScholarships.Domain.Entities.Reference;
-using AccountingScholarships.Domain.Entities.Auth;
-using AccountingScholarships.Domain.Entities.StudentData;
+using AccountingScholarships.Domain.Entities.Testing.Students;
+using AccountingScholarships.Domain.Entities.Testing.Scholarships;
+using AccountingScholarships.Domain.Entities.Testing.Grants;
+using AccountingScholarships.Domain.Entities.Testing.Users;
+using AccountingScholarships.Domain.Entities.Testing.Reference;
+using AccountingScholarships.Domain.Entities.Testing.Auth;
+using AccountingScholarships.Domain.Entities.Testing.StudentData;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountingScholarships.Infrastructure.Data;

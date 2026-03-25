@@ -1,18 +1,18 @@
 using AccountingScholarships.Domain.DTO;
-using AccountingScholarships.Domain.Entities.university;
+using AccountingScholarships.Domain.Entities.Real.university;
 using AccountingScholarships.Domain.Interfaces;
 using AccountingScholarships.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace AccountingScholarships.Infrastructure.Repositories;
 
-public class EduStudentRepository : SsoRepository<EduStudents>, IEduStudentRepository
+public class EduStudentRepository : SsoRepository<Edu_Students>, IEduStudentRepository
 {
     public EduStudentRepository(SsoDbContext context) : base(context) { }
 
-    public async Task<EduStudents?> GetWithDetailsAsync(int studentId, CancellationToken cancellationToken = default)
+    public async Task<Edu_Students?> GetWithDetailsAsync(int studentId, CancellationToken cancellationToken = default)
     {
-        return await _context.EduStudents
+        return await _context.Edu_Students
             .Include(s => s.User)
                 .ThenInclude(u => u!.Nationality)
             .Include(s => s.User)
@@ -30,17 +30,17 @@ public class EduStudentRepository : SsoRepository<EduStudents>, IEduStudentRepos
             .FirstOrDefaultAsync(s => s.StudentID == studentId, cancellationToken);
     }
 
-    public async Task<EduStudents?> GetByIINAsync(string iin, CancellationToken cancellationToken = default)
+    public async Task<Edu_Students?> GetByIINAsync(string iin, CancellationToken cancellationToken = default)
     {
-        return await _context.EduStudents
+        return await _context.Edu_Students
             .Include(s => s.User)
             .AsNoTracking()
             .FirstOrDefaultAsync(s => s.User.IIN == iin, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<EduStudents>> GetAllWithDetailsAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Edu_Students>> GetAllWithDetailsAsync(CancellationToken cancellationToken = default)
     {
-        return await _context.EduStudents
+        return await _context.Edu_Students
             .Include(s => s.User)
                 .ThenInclude(u => u!.Nationality)
             .Include(s => s.User)
@@ -68,7 +68,7 @@ public class EduStudentRepository : SsoRepository<EduStudents>, IEduStudentRepos
         return students.Select(MapToDto).ToList();
     }
 
-    private static EduStudentDto MapToDto(EduStudents s)
+    private static EduStudentDto MapToDto(Edu_Students s)
     {
         var u = s.User;
         return new EduStudentDto
@@ -121,7 +121,7 @@ public class EduStudentRepository : SsoRepository<EduStudents>, IEduStudentRepos
 
     public async Task<List<AccountingScholarships.Domain.DTO.University.StudentWithUserDto>> GetTopStudentsWithUserAsync(int count, CancellationToken cancellationToken = default)
     {
-        return await _context.EduStudents
+        return await _context.Edu_Students
             .AsNoTracking()
             .Include(s => s.User)
             .Select(s => new AccountingScholarships.Domain.DTO.University.StudentWithUserDto

@@ -2,7 +2,7 @@ namespace AccountingScholarships.Domain.DTO;
 
 public class EduStudentDto
 {
-    // Данные пользователя (EduUsers)
+    // Данные пользователя (Edu_Users)
     public int StudentID { get; set; }
     public string LastName { get; set; } = string.Empty;
     public string? FirstName { get; set; }
@@ -16,7 +16,7 @@ public class EduStudentDto
     public bool Resident { get; set; }
     public string? MobilePhone { get; set; }
 
-    // Академические данные (EduStudents)
+    // Академические данные (Edu_Students)
     public int Year { get; set; }
     public double? GPA { get; set; }
     public double? GPA_Y { get; set; }

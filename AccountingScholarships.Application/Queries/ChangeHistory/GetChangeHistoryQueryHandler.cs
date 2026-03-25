@@ -1,4 +1,4 @@
-using AccountingScholarships.Domain.Entities.Reference;
+using AccountingScholarships.Domain.Entities.Testing.Reference;
 using AccountingScholarships.Domain.Interfaces;
 using MediatR;
 

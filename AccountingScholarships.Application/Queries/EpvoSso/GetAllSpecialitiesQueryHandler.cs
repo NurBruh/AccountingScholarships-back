@@ -1,5 +1,5 @@
 using AccountingScholarships.Domain.DTO.EpvoSso;
-using AccountingScholarships.Domain.Entities.epvosso;
+using AccountingScholarships.Domain.Entities.Real.epvosso;
 using AccountingScholarships.Domain.Interfaces;
 using MediatR;
 

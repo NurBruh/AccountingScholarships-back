@@ -41,7 +41,7 @@ public class StudentsController : ControllerBase
     }
 
     /// <summary>
-    /// Пример CQRS: Получить список студентов (JOIN c EduUsers) из локальной SSO базы, как просил пользователь.
+    /// Пример CQRS: Получить список студентов (JOIN c Edu_Users) из локальной SSO базы, как просил пользователь.
     /// </summary>
     /// <param name="count">Количество записей (TOP).</param>
     /// <param name="cancellationToken">Токен отмены.</param>

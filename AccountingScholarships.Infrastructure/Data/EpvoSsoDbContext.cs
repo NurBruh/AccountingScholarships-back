@@ -1,4 +1,4 @@
-﻿using AccountingScholarships.Domain.Entities.epvosso;
+using AccountingScholarships.Domain.Entities.Real.epvosso;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

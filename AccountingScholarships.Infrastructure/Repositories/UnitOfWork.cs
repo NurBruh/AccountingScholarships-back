@@ -1,6 +1,6 @@
 using AccountingScholarships.Domain.Interfaces;
-using AccountingScholarships.Domain.Entities.Users;
-using AccountingScholarships.Domain.Entities.Auth;
+using AccountingScholarships.Domain.Entities.Testing.Users;
+using AccountingScholarships.Domain.Entities.Testing.Auth;
 using AccountingScholarships.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;

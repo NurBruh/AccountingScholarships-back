@@ -1,5 +1,5 @@
 using AccountingScholarships.Domain.DTO.EpvoSso;
-using AccountingScholarships.Domain.Entities.epvosso;
+using AccountingScholarships.Domain.Entities.Real.epvosso;
 using AccountingScholarships.Domain.Interfaces;
 using MediatR;
 
@@ -8,9 +8,9 @@ namespace AccountingScholarships.Application.Queries.EpvoSso;
 public class GetAllUniversitiesQueryHandler
     : IRequestHandler<GetAllUniversitiesQuery, IReadOnlyList<EpvoUniversityDto>>
 {
-    private readonly IEpvoSsoRepository<AccountingScholarships.Domain.Entities.epvosso.University> _repository;
+    private readonly IEpvoSsoRepository<AccountingScholarships.Domain.Entities.Real.epvosso.University> _repository;
 
-    public GetAllUniversitiesQueryHandler(IEpvoSsoRepository<AccountingScholarships.Domain.Entities.epvosso.University> repository)
+    public GetAllUniversitiesQueryHandler(IEpvoSsoRepository<AccountingScholarships.Domain.Entities.Real.epvosso.University> repository)
     {
         _repository = repository;
     }
