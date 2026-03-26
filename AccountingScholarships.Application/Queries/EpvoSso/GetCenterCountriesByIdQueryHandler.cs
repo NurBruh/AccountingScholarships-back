@@ -26,7 +26,7 @@ public class GetCenterCountriesByIdQueryHandler
             Id = s.Id,
             Alfa2_Code = s.Alfa2_Code,
             Alfa3_Code = s.Alfa3_Code,
-            CountryCode = s.CountryCode,
+            Country_Code = s.Country_Code,
             NameRu = s.NameRu,
             NameKz = s.NameKz,
             NameEn = s.NameEn,

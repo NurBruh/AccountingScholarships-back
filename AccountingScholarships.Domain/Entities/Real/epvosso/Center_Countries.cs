@@ -10,7 +10,7 @@ namespace AccountingScholarships.Domain.Entities.Real.epvosso
     {
         public string? Alfa2_Code { get; set; }
         public string? Alfa3_Code { get; set; }
-        public string? CountryCode { get; set; }
+        public string? Country_Code { get; set; }
         public string? Full_NameEn { get; set; }
         public string? Full_NameKz { get; set; }
         public string? Full_NameRu { get; set; }

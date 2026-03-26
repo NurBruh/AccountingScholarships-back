@@ -11,7 +11,7 @@ namespace AccountingScholarships.Domain.DTO.EpvoSso
         public int Id { get; set; }
         public string? Alfa2_Code { get; set; }
         public string? Alfa3_Code { get; set; }
-        public string? CountryCode { get; set; }
+        public string? Country_Code { get; set; }
         public string? NameRu { get; set; }
         public string? NameKz { get; set; }
         public string? NameEn { get; set; }
