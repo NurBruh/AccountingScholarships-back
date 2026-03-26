@@ -25,8 +25,22 @@ public class GetAllEduSpecializationsQueryHandler : IRequestHandler<GetAllEduSpe
                 TitleRu = e.TitleRu,
                 TitleKz = e.TitleKz,
                 TitleEn = e.TitleEn,
+                ShortTitleRu = e.ShortTitleRu,
+                ShortTitleKz = e.ShortTitleKz,
+                ShortTitleEn = e.ShortTitleEn,
+                DescriptionRu = e.DescriptionRu,
+                DescriptionKz = e.DescriptionKz,
+                DescriptionEn = e.DescriptionEn,
+                EducationalProgramType = e.EducationalProgramType,
+                EducationalProgramStatus = e.EducationalProgramStatus,
+                IsEducationalProgram = e.IsEducationalProgram,
                 Code = e.Code,
-                ESUVOID = e.ESUVOID
+                LevelId = e.LevelId,
+                RupEditorOrgUnitId = e.RupEditorOrgUnitId,
+                ChairId = e.ChairId,
+                Classifier = e.Classifier,
+                ESUVOID = e.ESUVOID,
+                NoBDID = e.NoBDID
             })
             .ToList()
             .AsReadOnly();

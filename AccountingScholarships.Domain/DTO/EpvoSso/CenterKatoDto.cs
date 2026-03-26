@@ -15,7 +15,10 @@ namespace AccountingScholarships.Domain.DTO.EpvoSso
         public string? FullNameRu { get; set; }
         public string? FullNameKz { get; set; }
         public int? Deep { get; set; }
-        public string? RegionCode { get; set; }
+        public DateTime? UpdateDate { get; set; }
+        public int? RegionCode { get; set; }
         public int? Status { get; set; }
+        public string? OldCode { get; set; }
+        public int? UniversityId { get; set; }
     }
 }

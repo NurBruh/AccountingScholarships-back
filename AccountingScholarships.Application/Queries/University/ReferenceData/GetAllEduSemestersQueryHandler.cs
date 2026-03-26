@@ -16,7 +16,7 @@ public class GetAllEduSemestersQueryHandler : IRequestHandler<GetAllEduSemesters
 
     public async Task<IReadOnlyList<Edu_SemestersDto>> Handle(GetAllEduSemestersQuery request, CancellationToken cancellationToken)
     {
-        var entities = await _repository.GetAllAsync(cancellationToken);
+        var entities = await _repository.GetAllWithIncludesAsync(new[] { "SemesterType" }, cancellationToken);
 
         return entities
             .Select(e => new Edu_SemestersDto
@@ -26,7 +26,13 @@ public class GetAllEduSemestersQueryHandler : IRequestHandler<GetAllEduSemesters
                 StartsOn = e.StartsOn,
                 EndsOn = e.EndsOn,
                 StudyYear = e.StudyYear,
-                SemesterTypeID = e.SemesterTypeID
+                SemesterTypeID = e.SemesterTypeID,
+                SemesterType = e.SemesterType == null ? null : new Edu_SemesterTypesDto
+                {
+                    ID = e.SemesterType.ID,
+                    Title = e.SemesterType.Title,
+                    OrderBy = e.SemesterType.OrderBy
+                }
             })
             .ToList()
             .AsReadOnly();

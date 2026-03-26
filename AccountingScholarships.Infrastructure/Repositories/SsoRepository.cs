@@ -30,4 +30,20 @@ public class SsoRepository<T> : ISsoRepository<T> where T : class
     {
         return await _dbSet.AsNoTracking().Where(predicate).ToListAsync(cancellationToken);
     }
+
+    public async Task<IReadOnlyList<T>> GetAllWithIncludesAsync(string[] includes, CancellationToken cancellationToken = default)
+    {
+        IQueryable<T> query = _dbSet.AsNoTracking();
+        foreach (var include in includes)
+            query = query.Include(include);
+        return await query.ToListAsync(cancellationToken);
+    }
+
+    public async Task<T?> FindFirstWithIncludesAsync(Expression<Func<T, bool>> predicate, string[] includes, CancellationToken cancellationToken = default)
+    {
+        IQueryable<T> query = _dbSet.AsNoTracking();
+        foreach (var include in includes)
+            query = query.Include(include);
+        return await query.FirstOrDefaultAsync(predicate, cancellationToken);
+    }
 }

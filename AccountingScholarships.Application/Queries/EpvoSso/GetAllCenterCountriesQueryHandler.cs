@@ -28,6 +28,11 @@ public class GetAllCenterCountriesQueryHandler
             NameRu = s.NameRu,
             NameKz = s.NameKz,
             NameEn = s.NameEn,
+            Full_NameEn = s.Full_NameEn,
+            Full_NameKz = s.Full_NameKz,
+            Full_NameRu = s.Full_NameRu,
+            Id_Regions = s.Id_Regions,
+            Update_Date = s.Update_Date,
         }).ToList().AsReadOnly();
     }
 }

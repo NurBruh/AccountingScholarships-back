@@ -28,8 +28,11 @@ public class GetAllCenterKatoQueryHandler
             FullNameRu = s.FullNameRu,
             FullNameKz = s.FullNameKz,
             Deep = s.Deep,
-            RegionCode = s.RegionCode?.ToString(),
+            UpdateDate = s.UpdateDate,
+            RegionCode = s.RegionCode,
             Status = s.Status,
+            OldCode = s.OldCode,
+            UniversityId = s.UniversityId,
         }).ToList().AsReadOnly();
     }
 }

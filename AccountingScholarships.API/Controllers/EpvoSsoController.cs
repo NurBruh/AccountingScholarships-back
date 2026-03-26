@@ -230,12 +230,30 @@ public class EpvoSsoController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("faculties/{id:int}")]
+    public async Task<IActionResult> GetFaculty(int id, CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetFacultyByIdQuery(id), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
     // ─── Center KATO ──────────────────────────────────────────────
 
     [HttpGet("center-kato")]
     public async Task<IActionResult> GetCenterKato(CancellationToken ct)
     {
         var result = await _mediator.Send(new GetAllCenterKatoQuery(), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
+    [HttpGet("center-kato/{id:int}")]
+    public async Task<IActionResult> GetCenterKatoById(int id, CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetCenterKatoByIdQuery(id), ct);
         if (result is null)
             return NotFound();
         return Ok(result);
@@ -252,12 +270,30 @@ public class EpvoSsoController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("center-countries/{id:int}")]
+    public async Task<IActionResult> GetCenterCountry(int id, CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetCenterCountriesByIdQuery(id), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
     // ─── Center Nationalities ─────────────────────────────────────
 
     [HttpGet("center-nationalities")]
     public async Task<IActionResult> GetCenterNationalities(CancellationToken ct)
     {
         var result = await _mediator.Send(new GetAllCenterNationalitiesQuery(), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
+    [HttpGet("center-nationalities/{id:int}")]
+    public async Task<IActionResult> GetCenterNationality(int id, CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetCenterNationalitiesByIdQuery(id), ct);
         if (result is null)
             return NotFound();
         return Ok(result);
@@ -274,6 +310,15 @@ public class EpvoSsoController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("maritalstates/{id:int}")]
+    public async Task<IActionResult> GetMaritalstate(int id, CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetMaritalstateByIdQuery(id), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
     // ─── Nationalities ────────────────────────────────────────────
 
     [HttpGet("nationalities")]
@@ -285,12 +330,30 @@ public class EpvoSsoController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("nationalities/{id:int}")]
+    public async Task<IActionResult> GetNationality(int id, CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetNationalityByIdQuery(id), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
     // ─── Study Languages ──────────────────────────────────────────
 
     [HttpGet("study-languages")]
     public async Task<IActionResult> GetStudyLanguages(CancellationToken ct)
     {
         var result = await _mediator.Send(new GetAllStudyLanguagesQuery(), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
+    [HttpGet("study-languages/{id:int}")]
+    public async Task<IActionResult> GetStudyLanguage(int id, CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetStudyLanguageByIdQuery(id), ct);
         if (result is null)
             return NotFound();
         return Ok(result);

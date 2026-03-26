@@ -16,7 +16,7 @@ public class GetAllEduSchoolsQueryHandler : IRequestHandler<GetAllEduSchoolsQuer
 
     public async Task<IReadOnlyList<Edu_SchoolsDto>> Handle(GetAllEduSchoolsQuery request, CancellationToken cancellationToken)
     {
-        var entities = await _repository.GetAllAsync(cancellationToken);
+        var entities = await _repository.GetAllWithIncludesAsync(new[] { "SchoolType", "SchoolRegionStatus", "Locality" }, cancellationToken);
 
         return entities
             .Select(e => new Edu_SchoolsDto
@@ -27,7 +27,10 @@ public class GetAllEduSchoolsQueryHandler : IRequestHandler<GetAllEduSchoolsQuer
                 LocalityID = e.LocalityID,
                 Number = e.Number,
                 Title = e.Title,
-                ShortTitle = e.ShortTitle
+                ShortTitle = e.ShortTitle,
+                SchoolType = e.SchoolType == null ? null : new Edu_SchoolsDto.SchoolTypeRefDto { ID = e.SchoolType.ID, Title = e.SchoolType.Title },
+                SchoolRegionStatus = e.SchoolRegionStatus == null ? null : new Edu_SchoolsDto.SchoolRegionStatusRefDto { ID = e.SchoolRegionStatus.ID, Title = e.SchoolRegionStatus.Title },
+                Locality = e.Locality == null ? null : new Edu_SchoolsDto.LocalityRefDto { ID = e.Locality.ID, Title = e.Locality.Title, ParentID = e.Locality.ParentID, ESUVOCenterKatoCode = e.Locality.ESUVOCenterKatoCode }
             })
             .ToList()
             .AsReadOnly();

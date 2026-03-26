@@ -12,5 +12,6 @@ namespace AccountingScholarships.Domain.DTO.EpvoSso
         public string? Nameru { get; set; }
         public string? Namekz { get; set; }
         public string? Nameen { get; set; }
+        public DateTime? Update_Date { get; set; }
     }
 }

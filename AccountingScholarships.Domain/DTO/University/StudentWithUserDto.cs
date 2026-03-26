@@ -1,5 +1,3 @@
-using System;
-
 namespace AccountingScholarships.Domain.DTO.University;
 
 public class StudentWithUserDto
@@ -42,4 +40,44 @@ public class StudentWithUserDto
     public DateOnly? ScholarshipDateEnd { get; set; }
     public int? FundingID { get; set; }
     public bool? IsKNB { get; set; }
+
+    // Navigation properties
+    public UserRefDto? User { get; set; }
+    public SimpleRefDto? EducationType { get; set; }
+    public SimpleRefDto? EducationPaymentType { get; set; }
+    public SimpleRefDto? GrantType { get; set; }
+    public SimpleRefDto? EducationDuration { get; set; }
+    public SimpleRefDto? StudyLanguage { get; set; }
+    public SimpleRefDto? AcademicStatus { get; set; }
+    public SpecialityRefDto? Speciality { get; set; }
+    public SimpleRefDto? Status { get; set; }
+    public SimpleRefDto? Category { get; set; }
+
+    public class UserRefDto
+    {
+        public int ID { get; set; }
+        public string? LastName { get; set; }
+        public string? FirstName { get; set; }
+        public string? MiddleName { get; set; }
+        public string? Email { get; set; }
+        public string? IIN { get; set; }
+        public DateOnly? DOB { get; set; }
+        public bool? Male { get; set; }
+        public string? MobilePhone { get; set; }
+        public string? HomePhone { get; set; }
+        public bool Resident { get; set; }
+    }
+
+    public class SimpleRefDto
+    {
+        public int ID { get; set; }
+        public string? Title { get; set; }
+    }
+
+    public class SpecialityRefDto
+    {
+        public int ID { get; set; }
+        public string? Code { get; set; }
+        public string? Title { get; set; }
+    }
 }
