@@ -82,7 +82,7 @@ const UNIVERSITY_ENDPOINTS = [
   "user-documents",
   "user-education",
   "users",
-].map((e) => ({ label: `University :: ${e}`, url: `${BASE_URL}/api/v1/university/${e}` }));
+].map((e) => ({ label: `University :: ${e}`, url: `${BASE_URL}/api/university/${e}` }));
 
 const ALL_ENDPOINTS = [...EPVO_SSO_ENDPOINTS, ...UNIVERSITY_ENDPOINTS];
 
