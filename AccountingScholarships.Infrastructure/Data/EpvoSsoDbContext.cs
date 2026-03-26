@@ -21,6 +21,16 @@ namespace AccountingScholarships.Infrastructure.Data
         public DbSet<Studycalendar> Studycalendars => Set<Studycalendar>();
         public DbSet<Faculties> Faculties => Set<Faculties>();
 
+        // Новые таблицы
+        public DbSet<Center_Kato> Center_Kato => Set<Center_Kato>();
+        public DbSet<Center_Countries> Center_Countries => Set<Center_Countries>();
+        public DbSet<Center_Nationalities> Center_Nationalities => Set<Center_Nationalities>();
+        public DbSet<Specialities_Epvo_2025> Specialities_Epvo_2025 => Set<Specialities_Epvo_2025>();
+        public DbSet<Maritalstates> Maritalstates => Set<Maritalstates>();
+        public DbSet<Nationalities> Nationalities => Set<Nationalities>();
+        public DbSet<StudyLanguages> StudyLanguages => Set<StudyLanguages>();
+        public DbSet<Student_Sso> Student_Sso => Set<Student_Sso>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -95,6 +105,55 @@ namespace AccountingScholarships.Infrastructure.Data
             {
                 e.HasKey(x => x.FacultyId);
                 e.ToTable("FACULTIES");
+            });
+
+            // Новые таблицы
+            modelBuilder.Entity<Center_Kato>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.ToTable("CENTER_KATO");
+            });
+
+            modelBuilder.Entity<Center_Countries>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.ToTable("center_countries");
+            });
+
+            modelBuilder.Entity<Center_Nationalities>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.ToTable("center_nationalities");
+            });
+
+            modelBuilder.Entity<Specialities_Epvo_2025>(e =>
+            {
+                e.HasNoKey();
+                e.ToTable("SPECIALITIES_EPVO_2025");
+            });
+
+            modelBuilder.Entity<Maritalstates>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.ToTable("MARITALSTATES");
+            });
+
+            modelBuilder.Entity<Nationalities>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.ToTable("NATIONALITIES");
+            });
+
+            modelBuilder.Entity<StudyLanguages>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.ToTable("STUDYLANGUAGES");
+            });
+
+            modelBuilder.Entity<Student_Sso>(e =>
+            {
+                e.HasKey(x => x.StudentId);
+                e.ToTable("STUDENT_SSO");
             });
         }
     }

@@ -42,6 +42,32 @@ public class SsoDbContext : DbContext
     public DbSet<Edu_StudentStatuses> Edu_StudentStatuses => Set<Edu_StudentStatuses>();
     public DbSet<Edu_StudentCategories> Edu_StudentCategories => Set<Edu_StudentCategories>();
 
+    // Новые таблицы (созданные entity)
+    public DbSet<Edu_AddressTypes> Edu_AddressTypes => Set<Edu_AddressTypes>();
+    public DbSet<Edu_Localities> Edu_Localities => Set<Edu_Localities>();
+    public DbSet<Edu_LocalityTypes> Edu_LocalityTypes => Set<Edu_LocalityTypes>();
+    public DbSet<Obsolete_Edu_Regions> Obsolete_Edu_Regions => Set<Obsolete_Edu_Regions>();
+    public DbSet<Edu_UserAddresses> Edu_UserAddresses => Set<Edu_UserAddresses>();
+    public DbSet<Edu_UserEducation> Edu_UserEducation => Set<Edu_UserEducation>();
+    public DbSet<Edu_EducationDocumentTypes> Edu_EducationDocumentTypes => Set<Edu_EducationDocumentTypes>();
+    public DbSet<Edu_EducationDocumentSubTypes> Edu_EducationDocumentSubTypes => Set<Edu_EducationDocumentSubTypes>();
+    public DbSet<Edu_Schools> Edu_Schools => Set<Edu_Schools>();
+    public DbSet<Edu_SchoolTypes> Edu_SchoolTypes => Set<Edu_SchoolTypes>();
+    public DbSet<Edu_SchoolRegionStatuses> Edu_SchoolRegionStatuses => Set<Edu_SchoolRegionStatuses>();
+    public DbSet<Edu_StudentCourses> Edu_StudentCourses => Set<Edu_StudentCourses>();
+    public DbSet<Edu_SemesterCourses> Edu_SemesterCourses => Set<Edu_SemesterCourses>();
+    public DbSet<Edu_Semesters> Edu_Semesters => Set<Edu_Semesters>();
+    public DbSet<Edu_SemesterTypes> Edu_SemesterTypes => Set<Edu_SemesterTypes>();
+    public DbSet<Edu_ControlTypes> Edu_ControlTypes => Set<Edu_ControlTypes>();
+    public DbSet<Edu_CourseTypes> Edu_CourseTypes => Set<Edu_CourseTypes>();
+    public DbSet<Edu_CourseTypeDvo> Edu_CourseTypeDvo => Set<Edu_CourseTypeDvo>();
+    public DbSet<Edu_Specializations> Edu_Specializations => Set<Edu_Specializations>();
+    public DbSet<Edu_SpecialitySpecializations> Edu_SpecialitySpecializations => Set<Edu_SpecialitySpecializations>();
+    public DbSet<Edu_Specializations_OrgUnits> Edu_Specializations_OrgUnits => Set<Edu_Specializations_OrgUnits>();
+    public DbSet<Edu_Entrants> Edu_Entrants => Set<Edu_Entrants>();
+    public DbSet<Edu_EntrantStatuses> Edu_EntrantStatuses => Set<Edu_EntrantStatuses>();
+    public DbSet<StudentInfo_Translations> StudentInfo_Translations => Set<StudentInfo_Translations>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

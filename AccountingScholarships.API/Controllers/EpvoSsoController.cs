@@ -229,4 +229,81 @@ public class EpvoSsoController : ControllerBase
             return NotFound();
         return Ok(result);
     }
+
+    // ─── Center KATO ──────────────────────────────────────────────
+
+    [HttpGet("center-kato")]
+    public async Task<IActionResult> GetCenterKato(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetAllCenterKatoQuery(), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
+    // ─── Center Countries ─────────────────────────────────────────
+
+    [HttpGet("center-countries")]
+    public async Task<IActionResult> GetCenterCountries(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetAllCenterCountriesQuery(), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
+    // ─── Center Nationalities ─────────────────────────────────────
+
+    [HttpGet("center-nationalities")]
+    public async Task<IActionResult> GetCenterNationalities(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetAllCenterNationalitiesQuery(), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
+    // ─── Specialities EPVO 2025 ───────────────────────────────────
+
+    [HttpGet("specialities-epvo-2025")]
+    public async Task<IActionResult> GetSpecialitiesEpvo2025(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetAllSpecialitiesEpvo2025Query(), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
+    // ─── Marital States ───────────────────────────────────────────
+
+    [HttpGet("maritalstates")]
+    public async Task<IActionResult> GetMaritalstates(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetAllMaritalstatesQuery(), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
+    // ─── Nationalities ────────────────────────────────────────────
+
+    [HttpGet("nationalities")]
+    public async Task<IActionResult> GetNationalities(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetAllNationalitiesQuery(), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
+    // ─── Study Languages ──────────────────────────────────────────
+
+    [HttpGet("study-languages")]
+    public async Task<IActionResult> GetStudyLanguages(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetAllStudyLanguagesQuery(), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
 }
