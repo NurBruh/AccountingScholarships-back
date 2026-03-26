@@ -357,6 +357,228 @@ public class SsoDbContext : DbContext
         modelBuilder.Entity<Edu_RupAlgorithms>(e => e.HasKey(x => x.ID));
 
         // ═══════════════════════════════════════════════════════════════
+        // Новые таблицы — Primary Keys и конфигурация
+        // ═══════════════════════════════════════════════════════════════
+
+        modelBuilder.Entity<Edu_AddressTypes>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_LocalityTypes>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Obsolete_Edu_Regions>(e =>
+        {
+            e.HasKey(x => x.ID);
+            e.ToTable("Obsolete_Edu_Regions");
+        });
+
+        modelBuilder.Entity<Edu_Localities>(entity =>
+        {
+            entity.HasKey(e => e.ID);
+
+            entity.HasOne(e => e.Type)
+                  .WithMany()
+                  .HasForeignKey(e => e.TypeID)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Parent)
+                  .WithMany(e => e.Children)
+                  .HasForeignKey(e => e.ParentID)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Edu_UserAddresses>(entity =>
+        {
+            entity.HasKey(e => e.ID);
+
+            entity.HasOne(e => e.User)
+                  .WithMany()
+                  .HasForeignKey(e => e.UserID)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.AddressType)
+                  .WithMany()
+                  .HasForeignKey(e => e.AddressTypeID)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Country)
+                  .WithMany()
+                  .HasForeignKey(e => e.CountryID)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Locality)
+                  .WithMany()
+                  .HasForeignKey(e => e.LocalityID)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Edu_EducationDocumentTypes>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_EducationDocumentSubTypes>(e => e.HasKey(x => x.ID));
+
+        modelBuilder.Entity<Edu_SchoolTypes>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_SchoolRegionStatuses>(e => e.HasKey(x => x.ID));
+
+        modelBuilder.Entity<Edu_Schools>(entity =>
+        {
+            entity.HasKey(e => e.ID);
+
+            entity.HasOne(e => e.SchoolType)
+                  .WithMany()
+                  .HasForeignKey(e => e.SchoolTypeID)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.SchoolRegionStatus)
+                  .WithMany()
+                  .HasForeignKey(e => e.SchoolRegionStatusID)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Locality)
+                  .WithMany()
+                  .HasForeignKey(e => e.LocalityID)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<Edu_UserEducation>(entity =>
+        {
+            entity.HasKey(e => e.ID);
+
+            entity.HasOne(e => e.User)
+                  .WithMany()
+                  .HasForeignKey(e => e.UserID)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.DocumentType)
+                  .WithMany()
+                  .HasForeignKey(e => e.DocumentTypeID)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.DocumentSubType)
+                  .WithMany()
+                  .HasForeignKey(e => e.DocumentSubTypeID)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.StudyLanguage)
+                  .WithMany()
+                  .HasForeignKey(e => e.StudyLanguageID)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.Speciality)
+                  .WithMany()
+                  .HasForeignKey(e => e.SpecialityID)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<Edu_SemesterTypes>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_ControlTypes>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_CourseTypes>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_CourseTypeDvo>(e => e.HasKey(x => x.Id));
+
+        modelBuilder.Entity<Edu_Semesters>(entity =>
+        {
+            entity.HasKey(e => e.ID);
+
+            entity.HasOne(e => e.SemesterType)
+                  .WithMany()
+                  .HasForeignKey(e => e.SemesterTypeID)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Edu_SemesterCourses>(entity =>
+        {
+            entity.HasKey(e => e.ID);
+
+            entity.HasOne(e => e.Semester)
+                  .WithMany()
+                  .HasForeignKey(e => e.SemesterID)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.OrgUnit)
+                  .WithMany()
+                  .HasForeignKey(e => e.OrgUnitID)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.ControlType)
+                  .WithMany()
+                  .HasForeignKey(e => e.ControlTypeID)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.CourseType)
+                  .WithMany()
+                  .HasForeignKey(e => e.CourseTypeID)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Language)
+                  .WithMany()
+                  .HasForeignKey(e => e.LanguageID)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.CourseTypeDvo)
+                  .WithMany()
+                  .HasForeignKey(e => e.CourseTypeDvoId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<Edu_StudentCourses>(entity =>
+        {
+            entity.HasKey(e => e.ID);
+
+            entity.HasOne(e => e.Student)
+                  .WithMany()
+                  .HasForeignKey(e => e.StudentID)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.SemesterCourse)
+                  .WithMany()
+                  .HasForeignKey(e => e.SemesterCourseID)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Level)
+                  .WithMany()
+                  .HasForeignKey(e => e.LevelID)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<Edu_Specializations>(e =>
+        {
+            e.HasKey(x => x.Id);
+        });
+
+        modelBuilder.Entity<Edu_SpecialitySpecializations>(e =>
+        {
+            e.HasKey(x => x.ID);
+        });
+
+        modelBuilder.Entity<Edu_Specializations_OrgUnits>(e =>
+        {
+            e.HasNoKey();
+            e.ToTable("Edu_Specializations_OrgUnits");
+        });
+
+        modelBuilder.Entity<Edu_Entrants>(entity =>
+        {
+            entity.HasKey(e => e.EntrantID);
+
+            entity.HasOne(e => e.User)
+                  .WithMany()
+                  .HasForeignKey(e => e.EntrantID)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Level)
+                  .WithMany()
+                  .HasForeignKey(e => e.LevelID)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.Status)
+                  .WithMany()
+                  .HasForeignKey(e => e.StatusID)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Edu_EntrantStatuses>(e => e.HasKey(x => x.ID));
+
+        modelBuilder.Entity<StudentInfo_Translations>(e =>
+        {
+            e.HasKey(x => new { x.TableName, x.ColumnName, x.ObjectID, x.Language });
+            e.ToTable("StudentInfo_Translations");
+        });
+
+        // ═══════════════════════════════════════════════════════════════
         // Имена таблиц в MSSQL базе
         // ═══════════════════════════════════════════════════════════════
         modelBuilder.Entity<Edu_Users>().ToTable("Edu_Users");
@@ -388,5 +610,28 @@ public class SsoDbContext : DbContext
         modelBuilder.Entity<Edu_RupAlgorithms>().ToTable("Edu_RupAlgorithms");
         modelBuilder.Entity<Edu_StudentStatuses>().ToTable("Edu_StudentStatuses");
         modelBuilder.Entity<Edu_StudentCategories>().ToTable("Edu_StudentCategories");
+
+        // Новые таблицы — имена
+        modelBuilder.Entity<Edu_AddressTypes>().ToTable("Edu_AddressTypes");
+        modelBuilder.Entity<Edu_Localities>().ToTable("Edu_Localities");
+        modelBuilder.Entity<Edu_LocalityTypes>().ToTable("Edu_LocalityTypes");
+        modelBuilder.Entity<Edu_UserAddresses>().ToTable("Edu_UserAddresses");
+        modelBuilder.Entity<Edu_UserEducation>().ToTable("Edu_UserEducation");
+        modelBuilder.Entity<Edu_EducationDocumentTypes>().ToTable("Edu_EducationDocumentTypes");
+        modelBuilder.Entity<Edu_EducationDocumentSubTypes>().ToTable("Edu_EducationDocumentSubTypes");
+        modelBuilder.Entity<Edu_Schools>().ToTable("Edu_Schools");
+        modelBuilder.Entity<Edu_SchoolTypes>().ToTable("Edu_SchoolTypes");
+        modelBuilder.Entity<Edu_SchoolRegionStatuses>().ToTable("Edu_SchoolRegionStatuses");
+        modelBuilder.Entity<Edu_StudentCourses>().ToTable("Edu_StudentCourses");
+        modelBuilder.Entity<Edu_SemesterCourses>().ToTable("Edu_SemesterCourses");
+        modelBuilder.Entity<Edu_Semesters>().ToTable("Edu_Semesters");
+        modelBuilder.Entity<Edu_SemesterTypes>().ToTable("Edu_SemesterTypes");
+        modelBuilder.Entity<Edu_ControlTypes>().ToTable("Edu_ControlTypes");
+        modelBuilder.Entity<Edu_CourseTypes>().ToTable("Edu_CourseTypes");
+        modelBuilder.Entity<Edu_CourseTypeDvo>().ToTable("Edu_CourseTypeDvo");
+        modelBuilder.Entity<Edu_Specializations>().ToTable("Edu_Specializations");
+        modelBuilder.Entity<Edu_SpecialitySpecializations>().ToTable("Edu_SpecialitySpecializations");
+        modelBuilder.Entity<Edu_Entrants>().ToTable("Edu_Entrants");
+        modelBuilder.Entity<Edu_EntrantStatuses>().ToTable("Edu_EntrantStatuses");
     }
 }
