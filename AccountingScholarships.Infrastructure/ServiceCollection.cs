@@ -104,9 +104,6 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IEpvoApiClient, EpvoApiClient>();
 
-        // Testing services
-        services.AddScoped<IStudentExportService, StudentExportService>();
-
         return services;
     }
 }
