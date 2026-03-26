@@ -262,6 +262,8 @@ public class SsoDbContext : DbContext
         {
             entity.HasKey(e => e.ID);
 
+            entity.Property(e => e.EducationDuration).HasColumnType("decimal(4,1)");
+
             entity.HasOne(e => e.Level)
                   .WithMany(l => l.Specialities)
                   .HasForeignKey(e => e.LevelID)
@@ -482,6 +484,11 @@ public class SsoDbContext : DbContext
         modelBuilder.Entity<Edu_SemesterCourses>(entity =>
         {
             entity.HasKey(e => e.ID);
+
+            entity.Property(e => e.Credits).HasColumnType("decimal(4,1)");
+            entity.Property(e => e.Lectures).HasColumnType("decimal(4,1)");
+            entity.Property(e => e.Practices).HasColumnType("decimal(4,1)");
+            entity.Property(e => e.Labs).HasColumnType("decimal(4,1)");
 
             entity.HasOne(e => e.Semester)
                   .WithMany()
