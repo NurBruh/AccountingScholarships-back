@@ -25,7 +25,7 @@ namespace AccountingScholarships.Infrastructure.Data
         public DbSet<Center_Kato> Center_Kato => Set<Center_Kato>();
         public DbSet<Center_Countries> Center_Countries => Set<Center_Countries>();
         public DbSet<Center_Nationalities> Center_Nationalities => Set<Center_Nationalities>();
-        public DbSet<Specialities_Epvo_2025> Specialities_Epvo_2025 => Set<Specialities_Epvo_2025>();
+
         public DbSet<Maritalstates> Maritalstates => Set<Maritalstates>();
         public DbSet<Nationalities> Nationalities => Set<Nationalities>();
         public DbSet<StudyLanguages> StudyLanguages => Set<StudyLanguages>();
@@ -124,12 +124,6 @@ namespace AccountingScholarships.Infrastructure.Data
             {
                 e.HasKey(x => x.Id);
                 e.ToTable("center_nationalities");
-            });
-
-            modelBuilder.Entity<Specialities_Epvo_2025>(e =>
-            {
-                e.HasNoKey();
-                e.ToTable("SPECIALITIES_EPVO_2025");
             });
 
             modelBuilder.Entity<Maritalstates>(e =>

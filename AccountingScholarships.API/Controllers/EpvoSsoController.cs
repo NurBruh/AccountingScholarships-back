@@ -263,17 +263,6 @@ public class EpvoSsoController : ControllerBase
         return Ok(result);
     }
 
-    // ─── Specialities EPVO 2025 ───────────────────────────────────
-
-    [HttpGet("specialities-epvo-2025")]
-    public async Task<IActionResult> GetSpecialitiesEpvo2025(CancellationToken ct)
-    {
-        var result = await _mediator.Send(new GetAllSpecialitiesEpvo2025Query(), ct);
-        if (result is null)
-            return NotFound();
-        return Ok(result);
-    }
-
     // ─── Marital States ───────────────────────────────────────────
 
     [HttpGet("maritalstates")]
@@ -307,3 +296,4 @@ public class EpvoSsoController : ControllerBase
         return Ok(result);
     }
 }
+
