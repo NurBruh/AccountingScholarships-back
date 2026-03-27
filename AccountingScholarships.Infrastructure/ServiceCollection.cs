@@ -103,6 +103,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped(typeof(ISsoRepository<>), typeof(SsoRepository<>));
 
         services.AddScoped<IEpvoApiClient, EpvoApiClient>();
+        services.AddScoped<IStoredProcedureRepository, StoredProcedureRepository>();
 
         return services;
     }

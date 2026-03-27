@@ -1,3 +1,4 @@
+using AccountingScholarships.Application.Commands.StoredProcedures;
 using AccountingScholarships.Application.Queries.EpvoSso;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -358,5 +359,17 @@ public class EpvoSsoController : ControllerBase
             return NotFound();
         return Ok(result);
     }
-}
 
+    // ─── Stored Procedures ───────────────────────────────────────
+
+    /// <summary>
+    /// Выполняет хранимую процедуру [dbo].[Reload_STUDENT].
+    /// Возвращает код возврата и количество затронутых строк.
+    /// </summary>
+    [HttpPost("reload-student")]
+    public async Task<IActionResult> ReloadStudent(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new ExecuteReloadStudentCommand(), ct);
+        return Ok(result);
+    }
+}
