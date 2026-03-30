@@ -16,5 +16,5 @@ public interface IStoredProcedureRepository
     /// <summary>
     /// Выполняет [dbo].[Reload_STUDENT] и возвращает SELECT-результат (как в SSMS).
     /// </summary>
-    Task<List<Student_Sso>> ReadReloadStudentAsync(CancellationToken ct = default);
+    Task<List<Dictionary<string, object?>>> ReadReloadStudentAsync(CancellationToken ct = default);
 }

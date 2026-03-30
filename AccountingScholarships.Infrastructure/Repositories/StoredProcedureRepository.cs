@@ -63,13 +63,36 @@ public class StoredProcedureRepository : IStoredProcedureRepository
         };
     }
 
-    public async Task<List<Student_Sso>> ReadReloadStudentAsync(CancellationToken ct = default)
+    public async Task<List<Dictionary<string, object?>>> ReadReloadStudentAsync(CancellationToken ct = default)
     {
-        var students = await _context.Student_Sso
-            .FromSqlRaw("EXEC [dbo].[Reload_STUDENT]")
-            .AsNoTracking()
-            .ToListAsync(ct);
+        var results = new List<Dictionary<string, object?>>();
 
-        return students;
+        var connection = _context.Database.GetDbConnection();
+        await connection.OpenAsync(ct);
+
+        try
+        {
+            using var command = connection.CreateCommand();
+            command.CommandText = "EXEC [dbo].[Reload_STUDENT]";
+            command.CommandTimeout = 120;
+
+            using var reader = await command.ExecuteReaderAsync(ct);
+
+            while (await reader.ReadAsync(ct))
+            {
+                var row = new Dictionary<string, object?>();
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    row[reader.GetName(i)] = reader.IsDBNull(i) ? null : reader.GetValue(i);
+                }
+                results.Add(row);
+            }
+        }
+        finally
+        {
+            await connection.CloseAsync();
+        }
+
+        return results;
     }
 }
