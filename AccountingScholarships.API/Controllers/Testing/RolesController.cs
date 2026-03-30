@@ -3,7 +3,7 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AccountingScholarships.API.Controllers;
+namespace AccountingScholarships.API.Controllers.Testing;
 
 /// <summary>
 /// Управление ролями пользователей.

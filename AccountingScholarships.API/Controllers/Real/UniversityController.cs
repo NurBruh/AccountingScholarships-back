@@ -6,7 +6,7 @@ using AccountingScholarships.Application.Queries.University.Users;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AccountingScholarships.API.Controllers;
+namespace AccountingScholarships.API.Controllers.Real;
 
 /// <summary>
 /// Справочные данные из University базы (SSO). Только чтение.

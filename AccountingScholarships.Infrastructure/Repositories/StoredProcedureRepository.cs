@@ -1,4 +1,5 @@
 using AccountingScholarships.Domain.Common;
+using AccountingScholarships.Domain.Entities.Real.epvosso;
 using AccountingScholarships.Domain.Interfaces;
 using AccountingScholarships.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
@@ -60,5 +61,15 @@ public class StoredProcedureRepository : IStoredProcedureRepository
                 : $"Ошибка выполнения. Код возврата: {returnValue}.",
             InsertedStudents = insertedStudents
         };
+    }
+
+    public async Task<List<Student_Sso>> ReadReloadStudentAsync(CancellationToken ct = default)
+    {
+        var students = await _context.Student_Sso
+            .FromSqlRaw("EXEC [dbo].[Reload_STUDENT]")
+            .AsNoTracking()
+            .ToListAsync(ct);
+
+        return students;
     }
 }

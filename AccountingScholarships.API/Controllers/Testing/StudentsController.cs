@@ -9,7 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AccountingScholarships.API.Controllers;
+namespace AccountingScholarships.API.Controllers.Testing;
 
 /// <summary>
 /// Контроллер для работы со студентами в локальной базе данных (ССО).

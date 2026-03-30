@@ -4,7 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AccountingScholarships.API.Controllers;
+namespace AccountingScholarships.API.Controllers.Testing;
 
 [ApiController]
 [ApiVersion("1.0")]

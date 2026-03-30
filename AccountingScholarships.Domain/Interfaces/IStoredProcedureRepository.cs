@@ -1,4 +1,5 @@
 using AccountingScholarships.Domain.Common;
+using AccountingScholarships.Domain.Entities.Real.epvosso;
 
 namespace AccountingScholarships.Domain.Interfaces;
 
@@ -11,4 +12,9 @@ public interface IStoredProcedureRepository
     /// Выполняет [dbo].[Reload_STUDENT] и возвращает результат.
     /// </summary>
     Task<StoredProcedureResult> ExecuteReloadStudentAsync(CancellationToken ct = default);
+
+    /// <summary>
+    /// Выполняет [dbo].[Reload_STUDENT] и возвращает SELECT-результат (как в SSMS).
+    /// </summary>
+    Task<List<Student_Sso>> ReadReloadStudentAsync(CancellationToken ct = default);
 }

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using AccountingScholarships.Application.Queries.University.Students;
 
-namespace AccountingScholarships.API.Controllers;
+namespace AccountingScholarships.API.Controllers.Real;
 
 /// <summary>
 /// Тестовый контроллер для проверки данных из SSO базы (Edu_Students + Edu_Users + справочники).
