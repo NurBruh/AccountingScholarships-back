@@ -1,4 +1,4 @@
-namespace AccountingScholarships.Domain.DTO.EpvoSso;
+namespace AccountingScholarships.Domain.DTO.EpvoSso.EpvoJoin;
 
 public class StudentSsoDetailDto
 {

@@ -1,8 +1,8 @@
-using AccountingScholarships.Domain.DTO.EpvoSso;
+using AccountingScholarships.Domain.DTO.EpvoSso.EpvoJoin;
 using AccountingScholarships.Domain.Interfaces;
 using MediatR;
 
-namespace AccountingScholarships.Application.Queries.EpvoSso;
+namespace AccountingScholarships.Application.Queries.EpvoSso.EpvoJoin;
 
 public class GetStudentSsoDetailsQueryHandler
     : IRequestHandler<GetStudentSsoDetailsQuery, IReadOnlyList<StudentSsoDetailDto>>

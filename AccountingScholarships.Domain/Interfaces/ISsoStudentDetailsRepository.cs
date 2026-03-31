@@ -1,4 +1,4 @@
-using AccountingScholarships.Domain.DTO.EpvoSso;
+using AccountingScholarships.Domain.DTO.EpvoSso.EpvoJoin;
 
 namespace AccountingScholarships.Domain.Interfaces;
 

@@ -18,6 +18,8 @@
 
   <ItemGroup>
     <Folder Include="Properties\" />
+    <Folder Include="Queries\EpvoSso\Новая папка1\" />
+    <Folder Include="Queries\EpvoSso\Новая папка\" />
   </ItemGroup>
 
 </Project>
