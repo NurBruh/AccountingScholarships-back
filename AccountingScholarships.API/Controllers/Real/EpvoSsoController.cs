@@ -410,4 +410,19 @@ public class EpvoSsoController : ControllerBase
             Students = students
         });
     }
+
+    // ─── Students SSO Details ─────────────────────────────────────
+
+    /// <summary>
+    /// Возвращает детальную информацию по студентам из STUDENT_SSO
+    /// с расшифровкой формы обучения, языка, профессии, специализации, факультета.
+    /// </summary>
+    [HttpGet("students-sso-details")]
+    public async Task<IActionResult> GetStudentSsoDetails(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetStudentSsoDetailsQuery(), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
 }

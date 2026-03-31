@@ -81,6 +81,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IChangeHistoryRepository, ChangeHistoryRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IEpvoSsoRepository<>), typeof(EpvoSsoRepository<>));
+        services.AddScoped<ISsoStudentDetailsRepository, SsoStudentDetailsRepository>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
 
         var jwtSettings = configuration.GetSection("JwtSettings");
