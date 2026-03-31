@@ -5,6 +5,7 @@ const path = require("path");
 // ─── Config ─────────────────────────────────────────────────────────────────
 const BASE_URL = "http://localhost:5150";
 const LOG_FILE = path.join(__dirname, "api-test-errors.txt");
+const DATA_FILE = path.join(__dirname, "api-test-data.txt");
 
 // ─── Endpoints ───────────────────────────────────────────────────────────────
 const EPVO_SSO_ENDPOINTS = [
@@ -88,6 +89,7 @@ const ALL_ENDPOINTS = [...EPVO_SSO_ENDPOINTS, ...UNIVERSITY_ENDPOINTS];
 
 // ─── Logger ──────────────────────────────────────────────────────────────────
 const logStream = fs.createWriteStream(LOG_FILE, { flags: "a" });
+const dataStream = fs.createWriteStream(DATA_FILE, { flags: "a" });
 
 function logError(message) {
   const line = `[${new Date().toISOString()}] ${message}`;
@@ -99,11 +101,17 @@ function logInfo(message) {
   console.log("  ✅ " + message);
 }
 
+function saveResponseData(label, url, body) {
+  const header = `\n${"=".repeat(70)}\n[${new Date().toISOString()}] API: ${label}\nURL: ${url}\n${"─".repeat(70)}`;
+  dataStream.write(header + "\n");
+  dataStream.write(body + "\n");
+}
+
 // ─── HTTP request ─────────────────────────────────────────────────────────────
 function fetchEndpoint(url) {
   return new Promise((resolve) => {
     const start = Date.now();
-    const req = http.get(url, { timeout: 10000 }, (res) => {
+    const req = http.get(url, { timeout: 600000 }, (res) => {
       const elapsed = Date.now() - start;
       let body = "";
       res.on("data", (chunk) => (body += chunk));
@@ -111,7 +119,7 @@ function fetchEndpoint(url) {
     });
     req.on("timeout", () => {
       req.destroy();
-      resolve({ status: null, elapsed: 10000, error: "Request timeout (10s)" });
+      resolve({ status: null, elapsed: 600000, error: "Request timeout (10m)" });
     });
     req.on("error", (err) => {
       resolve({ status: null, elapsed: Date.now() - start, error: err.message });
@@ -138,6 +146,7 @@ async function main() {
     } else if (result.status >= 200 && result.status < 300) {
       passed++;
       logInfo(`${result.status}  | ${label} | ${result.elapsed}ms`);
+      saveResponseData(label, url, result.body);
     } else {
       failed++;
       // Trim body to first 300 chars for readability
@@ -153,12 +162,14 @@ async function main() {
   logStream.write(summary + "\n");
 
   logStream.end();
+  dataStream.end();
 
   if (failed > 0) {
     console.log(`\n⚠️  Ошибки записаны в файл: ${LOG_FILE}`);
   } else {
     console.log(`\n🎉 Все ${passed} endpoint-ов прошли успешно!`);
   }
+  console.log(`\n📄 Данные ответов записаны в файл: ${DATA_FILE}`);
 }
 
 main().catch((err) => {

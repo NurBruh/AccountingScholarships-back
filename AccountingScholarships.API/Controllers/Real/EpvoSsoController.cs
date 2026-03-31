@@ -363,6 +363,26 @@ public class EpvoSsoController : ControllerBase
         return Ok(result);
     }
 
+    // ─── Students Temp ────────────────────────────────────────────
+
+    [HttpGet("students-temp")]
+    public async Task<IActionResult> GetStudentTemps(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetAllStudentTempsQuery(), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
+    [HttpGet("students-temp/{id:int}")]
+    public async Task<IActionResult> GetStudentTemp(int id, CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetStudentTempByIdQuery(id), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
     // ─── Stored Procedures ───────────────────────────────────────
 
     /// <summary>
