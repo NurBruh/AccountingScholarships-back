@@ -1,4 +1,4 @@
-﻿using AccountingScholarships.API.Contracts.Requests;
+using AccountingScholarships.API.Contracts.Requests;
 
 using AccountingScholarships.Domain.DTO;
 using AccountingScholarships.Application.Commands.Epvo;
@@ -10,13 +10,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace AccountingScholarships.API.Controllers;
+namespace AccountingScholarships.API.Controllers.Testing;
 
 /// <summary>
 /// Контроллер для синхронизации данных студентов между ССО и ЕПВО.
 /// </summary>
 [ApiController]
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 [Authorize]
 public class EpvoController : ControllerBase

@@ -3,12 +3,13 @@ using AccountingScholarships.Domain.Interfaces;
 using AccountingScholarships.Domain.Common;
 using AccountingScholarships.Infrastructure.Data;
 using AccountingScholarships.Infrastructure.Repositories;
-using AccountingScholarships.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using AccountingScholarships.Infrastructure.Services;
+
 //using Microsoft.EntityFrameworkCore.SqlServer;
 
 namespace AccountingScholarships.Infrastructure;
@@ -51,8 +52,13 @@ public static class ServiceCollectionExtensions
 
         services.AddDbContext<SsoDbContext>(options =>
             options.UseSqlServer(conmssql));
+        //services.AddDbContext<EpvoSsoDbContext>(options =>
+        //    options.UseSqlServer(conepvomssql));
         services.AddDbContext<EpvoSsoDbContext>(options =>
-            options.UseSqlServer(conepvomssql));
+            options.UseSqlServer(conepvomssql, sqlOptions =>
+            {
+                sqlOptions.CommandTimeout(300); // 5 минут для тяжёлых операций
+            }));
 
 
 
@@ -75,6 +81,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IChangeHistoryRepository, ChangeHistoryRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IEpvoSsoRepository<>), typeof(EpvoSsoRepository<>));
+        services.AddScoped<ISsoStudentDetailsRepository, SsoStudentDetailsRepository>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
 
         var jwtSettings = configuration.GetSection("JwtSettings");
@@ -103,6 +110,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped(typeof(ISsoRepository<>), typeof(SsoRepository<>));
 
         services.AddScoped<IEpvoApiClient, EpvoApiClient>();
+        services.AddScoped<IStoredProcedureRepository, StoredProcedureRepository>();
 
         return services;
     }

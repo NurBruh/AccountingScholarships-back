@@ -1,8 +1,10 @@
+using AccountingScholarships.Application.Commands.StoredProcedures;
 using AccountingScholarships.Application.Queries.EpvoSso;
+using AccountingScholarships.Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AccountingScholarships.API.Controllers;
+namespace AccountingScholarships.API.Controllers.Real;
 
 /// <summary>
 /// Данные из EPVO SSO базы (MSSQL). Только чтение.
@@ -12,10 +14,12 @@ namespace AccountingScholarships.API.Controllers;
 public class EpvoSsoController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IStoredProcedureRepository _spRepo;
 
-    public EpvoSsoController(IMediator mediator)
+    public EpvoSsoController(IMediator mediator, IStoredProcedureRepository spRepo)
     {
         _mediator = mediator;
+        _spRepo = spRepo;
     }
 
     // ─── Professions ──────────────────────────────────────────────
@@ -358,5 +362,54 @@ public class EpvoSsoController : ControllerBase
             return NotFound();
         return Ok(result);
     }
-}
 
+    // ─── Students Temp ────────────────────────────────────────────
+
+    [HttpGet("students-temp")]
+    public async Task<IActionResult> GetStudentTemps(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetAllStudentTempsQuery(), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
+    [HttpGet("students-temp/{id:int}")]
+    public async Task<IActionResult> GetStudentTemp(int id, CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetStudentTempByIdQuery(id), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
+    // ─── Stored Procedures ───────────────────────────────────────
+
+    /// <summary>
+    /// Выполняет хранимую процедуру [dbo].[Reload_STUDENT].
+    /// Возвращает код возврата и количество затронутых строк.
+    /// </summary>
+    [HttpPost("reload-student")]
+    public async Task<IActionResult> ReloadStudent(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new ExecuteReloadStudentCommand(), ct);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Выполняет [dbo].[Reload_STUDENT] и возвращает SELECT-результат (как в SSMS).
+    /// Только чтение — ничего не записывает.
+    /// </summary>
+    [HttpGet("reload-student-preview")]
+    public async Task<IActionResult> ReloadStudentPreview(CancellationToken ct)
+    {
+        var students = await _spRepo.ReadReloadStudentAsync(ct);
+        return Ok(new
+        {
+            Count = students.Count,
+            Students = students
+        });
+    }
+
+    
+}

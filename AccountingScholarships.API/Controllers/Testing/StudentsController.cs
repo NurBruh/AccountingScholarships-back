@@ -9,13 +9,13 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AccountingScholarships.API.Controllers;
+namespace AccountingScholarships.API.Controllers.Testing;
 
 /// <summary>
 /// Контроллер для работы со студентами в локальной базе данных (ССО).
 /// </summary>
 [ApiController]
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 [Authorize]
 public class StudentsController : ControllerBase
@@ -87,7 +87,7 @@ public class StudentsController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateStudentRequest dto, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new CreateStudentCommand(dto), cancellationToken);
-        return CreatedAtAction(nameof(GetById), new { id = result.Id, version = "1.0" }, result);
+        return CreatedAtAction(nameof(GetById), new { id = result.Id, version = "2.0" }, result);
     }
 
     /// <summary>

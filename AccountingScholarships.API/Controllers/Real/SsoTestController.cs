@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using AccountingScholarships.Application.Queries.University.Students;
 
-namespace AccountingScholarships.API.Controllers;
+namespace AccountingScholarships.API.Controllers.Real;
 
 /// <summary>
 /// Тестовый контроллер для проверки данных из SSO базы (Edu_Students + Edu_Users + справочники).
@@ -54,7 +54,8 @@ public class SsoTestController : ControllerBase
         if (student is null)
             return NotFound(new { message = $"Студент с ИИН={iin} не найден в SSO БД." });
 
-        return Ok(student);
+        var dto = await _repo.GetAsDtoAsync(student.StudentID, cancellationToken);
+        return Ok(dto);
     }
 
     /// <summary>

@@ -30,6 +30,7 @@ namespace AccountingScholarships.Infrastructure.Data
         public DbSet<Nationalities> Nationalities => Set<Nationalities>();
         public DbSet<StudyLanguages> StudyLanguages => Set<StudyLanguages>();
         public DbSet<Student_Sso> Student_Sso => Set<Student_Sso>();
+        public DbSet<Student_Temp> Student_Temp => Set<Student_Temp>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -148,6 +149,12 @@ namespace AccountingScholarships.Infrastructure.Data
             {
                 e.HasKey(x => x.StudentId);
                 e.ToTable("STUDENT_SSO");
+            });
+
+            modelBuilder.Entity<Student_Temp>(e =>
+            {
+                e.HasKey(x => x.StudentId);
+                e.ToTable("STUDENT_TEMP");
             });
         }
     }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,27 +6,27 @@ using System.Threading.Tasks;
 
 namespace AccountingScholarships.Domain.Entities.Real.epvosso
 {
-    public class Student
+    public class Student_Temp
     {
-        public int? UniversityId { get; set; } //моделька University
-        public int StudentId { get; set; } 
+        public int? UniversityId { get; set; }
+        public int StudentId { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Patronymic { get; set; }
         public DateOnly? BirthDate { get; set; }
         public DateOnly? StartDate { get; set; }
         public string? Address { get; set; }
-        public int? NationId { get; set; }
-        public int? StudyFormId { get; set; } //Study_forms моделька
-        public int? StudyCalendarId { get; set; } //Studycalendar моделька
-        public int? PaymentFormId { get; set; } //2 - Государственный грант, 1 - Платник, если тип гранта -6, то 1 - Трехсторонняя форма обучения
-        public int? StudyLanguageId { get; set; } //StudyLanguages моделька
+        public int? NationId { get; set; } //center_nationalities or nationalities
+        public int? StudyFormId { get; set; }
+        public int? StudyCalendarId { get; set; }
+        public int? PaymentFormId { get; set; } // 1 платник 2 грантник
+        public int? StudyLanguageId { get; set; }
         public byte[]? Photo { get; set; }
-        public int? ProfessionId { get; set; } //Profession моделька
+        public int? ProfessionId { get; set; }
         public int? CourseNumber { get; set; }
         public string? TranscriptNumber { get; set; }
         public string? TranscriptSeries { get; set; }
-        public int? IsMarried { get; set; } //1 женат, 2 холост //Maritalstates моделька
+        public int? IsMarried { get; set; }
         public string? IcNumber { get; set; }
         public DateOnly? IcDate { get; set; }
         public string? Education { get; set; }
@@ -36,13 +36,13 @@ namespace AccountingScholarships.Domain.Entities.Real.epvosso
         public string? Certificate { get; set; }
         public string? GrantNumber { get; set; }
         public decimal? Gpa { get; set; }
-        public float? CurrentCreditsSum { get; set; } 
-        public int? Residence { get; set; } //место окончания школы 1-город, 2-село
-        public int? SitizenshipId { get; set; } 
+        public float? CurrentCreditsSum { get; set; }
+        public int? Residence { get; set; }
+        public int? SitizenshipId { get; set; }
         public int? DormState { get; set; }
         public bool? IsInRetire { get; set; }
         public int? FromId { get; set; }
-        public bool? Local { get; set; } //1 - местный, 0 - иногородний
+        public bool? Local { get; set; }
         public string? City { get; set; }
         public int? ContractId { get; set; }
         public int? SpecializationId { get; set; }
@@ -64,14 +64,14 @@ namespace AccountingScholarships.Domain.Entities.Real.epvosso
         public string? SeriyaDiploma { get; set; }
         public string? SchoolName { get; set; }
         public int? FacultyId { get; set; }
-        public int? SexId { get; set; } //2 мужской, 1 женский
+        public int? SexId { get; set; }
         public string? Mail { get; set; }
         public string? Phone { get; set; }
         public int? SumPoints { get; set; }
         public int? SumPointsCreative { get; set; }
         public DateOnly? EnrollOrderDate { get; set; }
         public string? MobilePhone { get; set; }
-        public int? GrantType { get; set; } //-4 Государственный грант, -7 Из собственных средств, -6 Трехсторонняя форма обучения
+        public int? GrantType { get; set; }
         public int? AcademicMobility { get; set; }
         public bool? IncorrectIin { get; set; }
         public int? BirthPlaceCatoId { get; set; }

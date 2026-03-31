@@ -3,14 +3,14 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AccountingScholarships.API.Controllers;
+namespace AccountingScholarships.API.Controllers.Testing;
 
 /// <summary>
 /// Управление ролями пользователей.
 /// Роли: manager_or (Менеджер ОР), department_head (Заведующий кафедры), institute_director (Директор института).
 /// </summary>
 [ApiController]
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 public class RolesController : ControllerBase
 {

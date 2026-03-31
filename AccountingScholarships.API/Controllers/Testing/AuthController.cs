@@ -1,4 +1,4 @@
-﻿using AccountingScholarships.API.Contracts.Requests;
+using AccountingScholarships.API.Contracts.Requests;
 
 using AccountingScholarships.Domain.DTO;
 using AccountingScholarships.Application.Commands.Auth;
@@ -6,13 +6,13 @@ using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AccountingScholarships.API.Controllers;
+namespace AccountingScholarships.API.Controllers.Testing;
 
 /// <summary>
 /// Контроллер для управления аутентификацией и регистрацией пользователей.
 /// </summary>
 [ApiController]
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 public class AuthController : ControllerBase
 {
