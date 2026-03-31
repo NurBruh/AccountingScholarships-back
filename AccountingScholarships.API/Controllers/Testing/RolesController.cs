@@ -10,7 +10,7 @@ namespace AccountingScholarships.API.Controllers.Testing;
 /// Роли: manager_or (Менеджер ОР), department_head (Заведующий кафедры), institute_director (Директор института).
 /// </summary>
 [ApiController]
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 public class RolesController : ControllerBase
 {

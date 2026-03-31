@@ -51,6 +51,13 @@ builder.Services.AddSwaggerGen(options =>
         Description = "API для учета стипендий и грантов студентов"
     });
 
+    options.SwaggerDoc("v2", new OpenApiInfo
+    {
+        Title = "AccountingScholarships API (Testing)",
+        Version = "v2",
+        Description = "Тестовые эндпоинты"
+    });
+
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -97,6 +104,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "AccountingScholarships API v1");
+        options.SwaggerEndpoint("/swagger/v2/swagger.json", "AccountingScholarships API v2 (Testing)");
     });
 }
 

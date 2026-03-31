@@ -16,7 +16,7 @@ namespace AccountingScholarships.API.Controllers.Testing;
 /// Контроллер для синхронизации данных студентов между ССО и ЕПВО.
 /// </summary>
 [ApiController]
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 [Authorize]
 public class EpvoController : ControllerBase

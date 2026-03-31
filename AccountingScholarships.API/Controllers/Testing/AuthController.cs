@@ -12,7 +12,7 @@ namespace AccountingScholarships.API.Controllers.Testing;
 /// Контроллер для управления аутентификацией и регистрацией пользователей.
 /// </summary>
 [ApiController]
-[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
 public class AuthController : ControllerBase
 {
