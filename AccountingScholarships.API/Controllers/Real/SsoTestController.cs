@@ -54,7 +54,8 @@ public class SsoTestController : ControllerBase
         if (student is null)
             return NotFound(new { message = $"Студент с ИИН={iin} не найден в SSO БД." });
 
-        return Ok(student);
+        var dto = await _repo.GetAsDtoAsync(student.StudentID, cancellationToken);
+        return Ok(dto);
     }
 
     /// <summary>

@@ -56,6 +56,9 @@ public class GlobalExceptionHandlerMiddleware
 
     private static async Task HandleExceptionAsync(HttpContext context, Exception exception, HttpStatusCode statusCode)
     {
+        if (context.Response.HasStarted)
+            return;
+
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)statusCode;
 
@@ -75,4 +78,4 @@ public class GlobalExceptionHandlerMiddleware
 
         await context.Response.WriteAsync(json);
     }
-}
+} 
