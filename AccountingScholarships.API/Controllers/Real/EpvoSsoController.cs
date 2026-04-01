@@ -411,5 +411,20 @@ public class EpvoSsoController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Выполняет [dbo].[Reload_STUDENT] и сохраняет результат в STUDENT_TEMP.
+    /// STUDENT_TEMP очищается перед вставкой.
+    /// </summary>
+    [HttpPost("save-to-temp")]
+    public async Task<IActionResult> SaveToTemp(CancellationToken ct)
+    {
+        var count = await _spRepo.SaveReloadStudentToTempAsync(ct);
+        return Ok(new
+        {
+            Message = $"STUDENT_TEMP обновлён. Загружено записей: {count}",
+            Count = count
+        });
+    }
+
     
 }

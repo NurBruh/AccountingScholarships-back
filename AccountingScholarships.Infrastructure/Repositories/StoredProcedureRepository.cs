@@ -95,4 +95,156 @@ public class StoredProcedureRepository : IStoredProcedureRepository
 
         return results;
     }
+
+    public async Task<int> SaveReloadStudentToTempAsync(CancellationToken ct = default)
+    {
+        // 1. Читаем результат SP
+        var rows = await ReadReloadStudentAsync(ct);
+
+        // 2. Маппим в сущности Student_Temp
+        var entities = rows.Select(MapRowToStudentTemp).ToList();
+
+        // 3. Очищаем STUDENT_TEMP
+        await _context.Database.ExecuteSqlRawAsync("TRUNCATE TABLE [dbo].[STUDENT_TEMP]", ct);
+
+        // 4. Вставляем записи
+        await _context.Student_Temp.AddRangeAsync(entities, ct);
+        await _context.SaveChangesAsync(ct);
+
+        return entities.Count;
+    }
+
+    private static Student_Temp MapRowToStudentTemp(Dictionary<string, object?> row)
+    {
+        return new Student_Temp
+        {
+            UniversityId          = GetInt(row, "universityId"),
+            StudentId             = GetInt(row, "studentId") ?? 0,
+            FirstName             = GetStr(row, "firstname"),
+            LastName              = GetStr(row, "lastname"),
+            Patronymic            = GetStr(row, "patronymic"),
+            BirthDate             = GetDate(row, "birthDate"),
+            StartDate             = GetDate(row, "startDate"),
+            Address               = GetStr(row, "address"),
+            NationId              = GetInt(row, "nationid"),
+            StudyFormId           = GetInt(row, "studyformid"),
+            PaymentFormId         = GetInt(row, "paymentformid"),
+            StudyLanguageId       = GetInt(row, "studylanguageid"),
+            Photo                 = null,
+            ProfessionId          = GetInt(row, "professionid"),
+            CourseNumber          = GetInt(row, "coursenumber"),
+            TranscriptNumber      = GetStr(row, "transcriptNumber"),
+            TranscriptSeries      = GetStr(row, "transcriptSeries"),
+            IsMarried             = GetInt(row, "ismarried"),
+            IcNumber              = GetStr(row, "icnumber"),
+            IcDate                = GetDate(row, "icDate"),
+            Education             = GetStr(row, "education"),
+            HasExcellent          = GetBool(row, "hasexcellent"),
+            StartOrder            = GetStr(row, "startorder"),
+            IsStudent             = GetInt(row, "isstudent"),
+            Certificate           = GetStr(row, "certificate"),
+            GrantNumber           = GetStr(row, "grantnumber"),
+            Gpa                   = GetDecimal(row, "gpa"),
+            CurrentCreditsSum     = GetFloat(row, "currentCreditsSum"),
+            Residence             = GetInt(row, "residence"),
+            SitizenshipId         = GetInt(row, "sitizenshipid"),
+            DormState             = GetInt(row, "dormState"),
+            IsInRetire            = GetBool(row, "isinretire"),
+            FromId                = GetInt(row, "fromid"),
+            Local                 = GetBool(row, "local"),
+            City                  = GetStr(row, "city"),
+            ContractId            = GetInt(row, "contractid"),
+            SpecializationId      = GetInt(row, "specializationid"),
+            IinPlt                = GetStr(row, "iinplt"),
+            AltynBelgi            = GetBool(row, "altynBelgi"),
+            DataVydachiAttestata  = GetDate(row, "datavydachiattestata"),
+            DataVydachiDiploma    = GetDate(row, "datavydachidiploma"),
+            DateDocEducation      = GetDate(row, "dateDocEducation"),
+            EndCollege            = GetBool(row, "endCollege"),
+            EndHighSchool         = GetBool(row, "endHighSchool"),
+            EndSchool             = GetBool(row, "endSchool"),
+            IcSeries              = GetStr(row, "icseries"),
+            IcType                = GetInt(row, "ictype"),
+            LivingAddress         = GetStr(row, "livingAddress"),
+            NomerAttestata        = GetStr(row, "nomerattestata"),
+            OtherBirthPlace       = GetStr(row, "otherBirthPlace"),
+            SeriesNumberDocEducation = GetStr(row, "seriesNumberDocEducation"),
+            SeriyaAttestata       = GetStr(row, "seriyaattestata"),
+            SeriyaDiploma         = GetStr(row, "seriyaDiploma"),
+            SchoolName            = GetStr(row, "schoolName"),
+            FacultyId             = GetInt(row, "facultyId"),
+            SexId                 = GetInt(row, "sexid"),
+            Mail                  = GetStr(row, "mail"),
+            Phone                 = GetStr(row, "phone"),
+            SumPoints             = GetInt(row, "sumPoints"),
+            SumPointsCreative     = GetInt(row, "sumPointsCreative"),
+            EnrollOrderDate       = GetDate(row, "enrollOrderDate"),
+            MobilePhone           = GetStr(row, "mobilePhone"),
+            GrantType             = GetInt(row, "grant_type"),
+            AcademicMobility      = GetInt(row, "academicMobility"),
+            IncorrectIin          = GetBool(row, "incorrectIin"),
+            BirthPlaceCatoId      = GetInt(row, "birthPlaceCatoId"),
+            LivingPlaceCatoId     = GetInt(row, "livingPlaceCatoId"),
+            RegistrationPlaceCatoId = GetInt(row, "registrationPlaceCatoId"),
+            NaselennyiPunktAttestataCatoId = GetInt(row, "naselennyiPunktAttestataCatoId"),
+            FundingId             = GetInt(row, "fundingId"),
+            TypeCode              = GetStr(row, "typeCode"),
+        };
+    }
+
+    private static int? GetInt(Dictionary<string, object?> row, string key)
+    {
+        var val = GetRaw(row, key);
+        if (val == null) return null;
+        try { return Convert.ToInt32(val); } catch { return null; }
+    }
+
+    private static string? GetStr(Dictionary<string, object?> row, string key)
+    {
+        var val = GetRaw(row, key);
+        return val?.ToString();
+    }
+
+    private static decimal? GetDecimal(Dictionary<string, object?> row, string key)
+    {
+        var val = GetRaw(row, key);
+        if (val == null) return null;
+        try { return Convert.ToDecimal(val); } catch { return null; }
+    }
+
+    private static float? GetFloat(Dictionary<string, object?> row, string key)
+    {
+        var val = GetRaw(row, key);
+        if (val == null) return null;
+        try { return Convert.ToSingle(val); } catch { return null; }
+    }
+
+    private static bool? GetBool(Dictionary<string, object?> row, string key)
+    {
+        var val = GetRaw(row, key);
+        if (val == null) return null;
+        if (val is bool b) return b;
+        if (val is int i) return i != 0;
+        if (val is byte by) return by != 0;
+        try { return Convert.ToBoolean(val); } catch { return null; }
+    }
+
+    private static DateOnly? GetDate(Dictionary<string, object?> row, string key)
+    {
+        var val = GetRaw(row, key);
+        if (val == null) return null;
+        if (val is DateOnly d) return d;
+        if (val is DateTime dt) return DateOnly.FromDateTime(dt);
+        if (DateTime.TryParse(val.ToString(), out var parsed)) return DateOnly.FromDateTime(parsed);
+        return null;
+    }
+
+    private static object? GetRaw(Dictionary<string, object?> row, string key)
+    {
+        var entry = row.FirstOrDefault(kv =>
+            string.Equals(kv.Key, key, StringComparison.OrdinalIgnoreCase));
+        var val = entry.Value;
+        if (val == null || val is DBNull) return null;
+        return val;
+    }
 }
