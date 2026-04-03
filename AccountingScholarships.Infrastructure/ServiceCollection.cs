@@ -57,7 +57,7 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<EpvoSsoDbContext>(options =>
             options.UseSqlServer(conepvomssql, sqlOptions =>
             {
-                sqlOptions.CommandTimeout(300); // 5 минут для тяжёлых операций
+                sqlOptions.CommandTimeout(300); // 5 пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             }));
 
 
@@ -108,6 +108,7 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IEduStudentRepository, EduStudentRepository>();
         services.AddScoped(typeof(ISsoRepository<>), typeof(SsoRepository<>));
+        services.AddScoped<IComparisonRepository, ComparisonRepository>();
 
         services.AddScoped<IEpvoApiClient, EpvoApiClient>();
         services.AddScoped<IStoredProcedureRepository, StoredProcedureRepository>();

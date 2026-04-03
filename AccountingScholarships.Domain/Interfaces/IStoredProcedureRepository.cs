@@ -23,4 +23,11 @@ public interface IStoredProcedureRepository
     /// Перед вставкой очищает STUDENT_TEMP. Возвращает количество вставленных записей.
     /// </summary>
     Task<int> SaveReloadStudentToTempAsync(CancellationToken ct = default);
+
+    /// <summary>
+    /// Читает записи из STUDENT_TEMP, симулирует отправку в ЕПВО,
+    /// записывает результат каждой попытки в STUDENT_SYNC_LOG.
+    /// STUDENT_SSO не затрагивается.
+    /// </summary>
+    Task<SendTempResult> SendTempToEpvoAsync(CancellationToken ct = default);
 }

@@ -4,6 +4,7 @@ using AccountingScholarships.Domain.Interfaces;
 using AccountingScholarships.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace AccountingScholarships.Infrastructure.Repositories;
 
@@ -112,6 +113,70 @@ public class StoredProcedureRepository : IStoredProcedureRepository
         await _context.SaveChangesAsync(ct);
 
         return entities.Count;
+    }
+
+    public async Task<SendTempResult> SendTempToEpvoAsync(CancellationToken ct = default)
+    {
+        // 1. Читаем все записи из STUDENT_TEMP
+        var students = await _context.Student_Temp
+            .AsNoTracking()
+            .ToListAsync(ct);
+
+        int success = 0;
+        int errors = 0;
+        var logs = new List<StudentSyncLog>();
+
+        var jsonOptions = new JsonSerializerOptions
+        {
+            WriteIndented = false,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
+        // 2. Для каждого студента симулируем отправку и пишем лог
+        //    TODO: заменить блок try/catch на реальный HttpClient к ЕПВО API
+        foreach (var student in students)
+        {
+            var log = new StudentSyncLog
+            {
+                StudentId    = student.StudentId,
+                IinPlt       = student.IinPlt,
+                SentAt       = DateTime.UtcNow,
+                EpvoEndpoint = "/students/save",  // будущий эндпоинт ЕПВО
+                RequestBody  = JsonSerializer.Serialize(student, jsonOptions)
+            };
+
+            try
+            {
+                // ─── ЗАГЛУШКА: симулируем успешную отправку ─────────────
+                // Когда будет реальный ЕПВО API — убрать эту секцию и вызвать HttpClient
+                await Task.CompletedTask;
+                log.Status       = "Success";
+                log.ResponseBody = "{\"result\":\"stub_ok\"}";
+                // ────────────────────────────────────────────────────────
+
+                success++;
+            }
+            catch (Exception ex)
+            {
+                log.Status       = "Error";
+                log.ErrorMessage = ex.Message;
+                errors++;
+            }
+
+            logs.Add(log);
+        }
+
+        // 3. Сохраняем все логи одним батчем — STUDENT_SSO не трогаем
+        await _context.StudentSyncLogs.AddRangeAsync(logs, ct);
+        await _context.SaveChangesAsync(ct);
+
+        return new SendTempResult
+        {
+            Total   = students.Count,
+            Success = success,
+            Errors  = errors,
+            Message = $"Обработано: {students.Count}. Успешно: {success}. Ошибок: {errors}."
+        };
     }
 
     private static Student_Temp MapRowToStudentTemp(Dictionary<string, object?> row)

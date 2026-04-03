@@ -46,9 +46,9 @@ public class SsoStudentDetailsRepository : ISsoStudentDetailsRepository
             FROM STUDENT_SSO ss
             JOIN STUDY_FORMS           sf  ON sf.id          = ss.studyFormId
             JOIN STUDYLANGUAGES         sl  ON sl.id          = ss.studyLanguageId
-            JOIN PROFESSION_EPVO_2025   pe  ON pe.professionId = ss.professionid
+            JOIN PROFESSION   pe  ON pe.professionId = ss.professionid
             JOIN FACULTIES              fac ON fac.facultyId  = ss.facultyId
-            JOIN SPECIALITIES_EPVO_2025 se  ON se.id          = ss.specializationId
+            JOIN SPECIALITIES se  ON se.id          = ss.specializationId
             JOIN STUDENT_INFO           si  ON si.studentId   = ss.studentId
             """;
 
