@@ -6,6 +6,12 @@ public class SsoEpvoComparisonDto
     public int TotalDifferences { get; set; }
     public int OnlyInSso { get; set; }
     public int OnlyInEpvo { get; set; }
+    public int TotalItems { get; set; }
+    public int TotalOk { get; set; }
+    public int FilteredCount { get; set; }
+    public int Page { get; set; }
+    public int PageSize { get; set; }
+    public int TotalPages { get; set; }
 }
 
 public class SsoEpvoComparisonItemDto

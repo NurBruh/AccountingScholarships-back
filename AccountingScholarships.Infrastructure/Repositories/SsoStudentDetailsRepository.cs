@@ -20,7 +20,7 @@ public class SsoStudentDetailsRepository : ISsoStudentDetailsRepository
             SELECT DISTINCT
                 ss.universityId,
                 ss.studentId,
-                CONCAT(ss.firstName, ' ', ss.lastName, ' ', ss.patronymic) AS FullName,
+                CONCAT(ss.lastName, ' ', ss.firstName, ' ', ss.patronymic) AS FullName,
                 ss.iinPlt,
                 ss.courseNumber,
                 sf.nameRu   AS StudyForm,
@@ -43,13 +43,13 @@ public class SsoStudentDetailsRepository : ISsoStudentDetailsRepository
                     WHEN ss.grantType = -6 THEN N'Трехсторонняя форма обучения'
                 END AS GrantType,
                 si.iic
-            FROM STUDENT_SSO ss
-            JOIN STUDY_FORMS           sf  ON sf.id          = ss.studyFormId
-            JOIN STUDYLANGUAGES         sl  ON sl.id          = ss.studyLanguageId
-            JOIN PROFESSION   pe  ON pe.professionId = ss.professionid
-            JOIN FACULTIES              fac ON fac.facultyId  = ss.facultyId
-            JOIN SPECIALITIES se  ON se.id          = ss.specializationId
-            JOIN STUDENT_INFO           si  ON si.studentId   = ss.studentId
+            FROM STUDENT ss
+            JOIN STUDY_FORMS  sf  ON sf.id = ss.studyFormId
+            JOIN STUDYLANGUAGES  sl  ON sl.id = ss.studyLanguageId
+            JOIN PROFESSION pe ON pe.professionId = ss.professionid
+            JOIN FACULTIES fac ON fac.facultyId  = ss.facultyId
+            JOIN SPECIALITIES_EPVO se  ON se.id   = ss.specializationId
+            JOIN STUDENT_INFO  si  ON si.studentId   = ss.studentId
             """;
 
         return await _context.Database

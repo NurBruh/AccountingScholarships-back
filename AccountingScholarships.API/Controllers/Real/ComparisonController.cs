@@ -16,9 +16,20 @@ public class ComparisonController : ControllerBase
     }
 
     [HttpGet("students")]
-    public async Task<IActionResult> GetStudentComparison(CancellationToken ct)
+    public async Task<IActionResult> GetStudentComparison(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 50,
+        [FromQuery] string filter = "all",
+        [FromQuery] string? search = null,
+        CancellationToken ct = default)
     {
-        var result = await _mediator.Send(new GetStudentComparisonQuery(), ct);
+        var result = await _mediator.Send(new GetStudentComparisonQuery
+        {
+            Page = page,
+            PageSize = pageSize,
+            Filter = filter,
+            Search = search
+        }, ct);
         if (result is null)
             return NotFound();
         return Ok(result);

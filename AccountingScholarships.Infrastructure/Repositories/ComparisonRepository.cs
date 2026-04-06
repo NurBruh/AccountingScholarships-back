@@ -19,16 +19,13 @@ public class ComparisonRepository : IComparisonRepository
 
     public async Task<IReadOnlyList<StudentComparisonDto>> GetComparisonAsync(CancellationToken ct = default)
     {
-        // Параллельно загружаем данные из обоих источников
+        // Загружаем данные из SSO параллельно с EPVO,
+        // но запросы к _epvoContext выполняем последовательно (DbContext не потокобезопасен)
         var ssoTask = LoadSsoDataAsync(ct);
-        var epvoTask = LoadEpvoDataAsync(ct);
-        var studyFormsTask = LoadStudyFormsAsync(ct);
+        var epvoStudents = await LoadEpvoDataAsync(ct);
+        var studyForms = await LoadStudyFormsAsync(ct);
 
-        await Task.WhenAll(ssoTask, epvoTask, studyFormsTask);
-
-        var ssoStudents = ssoTask.Result;
-        var epvoStudents = epvoTask.Result;
-        var studyForms = studyFormsTask.Result;
+        var ssoStudents = await ssoTask;
 
         // Индексируем ЕПВО данные по IIN
         var epvoByIin = epvoStudents
@@ -162,7 +159,7 @@ public class ComparisonRepository : IComparisonRepository
             SELECT DISTINCT
                 ss.universityId,
                 ss.studentId,
-                CONCAT(ss.firstName, ' ', ss.lastName, ' ', ss.patronymic) AS FullName,
+                CONCAT(ss.lastName, ' ', ss.firstName, ' ', ss.patronymic) AS FullName,
                 ss.iinPlt,
                 ss.courseNumber,
                 sf.nameRu   AS StudyForm,
@@ -185,12 +182,12 @@ public class ComparisonRepository : IComparisonRepository
                     WHEN ss.grantType = -6 THEN N'Трехсторонняя форма обучения'
                 END AS GrantType,
                 si.iic
-            FROM STUDENT_SSO ss
+            FROM STUDENT ss
             JOIN STUDY_FORMS           sf  ON sf.id          = ss.studyFormId
             JOIN STUDYLANGUAGES        sl  ON sl.id          = ss.studyLanguageId
             JOIN PROFESSION            pe  ON pe.professionId = ss.professionid
             JOIN FACULTIES             fac ON fac.facultyId   = ss.facultyId
-            JOIN SPECIALITIES          se  ON se.id           = ss.specializationId
+            JOIN SPECIALITIES_EPVO          se  ON se.id           = ss.specializationId
             LEFT JOIN STUDENT_INFO     si  ON si.studentId    = ss.studentId
             """;
 

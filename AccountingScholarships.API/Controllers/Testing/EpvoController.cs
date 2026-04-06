@@ -125,9 +125,18 @@ public class EpvoController : ControllerBase
     /// <response code="200">Возвращает данные о расхождениях между ССО и ЕПВО.</response>
     /// <response code="401">Необходима авторизация.</response>
     [HttpGet("compare")]
-    public async Task<IActionResult> GetSsoEpvoComparison(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetSsoEpvoComparison(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 50,
+        [FromQuery] string filter = "all",
+        CancellationToken cancellationToken = default)
     {
-        var result = await _mediator.Send(new GetSsoEpvoComparisonQuery(), cancellationToken);
+        var result = await _mediator.Send(new GetSsoEpvoComparisonQuery
+        {
+            Page = page,
+            PageSize = pageSize,
+            Filter = filter
+        }, cancellationToken);
         return Ok(result);
     }
 

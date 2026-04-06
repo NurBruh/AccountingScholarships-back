@@ -29,3 +29,17 @@ public class StudentComparisonDto
     public bool HasDifference { get; set; }
     public List<string> DifferentFields { get; set; } = new();
 }
+
+public class StudentComparisonPagedDto
+{
+    public IList<StudentComparisonDto> Items { get; set; } = new List<StudentComparisonDto>();
+    public int TotalItems { get; set; }
+    public int WithDifferences { get; set; }
+    public int OnlyInSso { get; set; }
+    public int OnlyInEpvo { get; set; }
+    public int Matching { get; set; }
+    public int FilteredCount { get; set; }
+    public int Page { get; set; }
+    public int PageSize { get; set; }
+    public int TotalPages { get; set; }
+}

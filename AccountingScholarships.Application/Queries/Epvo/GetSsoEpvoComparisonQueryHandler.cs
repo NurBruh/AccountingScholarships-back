@@ -131,12 +131,51 @@ public class GetSsoEpvoComparisonQueryHandler : IRequestHandler<GetSsoEpvoCompar
             }
         }
 
+        // Считаем статистику по всем items
+        var totalItems = items.Count;
+        var countDiff = items.Count(i => i.HasDifferences);
+        var countSsoOnly = items.Count(i => i.OnlyInSso);
+        var countEpvoOnly = items.Count(i => i.OnlyInEpvo);
+        var countOk = items.Count(i => !i.HasDifferences && !i.OnlyInSso && !i.OnlyInEpvo);
+
+        // Фильтрация по типу
+        IEnumerable<SsoEpvoComparisonItemDto> filtered = request.Filter switch
+        {
+            "diff" => items.Where(i => i.HasDifferences),
+            "sso-only" => items.Where(i => i.OnlyInSso),
+            "epvo-only" => items.Where(i => i.OnlyInEpvo),
+            _ => items
+        };
+
+        // Сортировка по фамилии
+        var sorted = filtered
+            .OrderBy(i => (i.SsoData?.LastName ?? i.EpvoData?.LastName ?? "").Trim(),
+                     StringComparer.Create(new System.Globalization.CultureInfo("ru-RU"), ignoreCase: true))
+            .ToList();
+
+        var filteredCount = sorted.Count;
+        var page = Math.Max(1, request.Page);
+        var pageSize = Math.Clamp(request.PageSize, 1, 200);
+        var totalPages = Math.Max(1, (int)Math.Ceiling(filteredCount / (double)pageSize));
+        page = Math.Min(page, totalPages);
+
+        var pageItems = sorted
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
         return new SsoEpvoComparisonDto
         {
-            Items = items,
-            TotalDifferences = items.Count(i => i.HasDifferences || i.OnlyInSso || i.OnlyInEpvo),
-            OnlyInSso = items.Count(i => i.OnlyInSso),
-            OnlyInEpvo = items.Count(i => i.OnlyInEpvo)
+            Items = pageItems,
+            TotalItems = totalItems,
+            TotalDifferences = countDiff,
+            OnlyInSso = countSsoOnly,
+            OnlyInEpvo = countEpvoOnly,
+            TotalOk = countOk,
+            FilteredCount = filteredCount,
+            Page = page,
+            PageSize = pageSize,
+            TotalPages = totalPages
         };
     }
 
