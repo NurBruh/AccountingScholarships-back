@@ -31,6 +31,7 @@ namespace AccountingScholarships.Infrastructure.Data
         public DbSet<StudyLanguages> StudyLanguages => Set<StudyLanguages>();
         public DbSet<Student_Sso> Student_Sso => Set<Student_Sso>();
         public DbSet<Student_Temp> Student_Temp => Set<Student_Temp>();
+        public DbSet<StudentSyncLog> StudentSyncLogs => Set<StudentSyncLog>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -155,6 +156,17 @@ namespace AccountingScholarships.Infrastructure.Data
             {
                 e.HasKey(x => x.StudentId);
                 e.ToTable("STUDENT_TEMP");
+            });
+
+            modelBuilder.Entity<StudentSyncLog>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.Property(x => x.Id).ValueGeneratedOnAdd();
+                e.Property(x => x.Status).HasMaxLength(20);
+                e.Property(x => x.IinPlt).HasMaxLength(12);
+                e.Property(x => x.EpvoEndpoint).HasMaxLength(500);
+                e.Property(x => x.TriggeredBy).HasMaxLength(256);
+                e.ToTable("STUDENT_SYNC_LOG");
             });
         }
     }

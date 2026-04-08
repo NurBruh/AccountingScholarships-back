@@ -1,0 +1,37 @@
+using AccountingScholarships.Application.Queries.EpvoSso;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
+namespace AccountingScholarships.API.Controllers.Real;
+
+[ApiController]
+[Route("api/comparison")]
+public class ComparisonController : ControllerBase
+{
+    private readonly IMediator _mediator;
+
+    public ComparisonController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    [HttpGet("students")]
+    public async Task<IActionResult> GetStudentComparison(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 50,
+        [FromQuery] string filter = "all",
+        [FromQuery] string? search = null,
+        CancellationToken ct = default)
+    {
+        var result = await _mediator.Send(new GetStudentComparisonQuery
+        {
+            Page = page,
+            PageSize = pageSize,
+            Filter = filter,
+            Search = search
+        }, ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+}

@@ -1,8 +1,12 @@
 using AccountingScholarships.Application.Commands.StoredProcedures;
 using AccountingScholarships.Application.Queries.EpvoSso;
 using AccountingScholarships.Domain.Interfaces;
+using AccountingScholarships.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace AccountingScholarships.API.Controllers.Real;
 
@@ -15,11 +19,13 @@ public class EpvoSsoController : ControllerBase
 {
     private readonly IMediator _mediator;
     private readonly IStoredProcedureRepository _spRepo;
+    private readonly EpvoSsoDbContext _db;
 
-    public EpvoSsoController(IMediator mediator, IStoredProcedureRepository spRepo)
+    public EpvoSsoController(IMediator mediator, IStoredProcedureRepository spRepo, EpvoSsoDbContext db)
     {
         _mediator = mediator;
         _spRepo = spRepo;
+        _db = db;
     }
 
     // ─── Professions ──────────────────────────────────────────────
@@ -386,13 +392,14 @@ public class EpvoSsoController : ControllerBase
     // ─── Stored Procedures ───────────────────────────────────────
 
     /// <summary>
-    /// Выполняет хранимую процедуру [dbo].[Reload_STUDENT].
-    /// Возвращает код возврата и количество затронутых строк.
+    /// Предпросмотр синхронизации: выполняет [dbo].[Reload_STUDENT] (read-only),
+    /// проверяет дубликаты по iinPlt против STUDENT_SSO и STUDENT.
+    /// Возвращает список с флагом IsDuplicate и статистику.
     /// </summary>
-    [HttpPost("reload-student")]
-    public async Task<IActionResult> ReloadStudent(CancellationToken ct)
+    [HttpGet("sync-preview")]
+    public async Task<IActionResult> GetSyncPreview(CancellationToken ct)
     {
-        var result = await _mediator.Send(new ExecuteReloadStudentCommand(), ct);
+        var result = await _spRepo.GetSyncPreviewAsync(ct);
         return Ok(result);
     }
 
@@ -409,6 +416,76 @@ public class EpvoSsoController : ControllerBase
             Count = students.Count,
             Students = students
         });
+    }
+
+    /// <summary>
+    /// Выполняет [dbo].[Reload_STUDENT] и сохраняет результат в STUDENT_TEMP.
+    /// STUDENT_TEMP очищается перед вставкой.
+    /// </summary>
+    [HttpPost("save-to-temp")]
+    public async Task<IActionResult> SaveToTemp(CancellationToken ct)
+    {
+        var count = await _spRepo.SaveReloadStudentToTempAsync(ct);
+        return Ok(new
+        {
+            Message = $"STUDENT_TEMP обновлён. Загружено записей: {count}",
+            Count = count
+        });
+    }
+
+    /// <summary>
+    /// Читает STUDENT_TEMP, симулирует отправку в ЕПВО,
+    /// каждую попытку пишет в STUDENT_SYNC_LOG (Success / Error).
+    /// STUDENT_SSO не затрагивается. Фиксирует кто запустил.
+    /// </summary>
+    [HttpPost("send-temp-to-epvo")]
+    public async Task<IActionResult> SendTempToEpvo(CancellationToken ct)
+    {
+        var triggeredBy = User.FindFirst(JwtRegisteredClaimNames.UniqueName)?.Value
+                       ?? User.FindFirst(ClaimTypes.Name)?.Value
+                       ?? "Неизвестно";
+        var result = await _spRepo.SendTempToEpvoAsync(triggeredBy, ct);
+        return Ok(result);
+    }
+
+    // ─── Sync Logs ────────────────────────────────────────────────
+
+    /// <summary>
+    /// Возвращает историю отправок в ЕПВО.
+    /// Опционально фильтрует по статусу: Pending / Success / Error
+    /// </summary>
+    [HttpGet("sync-logs")]
+    public async Task<IActionResult> GetSyncLogs([FromQuery] string? status, [FromQuery] int page = 1, [FromQuery] int pageSize = 50, CancellationToken ct = default)
+    {
+        var query = _db.StudentSyncLogs.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(status))
+            query = query.Where(x => x.Status == status);
+
+        var total = await query.CountAsync(ct);
+
+        var logs = await query
+            .OrderByDescending(x => x.SentAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(ct);
+
+        return Ok(new { Total = total, Page = page, PageSize = pageSize, Logs = logs });
+    }
+
+    /// <summary>
+    /// Логи по конкретному студенту (studentId или iin)
+    /// </summary>
+    [HttpGet("sync-logs/student/{studentId:int}")]
+    public async Task<IActionResult> GetSyncLogsByStudent(int studentId, CancellationToken ct)
+    {
+        var logs = await _db.StudentSyncLogs
+            .AsNoTracking()
+            .Where(x => x.StudentId == studentId)
+            .OrderByDescending(x => x.SentAt)
+            .ToListAsync(ct);
+
+        return Ok(logs);
     }
 
     
