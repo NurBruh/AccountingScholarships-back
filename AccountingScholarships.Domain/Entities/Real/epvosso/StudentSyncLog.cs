@@ -31,5 +31,8 @@ namespace AccountingScholarships.Domain.Entities.Real.epvosso
 
         /// <summary>Эндпоинт ЕПВО куда отправляли</summary>
         public string? EpvoEndpoint { get; set; }
+
+        /// <summary>Кто запустил синхронизацию (имя из JWT-токена)</summary>
+        public string? TriggeredBy { get; set; }
     }
 }

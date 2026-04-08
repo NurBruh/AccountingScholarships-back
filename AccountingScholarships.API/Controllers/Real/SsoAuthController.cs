@@ -289,7 +289,7 @@ public class SsoAuthController : ControllerBase
                         WHEN ss.grantType = -6 THEN N'Трехсторонняя форма обучения'
                     END AS GrantType,
                     si.iic
-                FROM STUDENT ss
+                FROM STUDENT_SSO ss
                 JOIN STUDY_FORMS  sf  ON sf.id = ss.studyFormId
                 JOIN STUDYLANGUAGES  sl  ON sl.id = ss.studyLanguageId
                 JOIN PROFESSION pe ON pe.professionId = ss.professionid

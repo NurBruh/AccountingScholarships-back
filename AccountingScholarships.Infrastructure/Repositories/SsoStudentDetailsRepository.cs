@@ -16,44 +16,37 @@ public class SsoStudentDetailsRepository : ISsoStudentDetailsRepository
 
     public async Task<IReadOnlyList<StudentSsoDetailDto>> GetAllAsync(CancellationToken ct = default)
     {
-        const string sql = """
-            SELECT DISTINCT
-                ss.universityId,
-                ss.studentId,
-                CONCAT(ss.lastName, ' ', ss.firstName, ' ', ss.patronymic) AS FullName,
-                ss.iinPlt,
-                ss.courseNumber,
-                sf.nameRu   AS StudyForm,
-                CASE
-                    WHEN ss.paymentFormId = 1 THEN N'Платник'
-                    WHEN ss.paymentFormId = 2 THEN N'Стипендия'
-                END AS PaymentType,
-                ss.gpa,
-                sl.nameRu   AS StudyLanguage,
-                pe.professionNameRu AS ProfessionName,
-                se.nameRu   AS Specialization,
-                fac.facultyNameRu   AS FacultyName,
-                CASE
-                    WHEN ss.sexId = 2 THEN N'Мужского пола'
-                    WHEN ss.sexId = 1 THEN N'Женского пола'
-                END AS Sex,
-                CASE
-                    WHEN ss.grantType = -4 THEN N'Государственный грант'
-                    WHEN ss.grantType = -7 THEN N'Из собственных средств'
-                    WHEN ss.grantType = -6 THEN N'Трехсторонняя форма обучения'
-                END AS GrantType,
-                si.iic
-            FROM STUDENT ss
-            JOIN STUDY_FORMS  sf  ON sf.id = ss.studyFormId
-            JOIN STUDYLANGUAGES  sl  ON sl.id = ss.studyLanguageId
-            JOIN PROFESSION pe ON pe.professionId = ss.professionid
-            JOIN FACULTIES fac ON fac.facultyId  = ss.facultyId
-            JOIN SPECIALITIES_EPVO se  ON se.id   = ss.specializationId
-            JOIN STUDENT_INFO  si  ON si.studentId   = ss.studentId
-            """;
+            var query =
+            from ss  in _context.Student_Sso
+            join sf  in _context.Study_forms      on ss.StudyFormId               equals sf.Id
+            join sl  in _context.StudyLanguages   on ss.StudyLanguageId            equals (int?)sl.Id
+            join pe  in _context.Professions      on ss.ProfessionId               equals (int?)pe.ProfessionId
+            join fac in _context.Faculties        on ss.FacultyId                  equals (int?)fac.FacultyId
+            join se  in _context.SpecialitiesEpvo on (float?)ss.SpecializationId   equals se.Id
+            join si  in _context.Student_Info     on ss.StudentId                  equals si.StudentId
+            select new StudentSsoDetailDto
+            {
+                UniversityId   = ss.UniversityId,
+                StudentId      = ss.StudentId,
+                FullName       = (ss.LastName + " " + ss.FirstName + " " + ss.Patronymic).Trim(),
+                IinPlt         = ss.IinPlt,
+                CourseNumber   = ss.CourseNumber,
+                StudyForm      = sf.NameRu,
+                PaymentType    = ss.PaymentFormId == 1 ? "Платник"
+                               : ss.PaymentFormId == 2 ? "Стипендия" : null,
+                Gpa            = ss.Gpa,
+                StudyLanguage  = sl.NameRu,
+                ProfessionName = pe.ProfessionNameRu,
+                Specialization = se.NameRu,
+                FacultyName    = fac.FacultyNameRu,
+                Sex            = ss.SexId == 2 ? "Мужского пола"
+                               : ss.SexId == 1 ? "Женского пола" : null,
+                GrantType      = ss.GrantType == -4 ? "Государственный грант"
+                               : ss.GrantType == -7 ? "Из собственных средств"
+                               : ss.GrantType == -6 ? "Трехсторонняя форма обучения" : null,
+                Iic            = si.Iic,
+            };
 
-        return await _context.Database
-            .SqlQueryRaw<StudentSsoDetailDto>(sql)
-            .ToListAsync(ct);
+        return await query.Distinct().ToListAsync(ct);
     }
 }

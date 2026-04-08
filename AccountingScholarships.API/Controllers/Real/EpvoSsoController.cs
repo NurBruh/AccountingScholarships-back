@@ -5,6 +5,8 @@ using AccountingScholarships.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace AccountingScholarships.API.Controllers.Real;
 
@@ -390,13 +392,14 @@ public class EpvoSsoController : ControllerBase
     // ─── Stored Procedures ───────────────────────────────────────
 
     /// <summary>
-    /// Выполняет хранимую процедуру [dbo].[Reload_STUDENT].
-    /// Возвращает код возврата и количество затронутых строк.
+    /// Предпросмотр синхронизации: выполняет [dbo].[Reload_STUDENT] (read-only),
+    /// проверяет дубликаты по iinPlt против STUDENT_SSO и STUDENT.
+    /// Возвращает список с флагом IsDuplicate и статистику.
     /// </summary>
-    [HttpPost("reload-student")]
-    public async Task<IActionResult> ReloadStudent(CancellationToken ct)
+    [HttpGet("sync-preview")]
+    public async Task<IActionResult> GetSyncPreview(CancellationToken ct)
     {
-        var result = await _mediator.Send(new ExecuteReloadStudentCommand(), ct);
+        var result = await _spRepo.GetSyncPreviewAsync(ct);
         return Ok(result);
     }
 
@@ -433,12 +436,15 @@ public class EpvoSsoController : ControllerBase
     /// <summary>
     /// Читает STUDENT_TEMP, симулирует отправку в ЕПВО,
     /// каждую попытку пишет в STUDENT_SYNC_LOG (Success / Error).
-    /// STUDENT_SSO не затрагивается.
+    /// STUDENT_SSO не затрагивается. Фиксирует кто запустил.
     /// </summary>
     [HttpPost("send-temp-to-epvo")]
     public async Task<IActionResult> SendTempToEpvo(CancellationToken ct)
     {
-        var result = await _spRepo.SendTempToEpvoAsync(ct);
+        var triggeredBy = User.FindFirst(JwtRegisteredClaimNames.UniqueName)?.Value
+                       ?? User.FindFirst(ClaimTypes.Name)?.Value
+                       ?? "Неизвестно";
+        var result = await _spRepo.SendTempToEpvoAsync(triggeredBy, ct);
         return Ok(result);
     }
 

@@ -165,6 +165,7 @@ namespace AccountingScholarships.Infrastructure.Data
                 e.Property(x => x.Status).HasMaxLength(20);
                 e.Property(x => x.IinPlt).HasMaxLength(12);
                 e.Property(x => x.EpvoEndpoint).HasMaxLength(500);
+                e.Property(x => x.TriggeredBy).HasMaxLength(256);
                 e.ToTable("STUDENT_SYNC_LOG");
             });
         }

@@ -115,7 +115,7 @@ public class StoredProcedureRepository : IStoredProcedureRepository
         return entities.Count;
     }
 
-    public async Task<SendTempResult> SendTempToEpvoAsync(CancellationToken ct = default)
+    public async Task<SendTempResult> SendTempToEpvoAsync(string triggeredBy, CancellationToken ct = default)
     {
         // 1. Читаем все записи из STUDENT_TEMP
         var students = await _context.Student_Temp
@@ -141,8 +141,9 @@ public class StoredProcedureRepository : IStoredProcedureRepository
                 StudentId    = student.StudentId,
                 IinPlt       = student.IinPlt,
                 SentAt       = DateTime.UtcNow,
-                EpvoEndpoint = "/students/save",  // будущий эндпоинт ЕПВО
-                RequestBody  = JsonSerializer.Serialize(student, jsonOptions)
+                EpvoEndpoint = "/students/save",
+                RequestBody  = JsonSerializer.Serialize(student, jsonOptions),
+                TriggeredBy  = triggeredBy
             };
 
             try
@@ -311,5 +312,78 @@ public class StoredProcedureRepository : IStoredProcedureRepository
         var val = entry.Value;
         if (val == null || val is DBNull) return null;
         return val;
+    }
+
+    // ─── Sync Preview ─────────────────────────────────────────────
+
+    public async Task<SyncPreviewResult> GetSyncPreviewAsync(CancellationToken ct = default)
+    {
+        // 1. Читаем результат SP (read-only, ничего не пишем)
+        var rows = await ReadReloadStudentAsync(ct);
+
+        // 2. Загружаем существующие IIN из STUDENT_SSO и STUDENT в HashSet
+        var iinsInSso = await _context.Student_Sso
+            .AsNoTracking()
+            .Where(s => s.IinPlt != null)
+            .Select(s => s.IinPlt!)
+            .ToListAsync(ct);
+
+        var iinsInStudent = await _context.Students
+            .AsNoTracking()
+            .Where(s => s.IinPlt != null)
+            .Select(s => s.IinPlt!)
+            .ToListAsync(ct);
+
+        var ssoSet     = new HashSet<string>(iinsInSso,     StringComparer.OrdinalIgnoreCase);
+        var studentSet = new HashSet<string>(iinsInStudent, StringComparer.OrdinalIgnoreCase);
+
+        // 3. Формируем предпросмотр с флагом дубликата
+        var items = rows.Select(row =>
+        {
+            var iin = GetStr(row, "iinplt");
+            var professionId = GetInt(row, "professionid");
+
+            string? duplicateSource = null;
+            if (iin != null && ssoSet.Contains(iin))
+                duplicateSource = "STUDENT_SSO";
+            else if (iin != null && studentSet.Contains(iin))
+                duplicateSource = "STUDENT";
+
+            // Разбираем paymentFormId → текст
+            var paymentFormId = GetInt(row, "paymentformid");
+            var paymentType = paymentFormId == 2 ? "Стипендия"
+                            : paymentFormId == 1 ? "Платник" : null;
+
+            // Разбираем grantType → текст
+            var grantTypeId = GetInt(row, "grant_type");
+            var grantType = grantTypeId == -4 ? "Государственный грант"
+                          : grantTypeId == -7 ? "Из собственных средств"
+                          : grantTypeId == -6 ? "Трехсторонняя форма обучения" : null;
+
+            var lastName  = GetStr(row, "lastname")  ?? "";
+            var firstName = GetStr(row, "firstname") ?? "";
+            var patronymic = GetStr(row, "patronymic") ?? "";
+            var fullName  = $"{lastName} {firstName} {patronymic}".Trim();
+
+            return new SyncPreviewItem
+            {
+                StudentId      = GetInt(row, "studentid"),
+                IinPlt         = iin,
+                FullName       = fullName,
+                CourseNumber   = GetInt(row, "coursenumber"),
+                PaymentType    = paymentType,
+                GrantType      = grantType,
+                IsDuplicate    = duplicateSource != null,
+                DuplicateSource = duplicateSource,
+            };
+        }).ToList();
+
+        return new SyncPreviewResult
+        {
+            Total          = items.Count,
+            NewCount       = items.Count(x => !x.IsDuplicate),
+            DuplicateCount = items.Count(x => x.IsDuplicate),
+            Items          = items,
+        };
     }
 }
