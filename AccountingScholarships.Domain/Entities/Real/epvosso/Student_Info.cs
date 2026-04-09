@@ -11,7 +11,7 @@ namespace AccountingScholarships.Domain.Entities.Real.epvosso
         public int UniversityId { get; set; }
         public int StudentId { get; set; }
         public int? EndHighSchoolType { get; set; }
-        public float PreviousGpa { get; set; }
+        public double PreviousGpa { get; set; }
         public int EducationConditionId { get; set; }
         public string? ForeignLangCertMark { get; set; }
         public int? EntranceExamFinalMark { get; set; }

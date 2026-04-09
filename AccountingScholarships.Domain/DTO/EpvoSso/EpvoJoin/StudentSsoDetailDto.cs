@@ -17,4 +17,5 @@ public class StudentSsoDetailDto
     public string? Sex { get; set; }
     public string? GrantType { get; set; }
     public string? Iic { get; set; }
+    public DateOnly? UpdateDate { get; set; }
 }

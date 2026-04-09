@@ -45,6 +45,7 @@ public class SsoStudentDetailsRepository : ISsoStudentDetailsRepository
                                : ss.GrantType == -7 ? "Из собственных средств"
                                : ss.GrantType == -6 ? "Трехсторонняя форма обучения" : null,
                 Iic            = si.Iic,
+                UpdateDate = si.UpdateDate
             };
 
         return await query.Distinct().ToListAsync(ct);

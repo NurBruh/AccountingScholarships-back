@@ -18,10 +18,13 @@ public static class ServiceCollectionExtensions
         var ssolocal = configuration.GetConnectionString("PcConnection");
         var epvolocal = configuration.GetConnectionString("PcEpvoConnection");
 
+        var ssocon = configuration.GetConnectionString("MSSQLConnection");
+        var epvocon = configuration.GetConnectionString("EPVOConnection1");
+
         services.AddDbContext<SsoDbContext>(options =>
-            options.UseSqlServer(ssolocal));
+            options.UseSqlServer(ssocon));
         services.AddDbContext<EpvoSsoDbContext>(options =>
-            options.UseSqlServer(epvolocal, sqlOptions =>
+            options.UseSqlServer(epvocon, sqlOptions =>
             {
                 sqlOptions.CommandTimeout(300);
             }));

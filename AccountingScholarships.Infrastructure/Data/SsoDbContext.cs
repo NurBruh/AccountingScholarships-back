@@ -67,7 +67,7 @@ public class SsoDbContext : DbContext
     public DbSet<Edu_Entrants> Edu_Entrants => Set<Edu_Entrants>();
     public DbSet<Edu_EntrantStatuses> Edu_EntrantStatuses => Set<Edu_EntrantStatuses>();
     public DbSet<StudentInfo_Translations> StudentInfo_Translations => Set<StudentInfo_Translations>();
-
+    public DbSet<Scollarship_Students_Info> Scollarship_Students_Infos => Set<Scollarship_Students_Info>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -585,6 +585,12 @@ public class SsoDbContext : DbContext
             e.ToTable("StudentInfo_Translations");
         });
 
+        modelBuilder.Entity<Scollarship_Students_Info>(x =>
+        {
+          x.HasKey(e => e.Id);
+        });
+
+
         // ═══════════════════════════════════════════════════════════════
         // Имена таблиц в MSSQL базе
         // ═══════════════════════════════════════════════════════════════
@@ -640,5 +646,6 @@ public class SsoDbContext : DbContext
         modelBuilder.Entity<Edu_SpecialitySpecializations>().ToTable("Edu_SpecialitySpecializations");
         modelBuilder.Entity<Edu_Entrants>().ToTable("Edu_Entrants");
         modelBuilder.Entity<Edu_EntrantStatuses>().ToTable("Edu_EntrantStatuses");
+        modelBuilder.Entity<Scollarship_Students_Info>().ToTable("Scollarship_Students_Info");
     }
 }

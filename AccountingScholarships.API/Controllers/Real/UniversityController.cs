@@ -629,4 +629,10 @@ public class UniversityController : ControllerBase
         var result = await _mediator.Send(new GetEduUserByIdQuery(id), ct);
         return result is null ? NotFound() : Ok(result);
     }
+    [HttpGet("scollarship-students-info")]
+    public async Task<IActionResult> GetScollarshipStudentsInfo(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetAllScollarshipStudentsInfo(), ct);
+        return result is null ? NotFound() : Ok(result);
+    }
 }
