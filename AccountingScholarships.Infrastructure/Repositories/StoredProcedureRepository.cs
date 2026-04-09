@@ -321,7 +321,18 @@ public class StoredProcedureRepository : IStoredProcedureRepository
         // 1. Читаем результат SP (read-only, ничего не пишем)
         var rows = await ReadReloadStudentAsync(ct);
 
-        // 2. Загружаем существующие IIN из STUDENT_SSO и STUDENT в HashSet
+        // 2. Загружаем справочники факультетов и профессий
+        var facultyDict = await _context.Faculties
+            .AsNoTracking()
+            .Where(f => f.FacultyNameRu != null)
+            .ToDictionaryAsync(f => f.FacultyId, f => f.FacultyNameRu!, ct);
+
+        var professionDict = await _context.Professions
+            .AsNoTracking()
+            .Where(p => p.ProfessionNameRu != null)
+            .ToDictionaryAsync(p => p.ProfessionId, p => p.ProfessionNameRu!, ct);
+
+        // 3. Загружаем существующие IIN из STUDENT_SSO и STUDENT в HashSet
         var iinsInSso = await _context.Student_Sso
             .AsNoTracking()
             .Where(s => s.IinPlt != null)
@@ -365,15 +376,20 @@ public class StoredProcedureRepository : IStoredProcedureRepository
             var patronymic = GetStr(row, "patronymic") ?? "";
             var fullName  = $"{lastName} {firstName} {patronymic}".Trim();
 
+            facultyDict.TryGetValue(GetInt(row, "facultyId") ?? 0, out var facultyName);
+            professionDict.TryGetValue(GetInt(row, "professionid") ?? 0, out var professionName);
+
             return new SyncPreviewItem
             {
-                StudentId      = GetInt(row, "studentid"),
-                IinPlt         = iin,
-                FullName       = fullName,
-                CourseNumber   = GetInt(row, "coursenumber"),
-                PaymentType    = paymentType,
-                GrantType      = grantType,
-                IsDuplicate    = duplicateSource != null,
+                StudentId       = GetInt(row, "studentid"),
+                IinPlt          = iin,
+                FullName        = fullName,
+                CourseNumber    = GetInt(row, "coursenumber"),
+                FacultyName     = facultyName,
+                ProfessionName  = professionName,
+                PaymentType     = paymentType,
+                GrantType       = grantType,
+                IsDuplicate     = duplicateSource != null,
                 DuplicateSource = duplicateSource,
             };
         }).ToList();
