@@ -28,10 +28,13 @@ public class ComparisonRepository : IComparisonRepository
         var ssoStudents = await ssoTask;
 
         // Загружаем iic и updated_date из Scollarship_Students_Info (SSO)
-        var ssiDict = await _ssoContext.Scollarship_Students_Infos
+        var ssiList = await _ssoContext.Scollarship_Students_Infos
             .AsNoTracking()
             .Where(x => x.studentID != null)
-            .ToDictionaryAsync(x => x.studentID!.Value, ct);
+            .ToListAsync(ct);
+        var ssiDict = ssiList
+            .GroupBy(x => x.studentID!.Value)
+            .ToDictionary(g => g.Key, g => g.First());
 
         // Мёрджим iic/updated_date в SSO студентов
         foreach (var s in ssoStudents)
