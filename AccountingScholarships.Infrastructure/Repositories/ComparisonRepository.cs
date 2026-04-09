@@ -27,6 +27,22 @@ public class ComparisonRepository : IComparisonRepository
 
         var ssoStudents = await ssoTask;
 
+        // Загружаем iic и updated_date из Scollarship_Students_Info (SSO)
+        var ssiDict = await _ssoContext.Scollarship_Students_Infos
+            .AsNoTracking()
+            .Where(x => x.studentID != null)
+            .ToDictionaryAsync(x => x.studentID!.Value, ct);
+
+        // Мёрджим iic/updated_date в SSO студентов
+        foreach (var s in ssoStudents)
+        {
+            if (ssiDict.TryGetValue(s.StudentID, out var ssi))
+            {
+                s.Iic = ssi.Iic;
+                s.UpdatedDate = ssi.Updated_Date;
+            }
+        }
+
         // Индексируем ЕПВО данные по IIN
         var epvoByIin = epvoStudents
             .Where(e => !string.IsNullOrEmpty(e.IinPlt))
@@ -69,9 +85,12 @@ public class ComparisonRepository : IComparisonRepository
                     studyForms);
                 dto.Sso_Institute = sso.InstituteName;
                 dto.Sso_Cafedra = sso.CafedraName;
+                dto.Sso_Speciality = sso.SpecialityName;
                 dto.Sso_PaymentType = sso.EducationPaymentTypeID == 1 ? "Стипендия" : "Платник";
                 dto.Sso_GrantType = ResolveGrantTypeLabel(
                     ComputeGrantType(sso.EptESUVOGrantTypeId, sso.GtypeESUVOGrantTypeId));
+                dto.Sso_Iic = sso.Iic;
+                dto.Sso_UpdatedDate = sso.UpdatedDate;
             }
 
             // ЕПВО данные
@@ -85,6 +104,7 @@ public class ComparisonRepository : IComparisonRepository
                 dto.Epvo_PaymentType = epvo.PaymentType;
                 dto.Epvo_GrantType = epvo.GrantType;
                 dto.Epvo_Iic = epvo.Iic;
+                dto.Epvo_UpdateDate = epvo.UpdateDate;
             }
 
             // Сравнение полей
@@ -138,6 +158,7 @@ public class ComparisonRepository : IComparisonRepository
                     && s.Speciality.RupEditorOrgUnit.Parent.TypeID == 2
                         ? s.Speciality.RupEditorOrgUnit.Parent.Title
                         : null,
+                SpecialityName = s.Speciality != null ? s.Speciality.Title : null,
                 EptESUVOGrantTypeId = s.EducationPaymentType != null
                     ? s.EducationPaymentType.ESUVOGrantTypeId
                     : null,
@@ -296,8 +317,11 @@ public class ComparisonRepository : IComparisonRepository
         public int SemesterCount { get; set; }
         public string? CafedraName { get; set; }
         public string? InstituteName { get; set; }
+        public string? SpecialityName { get; set; }
         public int? EptESUVOGrantTypeId { get; set; }
         public int? GtypeESUVOGrantTypeId { get; set; }
+        public string? Iic { get; set; }
+        public DateTime? UpdatedDate { get; set; }
     }
 
     #endregion

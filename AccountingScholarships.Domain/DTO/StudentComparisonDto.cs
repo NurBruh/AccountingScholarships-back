@@ -12,8 +12,11 @@ public class StudentComparisonDto
     public string? Sso_StudyForm { get; set; }
     public string? Sso_Institute { get; set; }
     public string? Sso_Cafedra { get; set; }
+    public string? Sso_Speciality { get; set; }
     public string? Sso_PaymentType { get; set; }
     public string? Sso_GrantType { get; set; }
+    public string? Sso_Iic { get; set; }
+    public DateTime? Sso_UpdatedDate { get; set; }
 
     // ЕПВО данные
     public string? Epvo_FullName { get; set; }
@@ -24,6 +27,7 @@ public class StudentComparisonDto
     public string? Epvo_PaymentType { get; set; }
     public string? Epvo_GrantType { get; set; }
     public string? Epvo_Iic { get; set; }
+    public DateOnly? Epvo_UpdateDate { get; set; }
 
     // Статус расхождения
     public bool HasDifference { get; set; }

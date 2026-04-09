@@ -57,8 +57,8 @@ public class SsoStudentDetailsRepository : ISsoStudentDetailsRepository
                 GrantType      = ss.GrantType == -4 ? "Государственный грант"
                                : ss.GrantType == -7 ? "Из собственных средств"
                                : ss.GrantType == -6 ? "Трехсторонняя форма обучения" : null,
-                Iic            = si.Iic,
-                UpdateDate = si.UpdateDate
+                Iic            = si != null ? si.Iic : null,
+                UpdateDate     = si != null ? si.UpdateDate : null
             };
 
         return await query.Distinct().ToListAsync(ct);
