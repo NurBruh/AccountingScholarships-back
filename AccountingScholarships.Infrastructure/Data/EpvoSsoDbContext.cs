@@ -32,6 +32,7 @@ namespace AccountingScholarships.Infrastructure.Data
         public DbSet<Student_Sso> Student_Sso => Set<Student_Sso>();
         public DbSet<Student_Temp> Student_Temp => Set<Student_Temp>();
         public DbSet<StudentSyncLog> StudentSyncLogs => Set<StudentSyncLog>();
+        public DbSet<Student_Dump> Student_Dumps => Set<Student_Dump>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -156,6 +157,12 @@ namespace AccountingScholarships.Infrastructure.Data
             {
                 e.HasKey(x => x.StudentId);
                 e.ToTable("STUDENT_TEMP");
+            });
+
+            modelBuilder.Entity<Student_Dump>(e =>
+            {
+                e.HasKey(x => x.StudentId);
+                e.ToTable("STUDENT_DUMP");
             });
 
             modelBuilder.Entity<StudentSyncLog>(e =>
