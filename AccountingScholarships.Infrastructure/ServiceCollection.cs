@@ -58,6 +58,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEduStudentRepository, EduStudentRepository>();
         services.AddScoped(typeof(ISsoRepository<>), typeof(SsoRepository<>));
         services.AddScoped<IComparisonRepository, ComparisonRepository>();
+        services.AddScoped<IChangeLogRepository, ChangeLogRepository>();
         services.AddScoped<IStoredProcedureRepository, StoredProcedureRepository>();
         services.AddScoped<IAuthService, AuthService>();
 

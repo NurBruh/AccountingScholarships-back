@@ -1,3 +1,4 @@
+using AccountingScholarships.Application.Interfaces;
 using AccountingScholarships.Application.Queries.EpvoSso;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +10,12 @@ namespace AccountingScholarships.API.Controllers.Real;
 public class ComparisonController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IChangeLogRepository _changeLogRepo;
 
-    public ComparisonController(IMediator mediator)
+    public ComparisonController(IMediator mediator, IChangeLogRepository changeLogRepo)
     {
         _mediator = mediator;
+        _changeLogRepo = changeLogRepo;
     }
 
     [HttpGet("students")]
@@ -32,6 +35,23 @@ public class ComparisonController : ControllerBase
         }, ct);
         if (result is null)
             return NotFound();
+        return Ok(result);
+    }
+
+    [HttpGet("change-logs")]
+    public async Task<IActionResult> GetChangeLogs(
+        [FromQuery] string? iin = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 50,
+        CancellationToken ct = default)
+    {
+        if (!string.IsNullOrWhiteSpace(iin))
+        {
+            var logs = await _changeLogRepo.GetChangeLogsByIinAsync(iin.Trim(), ct);
+            return Ok(logs);
+        }
+
+        var result = await _changeLogRepo.GetChangeLogsAsync(null, page, pageSize, ct);
         return Ok(result);
     }
 }

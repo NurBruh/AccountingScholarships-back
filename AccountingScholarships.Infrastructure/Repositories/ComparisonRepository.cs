@@ -1,8 +1,10 @@
 using AccountingScholarships.Application.DTO;
 using AccountingScholarships.Application.DTO.EpvoSso.EpvoJoin;
 using AccountingScholarships.Application.Interfaces;
+using AccountingScholarships.Domain.Entities.Real.epvosso;
 using AccountingScholarships.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace AccountingScholarships.Infrastructure.Repositories;
 
@@ -10,11 +12,19 @@ public class ComparisonRepository : IComparisonRepository
 {
     private readonly SsoDbContext _ssoContext;
     private readonly EpvoSsoDbContext _epvoContext;
+    private readonly IChangeLogRepository _changeLogRepo;
+    private readonly string _dataSource;
 
-    public ComparisonRepository(SsoDbContext ssoContext, EpvoSsoDbContext epvoContext)
+    public ComparisonRepository(
+        SsoDbContext ssoContext,
+        EpvoSsoDbContext epvoContext,
+        IChangeLogRepository changeLogRepo,
+        IConfiguration configuration)
     {
         _ssoContext = ssoContext;
         _epvoContext = epvoContext;
+        _changeLogRepo = changeLogRepo;
+        _dataSource = configuration["SyncSettings:EpvoDataSource"] ?? "Dump";
     }
 
     public async Task<IReadOnlyList<StudentComparisonDto>> GetComparisonAsync(CancellationToken ct = default)
@@ -66,6 +76,8 @@ public class ComparisonRepository : IComparisonRepository
             .ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
 
         var result = new List<StudentComparisonDto>();
+        var changeLogs = new List<StudentChangeLog>();
+        var sessionId = Guid.NewGuid().ToString("N")[..16];
 
         foreach (var iin in allIins)
         {
@@ -110,7 +122,28 @@ public class ComparisonRepository : IComparisonRepository
                 dto.Epvo_UpdateDate = epvo.UpdateDate;
             }
 
-            // Сравнение полей
+            // Логика приоритета по ментору:
+            // Если IIC-и разные И дата в Scollarship_Students_Info свежее → SSO приоритет
+            if (sso != null && epvo != null)
+            {
+                var iicsDifferent = !string.Equals(
+                    (sso.Iic ?? "").Trim(),
+                    (epvo.Iic ?? "").Trim(),
+                    StringComparison.OrdinalIgnoreCase);
+
+                var ssoDateFresher = sso.UpdatedDate.HasValue && epvo.UpdateDate.HasValue
+                    ? sso.UpdatedDate.Value > epvo.UpdateDate.Value.ToDateTime(TimeOnly.MinValue)
+                    : sso.UpdatedDate.HasValue;
+
+                if (iicsDifferent && ssoDateFresher)
+                    dto.Priority = "SSO";
+                else if (iicsDifferent && !ssoDateFresher)
+                    dto.Priority = "EPVO";
+                else
+                    dto.Priority = "OK";
+            }
+
+            // Сравнение полей с записью в лог изменений
             if (sso == null || epvo == null)
             {
                 dto.HasDifference = true;
@@ -118,17 +151,22 @@ public class ComparisonRepository : IComparisonRepository
             }
             else
             {
-                CompareField(dto, "ФИО", dto.Sso_FullName, dto.Epvo_FullName);
-                CompareField(dto, "Курс", dto.Sso_CourseNumber?.ToString(), dto.Epvo_CourseNumber?.ToString());
-                CompareField(dto, "Форма обучения", dto.Sso_StudyForm, dto.Epvo_StudyForm);
-                CompareField(dto, "Институт/Факультет", dto.Sso_Institute, dto.Epvo_FacultyName);
-                CompareField(dto, "Кафедра/Специализация", dto.Sso_Cafedra, dto.Epvo_Specialization);
-                CompareField(dto, "Тип оплаты", dto.Sso_PaymentType, dto.Epvo_PaymentType);
-                CompareField(dto, "Тип гранта", dto.Sso_GrantType, dto.Epvo_GrantType);
+                CompareAndLog(dto, changeLogs, iin, sessionId, "ФИО", dto.Sso_FullName, dto.Epvo_FullName);
+                CompareAndLog(dto, changeLogs, iin, sessionId, "Курс", dto.Sso_CourseNumber?.ToString(), dto.Epvo_CourseNumber?.ToString());
+                CompareAndLog(dto, changeLogs, iin, sessionId, "Форма обучения", dto.Sso_StudyForm, dto.Epvo_StudyForm);
+                CompareAndLog(dto, changeLogs, iin, sessionId, "Институт/Факультет", dto.Sso_Institute, dto.Epvo_FacultyName);
+                CompareAndLog(dto, changeLogs, iin, sessionId, "Кафедра/Специализация", dto.Sso_Cafedra, dto.Epvo_Specialization);
+                CompareAndLog(dto, changeLogs, iin, sessionId, "Тип оплаты", dto.Sso_PaymentType, dto.Epvo_PaymentType);
+                CompareAndLog(dto, changeLogs, iin, sessionId, "Тип гранта", dto.Sso_GrantType, dto.Epvo_GrantType);
+                CompareAndLog(dto, changeLogs, iin, sessionId, "ИИК (Р/С)", dto.Sso_Iic, dto.Epvo_Iic);
             }
 
             result.Add(dto);
         }
+
+        // Сохраняем логи изменений в БД
+        if (changeLogs.Count > 0)
+            await _changeLogRepo.SaveChangesAsync(changeLogs, ct);
 
         return result.AsReadOnly();
     }
@@ -179,7 +217,12 @@ public class ComparisonRepository : IComparisonRepository
 
     private async Task<List<StudentSsoDetailDto>> LoadEpvoDataAsync(CancellationToken ct)
     {
-        const string sql = """
+        // Переключение между STUDENT_DUMP (полигон) и STUDENT_SSO (продакшн)
+        var tableName = _dataSource.Equals("Sso", StringComparison.OrdinalIgnoreCase)
+            ? "STUDENT_SSO"
+            : "STUDENT_DUMP";
+
+        var sql = $"""
             SELECT DISTINCT
                 ss.universityId,
                 ss.studentId,
@@ -207,7 +250,7 @@ public class ComparisonRepository : IComparisonRepository
                 END AS GrantType,
                 si.iic,
                 si.updateDate
-            FROM STUDENT_SSO ss
+            FROM {tableName} ss
             LEFT JOIN STUDY_FORMS           sf  ON sf.id          = ss.studyFormId
             LEFT JOIN STUDYLANGUAGES        sl  ON sl.id          = ss.studyLanguageId
             LEFT JOIN PROFESSION            pe  ON pe.professionId = ss.professionid
@@ -292,7 +335,14 @@ public class ComparisonRepository : IComparisonRepository
 
     #region Comparison Helper
 
-    private static void CompareField(StudentComparisonDto dto, string fieldName, string? ssoValue, string? epvoValue)
+    private static void CompareAndLog(
+        StudentComparisonDto dto,
+        List<StudentChangeLog> logs,
+        string iin,
+        string sessionId,
+        string fieldName,
+        string? ssoValue,
+        string? epvoValue)
     {
         var ssoNorm = (ssoValue ?? "").Trim();
         var epvoNorm = (epvoValue ?? "").Trim();
@@ -301,6 +351,18 @@ public class ComparisonRepository : IComparisonRepository
         {
             dto.HasDifference = true;
             dto.DifferentFields.Add(fieldName);
+
+            logs.Add(new StudentChangeLog
+            {
+                IinPlt = iin,
+                FieldName = fieldName,
+                OldValue = epvoNorm,
+                NewValue = ssoNorm,
+                DataSource = dto.Priority ?? "N/A",
+                ChangedAt = DateTime.Now,
+                ChangedBy = "System",
+                SyncSessionId = sessionId
+            });
         }
     }
 

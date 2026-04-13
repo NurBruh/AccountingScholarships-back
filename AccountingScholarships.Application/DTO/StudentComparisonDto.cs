@@ -32,6 +32,9 @@ public class StudentComparisonDto
     // Статус расхождения
     public bool HasDifference { get; set; }
     public List<string> DifferentFields { get; set; } = new();
+
+    // Приоритет данных: "SSO" | "EPVO" | "OK" | null
+    public string? Priority { get; set; }
 }
 
 public class StudentComparisonPagedDto

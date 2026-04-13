@@ -33,6 +33,7 @@ namespace AccountingScholarships.Infrastructure.Data
         public DbSet<Student_Temp> Student_Temp => Set<Student_Temp>();
         public DbSet<StudentSyncLog> StudentSyncLogs => Set<StudentSyncLog>();
         public DbSet<Student_Dump> Student_Dumps => Set<Student_Dump>();
+        public DbSet<StudentChangeLog> StudentChangeLogs => Set<StudentChangeLog>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -174,6 +175,23 @@ namespace AccountingScholarships.Infrastructure.Data
                 e.Property(x => x.EpvoEndpoint).HasMaxLength(500);
                 e.Property(x => x.TriggeredBy).HasMaxLength(256);
                 e.ToTable("STUDENT_SYNC_LOG");
+            });
+
+            modelBuilder.Entity<StudentChangeLog>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.Property(x => x.Id).ValueGeneratedOnAdd();
+                e.Property(x => x.IinPlt).HasMaxLength(12);
+                e.Property(x => x.FieldName).HasMaxLength(100);
+                e.Property(x => x.OldValue).HasMaxLength(1000);
+                e.Property(x => x.NewValue).HasMaxLength(1000);
+                e.Property(x => x.DataSource).HasMaxLength(20);
+                e.Property(x => x.ChangedBy).HasMaxLength(256);
+                e.Property(x => x.SyncSessionId).HasMaxLength(50);
+                e.HasIndex(x => x.IinPlt);
+                e.HasIndex(x => x.ChangedAt);
+                e.HasIndex(x => x.SyncSessionId);
+                e.ToTable("STUDENT_CHANGE_LOG");
             });
         }
     }

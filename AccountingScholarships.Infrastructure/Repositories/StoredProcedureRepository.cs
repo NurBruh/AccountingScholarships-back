@@ -14,10 +14,12 @@ namespace AccountingScholarships.Infrastructure.Repositories;
 public class StoredProcedureRepository : IStoredProcedureRepository
 {
     private readonly EpvoSsoDbContext _context;
+    private readonly string _dataSource;
 
-    public StoredProcedureRepository(EpvoSsoDbContext context)
+    public StoredProcedureRepository(EpvoSsoDbContext context, Microsoft.Extensions.Configuration.IConfiguration configuration)
     {
         _context = context;
+        _dataSource = configuration["SyncSettings:EpvoDataSource"] ?? "Dump";
     }
 
     public async Task<StoredProcedureResult> ExecuteReloadStudentAsync(CancellationToken ct = default)
@@ -365,12 +367,24 @@ public class StoredProcedureRepository : IStoredProcedureRepository
             .Where(p => p.ProfessionNameRu != null)
             .ToDictionaryAsync(p => p.ProfessionId, p => p.ProfessionNameRu!, ct);
 
-        // 3. Загружаем существующие IIN из STUDENT_SSO и STUDENT в HashSet
-        var iinsInSso = await _context.Student_Sso
-            .AsNoTracking()
-            .Where(s => s.IinPlt != null)
-            .Select(s => s.IinPlt!)
-            .ToListAsync(ct);
+        // 3. Загружаем существующие IIN из STUDENT_DUMP/STUDENT_SSO и STUDENT в HashSet
+        List<string> iinsInSso;
+        if (_dataSource.Equals("Sso", StringComparison.OrdinalIgnoreCase))
+        {
+            iinsInSso = await _context.Student_Sso
+                .AsNoTracking()
+                .Where(s => s.IinPlt != null)
+                .Select(s => s.IinPlt!)
+                .ToListAsync(ct);
+        }
+        else
+        {
+            iinsInSso = await _context.Student_Dumps
+                .AsNoTracking()
+                .Where(s => s.IinPlt != null)
+                .Select(s => s.IinPlt!)
+                .ToListAsync(ct);
+        }
 
         var iinsInStudent = await _context.Students
             .AsNoTracking()
@@ -389,7 +403,7 @@ public class StoredProcedureRepository : IStoredProcedureRepository
 
             string? duplicateSource = null;
             if (iin != null && ssoSet.Contains(iin))
-                duplicateSource = "STUDENT_SSO";
+                duplicateSource = _dataSource.Equals("Sso", StringComparison.OrdinalIgnoreCase) ? "STUDENT_SSO" : "STUDENT_DUMP";
             else if (iin != null && studentSet.Contains(iin))
                 duplicateSource = "STUDENT";
 
