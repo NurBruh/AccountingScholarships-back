@@ -143,11 +143,16 @@ public class StoredProcedureRepository : IStoredProcedureRepository
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        // 2. Загружаем существующие записи из STUDENT_DUMP по StudentId
-        var tempIds = tempStudents.Select(s => s.StudentId).ToList();
-        var existingDumps = await _context.Student_Dumps
+        // 2. Загружаем существующие записи из STUDENT_DUMP в память и строим словарь
+        //    Избегаем Contains(list) чтобы не генерировать OPENJSON, несовместимый
+        //    со старым уровнем совместимости SQL Server.
+        var tempIds = new HashSet<int>(tempStudents.Select(s => s.StudentId));
+        var allDumps = await _context.Student_Dumps
+            .AsNoTracking()
+            .ToListAsync(ct);
+        var existingDumps = allDumps
             .Where(d => tempIds.Contains(d.StudentId))
-            .ToDictionaryAsync(d => d.StudentId, ct);
+            .ToDictionary(d => d.StudentId);
 
         // 3. UPSERT: обновляем существующие, добавляем новые
         foreach (var temp in tempStudents)
