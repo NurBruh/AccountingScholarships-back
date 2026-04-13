@@ -1,4 +1,4 @@
-﻿using AccountingScholarships.Domain.DTO.EpvoSso;
+using AccountingScholarships.Application.DTO.EpvoSso;
 using MediatR;
 using System;
 using System.Collections.Generic;

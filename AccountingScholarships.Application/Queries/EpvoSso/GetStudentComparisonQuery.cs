@@ -1,4 +1,4 @@
-using AccountingScholarships.Domain.DTO;
+using AccountingScholarships.Application.DTO;
 using MediatR;
 
 namespace AccountingScholarships.Application.Queries.EpvoSso;

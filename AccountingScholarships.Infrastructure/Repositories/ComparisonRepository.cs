@@ -1,6 +1,6 @@
-using AccountingScholarships.Domain.DTO;
-using AccountingScholarships.Domain.DTO.EpvoSso.EpvoJoin;
-using AccountingScholarships.Domain.Interfaces;
+using AccountingScholarships.Application.DTO;
+using AccountingScholarships.Application.DTO.EpvoSso.EpvoJoin;
+using AccountingScholarships.Application.Interfaces;
 using AccountingScholarships.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

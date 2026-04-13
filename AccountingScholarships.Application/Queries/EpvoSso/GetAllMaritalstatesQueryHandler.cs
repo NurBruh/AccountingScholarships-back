@@ -1,6 +1,6 @@
-using AccountingScholarships.Domain.DTO.EpvoSso;
+using AccountingScholarships.Application.DTO.EpvoSso;
 using AccountingScholarships.Domain.Entities.Real.epvosso;
-using AccountingScholarships.Domain.Interfaces;
+using AccountingScholarships.Application.Interfaces;
 using MediatR;
 
 namespace AccountingScholarships.Application.Queries.EpvoSso;

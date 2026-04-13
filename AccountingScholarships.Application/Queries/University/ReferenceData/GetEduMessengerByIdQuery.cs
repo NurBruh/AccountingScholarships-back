@@ -1,4 +1,4 @@
-using AccountingScholarships.Domain.DTO.University;
+using AccountingScholarships.Application.DTO.University;
 using MediatR;
 namespace AccountingScholarships.Application.Queries.University.ReferenceData;
 public record GetEduMessengerByIdQuery(int Id) : IRequest<Edu_MessengersDto?>;

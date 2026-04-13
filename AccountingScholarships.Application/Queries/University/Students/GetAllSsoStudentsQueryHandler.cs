@@ -1,6 +1,6 @@
 using MediatR;
-using AccountingScholarships.Domain.DTO.University;
-using AccountingScholarships.Domain.Interfaces;
+using AccountingScholarships.Application.DTO.University;
+using AccountingScholarships.Application.Interfaces;
 
 namespace AccountingScholarships.Application.Queries.University.Students;
 

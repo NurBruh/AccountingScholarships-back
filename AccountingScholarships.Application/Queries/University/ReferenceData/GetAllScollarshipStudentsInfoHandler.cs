@@ -1,11 +1,11 @@
-﻿using MediatR;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AccountingScholarships.Domain.DTO.University;
-using AccountingScholarships.Domain.Interfaces;
+using AccountingScholarships.Application.DTO.University;
+using AccountingScholarships.Application.Interfaces;
 using AccountingScholarships.Domain.Entities.Real.university;
 
 namespace AccountingScholarships.Application.Queries.University.ReferenceData

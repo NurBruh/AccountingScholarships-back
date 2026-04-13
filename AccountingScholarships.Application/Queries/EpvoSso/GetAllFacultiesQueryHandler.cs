@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AccountingScholarships.Domain.Entities.Real.epvosso;
-using AccountingScholarships.Domain.Interfaces;
-using AccountingScholarships.Domain.DTO.EpvoSso;
+using AccountingScholarships.Application.Interfaces;
+using AccountingScholarships.Application.DTO.EpvoSso;
 using MediatR;
 
 namespace AccountingScholarships.Application.Queries.EpvoSso

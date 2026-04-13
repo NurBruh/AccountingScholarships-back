@@ -1,5 +1,5 @@
 using System.Text;
-using AccountingScholarships.Domain.Interfaces;
+using AccountingScholarships.Application.Interfaces;
 using AccountingScholarships.Infrastructure.Data;
 using AccountingScholarships.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -58,8 +58,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEduStudentRepository, EduStudentRepository>();
         services.AddScoped(typeof(ISsoRepository<>), typeof(SsoRepository<>));
         services.AddScoped<IComparisonRepository, ComparisonRepository>();
-
         services.AddScoped<IStoredProcedureRepository, StoredProcedureRepository>();
+        services.AddScoped<IAuthService, AuthService>();
 
         return services;
     }

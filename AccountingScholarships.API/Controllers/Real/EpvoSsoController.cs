@@ -1,10 +1,8 @@
 using AccountingScholarships.Application.Commands.StoredProcedures;
 using AccountingScholarships.Application.Queries.EpvoSso;
-using AccountingScholarships.Domain.Interfaces;
-using AccountingScholarships.Infrastructure.Data;
+using AccountingScholarships.Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -19,13 +17,11 @@ public class EpvoSsoController : ControllerBase
 {
     private readonly IMediator _mediator;
     private readonly IStoredProcedureRepository _spRepo;
-    private readonly EpvoSsoDbContext _db;
 
-    public EpvoSsoController(IMediator mediator, IStoredProcedureRepository spRepo, EpvoSsoDbContext db)
+    public EpvoSsoController(IMediator mediator, IStoredProcedureRepository spRepo)
     {
         _mediator = mediator;
         _spRepo = spRepo;
-        _db = db;
     }
 
     // ─── Professions ──────────────────────────────────────────────
@@ -388,6 +384,15 @@ public class EpvoSsoController : ControllerBase
             return NotFound();
         return Ok(result);
     }
+    // ─── Students Temp
+    [HttpGet("students-dump")]
+    public async Task<IActionResult> GetStudentDump(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetAllEpvoStudentDumpQuery(), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
 
     // ─── Stored Procedures ───────────────────────────────────────
 
@@ -457,20 +462,8 @@ public class EpvoSsoController : ControllerBase
     [HttpGet("sync-logs")]
     public async Task<IActionResult> GetSyncLogs([FromQuery] string? status, [FromQuery] int page = 1, [FromQuery] int pageSize = 50, CancellationToken ct = default)
     {
-        var query = _db.StudentSyncLogs.AsNoTracking();
-
-        if (!string.IsNullOrWhiteSpace(status))
-            query = query.Where(x => x.Status == status);
-
-        var total = await query.CountAsync(ct);
-
-        var logs = await query
-            .OrderByDescending(x => x.SentAt)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync(ct);
-
-        return Ok(new { Total = total, Page = page, PageSize = pageSize, Logs = logs });
+        var result = await _spRepo.GetSyncLogsAsync(status, page, pageSize, ct);
+        return Ok(result);
     }
 
     /// <summary>
@@ -479,12 +472,7 @@ public class EpvoSsoController : ControllerBase
     [HttpGet("sync-logs/student/{studentId:int}")]
     public async Task<IActionResult> GetSyncLogsByStudent(int studentId, CancellationToken ct)
     {
-        var logs = await _db.StudentSyncLogs
-            .AsNoTracking()
-            .Where(x => x.StudentId == studentId)
-            .OrderByDescending(x => x.SentAt)
-            .ToListAsync(ct);
-
+        var logs = await _spRepo.GetSyncLogsByStudentAsync(studentId, ct);
         return Ok(logs);
     }
 

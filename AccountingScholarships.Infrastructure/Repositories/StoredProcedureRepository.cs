@@ -1,6 +1,6 @@
-using AccountingScholarships.Domain.Common;
+using AccountingScholarships.Application.Common;
 using AccountingScholarships.Domain.Entities.Real.epvosso;
-using AccountingScholarships.Domain.Interfaces;
+using AccountingScholarships.Application.Interfaces;
 using AccountingScholarships.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -303,6 +303,39 @@ public class StoredProcedureRepository : IStoredProcedureRepository
         if (val is DateTime dt) return DateOnly.FromDateTime(dt);
         if (DateTime.TryParse(val.ToString(), out var parsed)) return DateOnly.FromDateTime(parsed);
         return null;
+    }
+
+    public async Task<SyncLogPagedResult> GetSyncLogsAsync(string? status, int page, int pageSize, CancellationToken ct = default)
+    {
+        var query = _context.StudentSyncLogs.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(status))
+            query = query.Where(x => x.Status == status);
+
+        var total = await query.CountAsync(ct);
+
+        var logs = await query
+            .OrderByDescending(x => x.SentAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(ct);
+
+        return new SyncLogPagedResult
+        {
+            Total = total,
+            Page = page,
+            PageSize = pageSize,
+            Logs = logs
+        };
+    }
+
+    public async Task<IReadOnlyList<StudentSyncLog>> GetSyncLogsByStudentAsync(int studentId, CancellationToken ct = default)
+    {
+        return await _context.StudentSyncLogs
+            .AsNoTracking()
+            .Where(x => x.StudentId == studentId)
+            .OrderByDescending(x => x.SentAt)
+            .ToListAsync(ct);
     }
 
     private static object? GetRaw(Dictionary<string, object?> row, string key)

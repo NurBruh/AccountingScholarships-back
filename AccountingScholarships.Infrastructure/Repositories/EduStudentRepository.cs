@@ -1,9 +1,9 @@
-using AccountingScholarships.Domain.DTO;
+using AccountingScholarships.Application.DTO;
 using AccountingScholarships.Domain.Entities.Real.university;
-using AccountingScholarships.Domain.Interfaces;
+using AccountingScholarships.Application.Interfaces;
 using AccountingScholarships.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using AccountingScholarships.Domain.DTO.University;
+using AccountingScholarships.Application.DTO.University;
 
 namespace AccountingScholarships.Infrastructure.Repositories;
 

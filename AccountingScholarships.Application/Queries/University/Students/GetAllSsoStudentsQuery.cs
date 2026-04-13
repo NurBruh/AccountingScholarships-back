@@ -1,5 +1,5 @@
 using MediatR;
-using AccountingScholarships.Domain.DTO.University;
+using AccountingScholarships.Application.DTO.University;
 
 namespace AccountingScholarships.Application.Queries.University.Students;
 

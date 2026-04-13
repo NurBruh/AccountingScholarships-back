@@ -1,5 +1,5 @@
-using AccountingScholarships.Domain.DTO.EpvoSso.EpvoJoin;
-using AccountingScholarships.Domain.Interfaces;
+using AccountingScholarships.Application.DTO.EpvoSso.EpvoJoin;
+using AccountingScholarships.Application.Interfaces;
 using MediatR;
 
 namespace AccountingScholarships.Application.Queries.EpvoSso.EpvoJoin;

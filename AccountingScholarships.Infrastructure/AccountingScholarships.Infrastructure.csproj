@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AccountingScholarships.Domain\AccountingScholarships.Domain.csproj" />
+    <ProjectReference Include="..\AccountingScholarships.Application\AccountingScholarships.Application.csproj" />
   </ItemGroup>
 
 </Project>
