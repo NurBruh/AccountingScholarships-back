@@ -15,6 +15,7 @@ public class EpvoStudentSsoDto
     public int? StudyCalendarId { get; set; }
     public int? PaymentFormId { get; set; }
     public int? StudyLanguageId { get; set; }
+    public byte[]? Photo { get; set; }
     public int? ProfessionId { get; set; }
     public int? CourseNumber { get; set; }
     public string? TranscriptNumber { get; set; }

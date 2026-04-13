@@ -394,6 +394,28 @@ public class EpvoSsoController : ControllerBase
         return Ok(result);
     }
 
+    // ─── Students SSO ─────────────────────────────────────────────
+
+    [HttpGet("students-sso")]
+    public async Task<IActionResult> GetStudentsSso(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetAllStudentSsoQuery(), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
+    // ─── Student Change Logs ──────────────────────────────────────
+
+    [HttpGet("student-change-logs")]
+    public async Task<IActionResult> GetStudentChangeLogs(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetAllStudentChangeLogsQuery(), ct);
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
     // ─── Stored Procedures ───────────────────────────────────────
 
     /// <summary>
