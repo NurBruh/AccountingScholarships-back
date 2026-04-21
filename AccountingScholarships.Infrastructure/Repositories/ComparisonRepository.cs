@@ -38,9 +38,10 @@ public class ComparisonRepository : IComparisonRepository
         var ssoStudents = await ssoTask;
 
         // Загружаем iic и updated_date из Scollarship_Students_Info (SSO)
+        var ssoStudentIds = ssoStudents.Select(s => s.StudentID).ToList();
         var ssiList = await _ssoContext.Scollarship_Students_Infos
             .AsNoTracking()
-            .Where(x => x.studentID != null)
+            .Where(x => x.studentID != null && ssoStudentIds.Contains(x.studentID.Value))
             .ToListAsync(ct);
         var ssiDict = ssiList
             .GroupBy(x => x.studentID!.Value)
@@ -177,7 +178,7 @@ public class ComparisonRepository : IComparisonRepository
     {
         return await _ssoContext.Edu_Students
             .AsNoTracking()
-            .Where(s => s.StatusID != 2 && s.StatusID != null && s.CategoryID == 1 && s.User.DOB != null)
+            .Where(s => s.StatusID != 2 && s.StatusID != null && s.CategoryID == 1 && s.User.DOB != null && s.EducationPaymentTypeID == 1)
             .Select(s => new SsoStudentFlat
             {
                 StudentID = s.StudentID,
@@ -257,6 +258,7 @@ public class ComparisonRepository : IComparisonRepository
             LEFT JOIN FACULTIES             fac ON fac.facultyId   = ss.facultyId
             LEFT JOIN SPECIALITIES_EPVO     se  ON se.id           = ss.specializationId
             LEFT JOIN STUDENT_INFO          si  ON si.studentId    = ss.studentId
+            WHERE ss.grantType = -4
             """;
 
         return await _epvoContext.Database
@@ -390,4 +392,119 @@ public class ComparisonRepository : IComparisonRepository
     }
 
     #endregion
+
+    public async Task<object> SyncBatchAsync(List<string> iins, string triggeredBy, CancellationToken ct = default)
+    {
+        // 1. Грузим данные из базы
+        var ssoStudents = await LoadSsoDataAsync(ct);
+        var epvoStudents = await LoadEpvoDataAsync(ct);
+
+        var ssoStudentIds = ssoStudents.Where(s => s.IIN != null && iins.Contains(s.IIN)).Select(s => s.StudentID).ToList();
+        var ssiDict = await _ssoContext.Scollarship_Students_Infos
+            .AsNoTracking()
+            .Where(x => x.studentID != null && ssoStudentIds.Contains(x.studentID.Value))
+            .ToDictionaryAsync(x => x.studentID!.Value, ct);
+
+        int updated = 0;
+        var changeLogs = new List<StudentChangeLog>();
+        var syncLogs = new List<StudentSyncLog>();
+        var sessionId = Guid.NewGuid().ToString("N")[..16];
+
+        foreach (var iin in iins)
+        {
+            var sso = ssoStudents.FirstOrDefault(s => s.IIN == iin);
+            var epvo = epvoStudents.FirstOrDefault(e => e.IinPlt == iin);
+
+            if (sso == null || epvo == null)
+            {
+                syncLogs.Add(new StudentSyncLog
+                {
+                    StudentId = epvo?.StudentId ?? sso?.StudentID ?? 0,
+                    IinPlt = iin,
+                    SentAt = DateTime.UtcNow,
+                    Status = "Error",
+                    ErrorMessage = "Студент не найден в одной из баз",
+                    TriggeredBy = triggeredBy
+                });
+                continue;
+            }
+
+            if (ssiDict.TryGetValue(sso.StudentID, out var ssi))
+            {
+                sso.Iic = ssi.Iic;
+                sso.UpdatedDate = ssi.Updated_Date;
+            }
+
+            var oldIic = epvo.Iic;
+            var newIic = sso.Iic;
+
+            // Если счет изменился
+            if (newIic != null && newIic != oldIic)
+            {
+                try
+                {
+                    var sqlUpdate = @"
+                        IF EXISTS (SELECT 1 FROM [STUDENT_INFO] WHERE studentId = @StudentId)
+                            UPDATE [STUDENT_INFO] SET iic = @Iic, updateDate = @UpdateDate WHERE studentId = @StudentId
+                        ELSE
+                            INSERT INTO [STUDENT_INFO] (studentId, iic, updateDate) VALUES (@StudentId, @Iic, @UpdateDate)";
+
+                    await _epvoContext.Database.ExecuteSqlRawAsync(sqlUpdate,
+                        new Microsoft.Data.SqlClient.SqlParameter("@Iic", newIic),
+                        new Microsoft.Data.SqlClient.SqlParameter("@UpdateDate", DateTime.Now),
+                        new Microsoft.Data.SqlClient.SqlParameter("@StudentId", epvo.StudentId));
+
+                    updated++;
+
+                    // Собираем лог изменений
+                    changeLogs.Add(new StudentChangeLog
+                    {
+                        IinPlt = iin,
+                        FieldName = "ИИК (Р/С)",
+                        OldValue = oldIic,
+                        NewValue = newIic,
+                        ChangedAt = DateTime.Now,
+                        ChangedBy = triggeredBy,
+                        DataSource = "SSO",
+                        SyncSessionId = sessionId
+                    });
+
+                    // Собираем лог синхронизации
+                    syncLogs.Add(new StudentSyncLog
+                    {
+                        StudentId = epvo.StudentId,
+                        IinPlt = iin,
+                        SentAt = DateTime.UtcNow,
+                        Status = "Success",
+                        RequestBody = $"{{ \"iic_updated\": \"{newIic}\" }}",
+                        TriggeredBy = triggeredBy
+                    });
+                }
+                catch (Exception ex)
+                {
+                    syncLogs.Add(new StudentSyncLog
+                    {
+                        StudentId = epvo.StudentId,
+                        IinPlt = iin,
+                        SentAt = DateTime.UtcNow,
+                        Status = "Error",
+                        ErrorMessage = ex.Message,
+                        TriggeredBy = triggeredBy
+                    });
+                }
+            }
+        }
+
+        // Сохраняем все логи
+        if (changeLogs.Any())
+            await _changeLogRepo.SaveChangesAsync(changeLogs, ct);
+
+        if (syncLogs.Any())
+        {
+            await _epvoContext.StudentSyncLogs.AddRangeAsync(syncLogs, ct);
+            await _epvoContext.SaveChangesAsync(ct);
+        }
+
+        return new { success = true, updated, errors = syncLogs.Count(s => s.Status == "Error"), logs = syncLogs };
+    }
 }

@@ -37,6 +37,8 @@ public class SsoStudentDetailsRepository : ISsoStudentDetailsRepository
             join si  in _context.Student_Info     on ss.StudentId            equals si.StudentId     into siG
             from si  in siG.DefaultIfEmpty()
 
+            where ss.GrantType == -4
+
             select new StudentSsoDetailDto
             {
                 UniversityId   = ss.UniversityId,
