@@ -29,21 +29,22 @@ public class ComparisonRepository : IComparisonRepository
 
     public async Task<IReadOnlyList<StudentComparisonDto>> GetComparisonAsync(CancellationToken ct = default)
     {
-        // Загружаем данные из SSO параллельно с EPVO,
-        // но запросы к _epvoContext выполняем последовательно (DbContext не потокобезопасен)
         var ssoTask = LoadSsoDataAsync(ct);
         var epvoStudents = await LoadEpvoDataAsync(ct);
         var studyForms = await LoadStudyFormsAsync(ct);
 
         var ssoStudents = await ssoTask;
 
-        // Загружаем iic и updated_date из Scollarship_Students_Info (SSO)
-        var ssoStudentIds = ssoStudents.Select(s => s.StudentID).ToList();
+        var ssoStudentIds = ssoStudents.Select(s => s.StudentID).ToHashSet();
+
+        // Загружаем все записи без Contains (избегаем OPENJSON для совместимости с SQL Server < 2016)
         var ssiList = await _ssoContext.Scollarship_Students_Infos
             .AsNoTracking()
-            .Where(x => x.studentID != null && ssoStudentIds.Contains(x.studentID.Value))
+            .Where(x => x.studentID != null)
             .ToListAsync(ct);
+
         var ssiDict = ssiList
+            .Where(x => ssoStudentIds.Contains(x.studentID!.Value))
             .GroupBy(x => x.studentID!.Value)
             .ToDictionary(g => g.Key, g => g.First());
 
@@ -395,11 +396,16 @@ public class ComparisonRepository : IComparisonRepository
         var ssoStudents = await LoadSsoDataAsync(ct);
         var epvoStudents = await LoadEpvoDataAsync(ct);
 
-        var ssoStudentIds = ssoStudents.Where(s => s.IIN != null && iins.Contains(s.IIN)).Select(s => s.StudentID).ToList();
+        var ssoStudentIds = ssoStudents.Where(s => s.IIN != null && iins.Contains(s.IIN)).Select(s => s.StudentID).ToHashSet();
+
+        // Загружаем без Contains в SQL для совместимости с SQL Server < 2016
         var ssiDict = await _ssoContext.Scollarship_Students_Infos
             .AsNoTracking()
-            .Where(x => x.studentID != null && ssoStudentIds.Contains(x.studentID.Value))
-            .ToDictionaryAsync(x => x.studentID!.Value, ct);
+            .Where(x => x.studentID != null)
+            .ToListAsync(ct)
+            .ContinueWith(t => t.Result
+                .Where(x => ssoStudentIds.Contains(x.studentID!.Value))
+                .ToDictionary(x => x.studentID!.Value), ct);
 
         int updated = 0;
         var changeLogs = new List<StudentChangeLog>();

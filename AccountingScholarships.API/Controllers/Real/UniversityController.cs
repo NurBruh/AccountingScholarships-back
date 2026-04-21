@@ -25,175 +25,293 @@ public class UniversityController : ControllerBase
     // ─── Academic Statuses ────────────────────────────────────────
     [HttpGet("academic-statuses")]
     public async Task<IActionResult> GetAcademicStatuses(CancellationToken ct)
-        => Ok(await _mediator.Send(new GetAllEduAcademicStatusesQuery(), ct));
+    {
+        var result = await _mediator.Send(new GetAllEduAcademicStatusesQuery(), ct);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
+
+    }
 
     [HttpGet("academic-statuses/{id:int}")]
     public async Task<IActionResult> GetAcademicStatusById(int id, CancellationToken ct)
     {
         var result = await _mediator.Send(new GetEduAcademicStatusByIdQuery(id), ct);
-        return result is null ? NotFound() : Ok(result);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
     }
 
     // ─── Address Types ────────────────────────────────────────────
     [HttpGet("address-types")]
     public async Task<IActionResult> GetAddressTypes(CancellationToken ct)
-        => Ok(await _mediator.Send(new GetAllEduAddressTypesQuery(), ct));
+    {
+        var result = await _mediator.Send(new GetAllEduAddressTypesQuery(), ct);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
+    }
+        
 
     [HttpGet("address-types/{id:int}")]
     public async Task<IActionResult> GetAddressTypeById(int id, CancellationToken ct)
     {
         var result = await _mediator.Send(new GetEduAddressTypeByIdQuery(id), ct);
-        return result is null ? NotFound() : Ok(result);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
     }
 
     // ─── Citizen Categories ───────────────────────────────────────
     [HttpGet("citizen-categories")]
     public async Task<IActionResult> GetCitizenCategories(CancellationToken ct)
-        => Ok(await _mediator.Send(new GetAllEduCitizenCategoriesQuery(), ct));
+    {
+        var result = await _mediator.Send(new GetAllEduCitizenCategoriesQuery(), ct);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
+    }
+        
 
     [HttpGet("citizen-categories/{id:int}")]
     public async Task<IActionResult> GetCitizenCategoryById(int id, CancellationToken ct)
     {
         var result = await _mediator.Send(new GetEduCitizenCategoryByIdQuery(id), ct);
-        return result is null ? NotFound() : Ok(result);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
     }
 
     // ─── Control Types ────────────────────────────────────────────
     [HttpGet("control-types")]
     public async Task<IActionResult> GetControlTypes(CancellationToken ct)
-        => Ok(await _mediator.Send(new GetAllEduControlTypesQuery(), ct));
+    {
+        var result = await _mediator.Send(new GetAllEduControlTypesQuery(), ct);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
+    }
+        
 
     [HttpGet("control-types/{id:int}")]
     public async Task<IActionResult> GetControlTypeById(int id, CancellationToken ct)
     {
         var result = await _mediator.Send(new GetEduControlTypeByIdQuery(id), ct);
-        return result is null ? NotFound() : Ok(result);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
     }
 
     // ─── Countries ────────────────────────────────────────────────
     [HttpGet("countries")]
     public async Task<IActionResult> GetCountries(CancellationToken ct)
-        => Ok(await _mediator.Send(new GetAllEduCountriesQuery(), ct));
+    {
+        var result = await _mediator.Send(new GetAllEduCountriesQuery(), ct);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
+    }
+        
 
     [HttpGet("countries/{id:int}")]
     public async Task<IActionResult> GetCountryById(int id, CancellationToken ct)
     {
         var result = await _mediator.Send(new GetEduCountryByIdQuery(id), ct);
-        return result is null ? NotFound() : Ok(result);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
     }
 
     // ─── Course Types ─────────────────────────────────────────────
     [HttpGet("course-types")]
     public async Task<IActionResult> GetCourseTypes(CancellationToken ct)
-        => Ok(await _mediator.Send(new GetAllEduCourseTypesQuery(), ct));
+    {
+        var result = await _mediator.Send(new GetAllEduCourseTypesQuery(), ct);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
+    }
+        
 
     [HttpGet("course-types/{id:int}")]
     public async Task<IActionResult> GetCourseTypeById(int id, CancellationToken ct)
     {
         var result = await _mediator.Send(new GetEduCourseTypeByIdQuery(id), ct);
-        return result is null ? NotFound() : Ok(result);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
     }
 
     // ─── Course Type DVO ──────────────────────────────────────────
     [HttpGet("course-type-dvo")]
     public async Task<IActionResult> GetCourseTypeDvo(CancellationToken ct)
-        => Ok(await _mediator.Send(new GetAllEduCourseTypeDvoQuery(), ct));
+    {
+        var result = await _mediator.Send(new GetAllEduCourseTypeDvoQuery(), ct);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
+    }
+
+    
 
     [HttpGet("course-type-dvo/{id:int}")]
     public async Task<IActionResult> GetCourseTypeDvoById(int id, CancellationToken ct)
     {
         var result = await _mediator.Send(new GetEduCourseTypeDvoByIdQuery(id), ct);
-        return result is null ? NotFound() : Ok(result);
+        if(result is null)
+            return NotFound();  
+        return Ok(result);
     }
 
     // ─── Document Issue Orgs ──────────────────────────────────────
     [HttpGet("document-issue-orgs")]
     public async Task<IActionResult> GetDocumentIssueOrgs(CancellationToken ct)
-        => Ok(await _mediator.Send(new GetAllEduDocumentIssueOrgsQuery(), ct));
+    {
+        var result = await _mediator.Send(new GetAllEduDocumentIssueOrgsQuery(), ct);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
+    }
+        
 
     [HttpGet("document-issue-orgs/{id:int}")]
     public async Task<IActionResult> GetDocumentIssueOrgById(int id, CancellationToken ct)
     {
         var result = await _mediator.Send(new GetEduDocumentIssueOrgByIdQuery(id), ct);
-        return result is null ? NotFound() : Ok(result);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
     }
 
     // ─── Education Document SubTypes ──────────────────────────────
     [HttpGet("education-document-subtypes")]
     public async Task<IActionResult> GetEducationDocumentSubTypes(CancellationToken ct)
-        => Ok(await _mediator.Send(new GetAllEduEducationDocumentSubTypesQuery(), ct));
+    {
+        var result = await _mediator.Send(new GetAllEduEducationDocumentSubTypesQuery(), ct);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
+    }
+        
 
     [HttpGet("education-document-subtypes/{id:int}")]
     public async Task<IActionResult> GetEducationDocumentSubTypeById(int id, CancellationToken ct)
     {
         var result = await _mediator.Send(new GetEduEducationDocumentSubTypeByIdQuery(id), ct);
-        return result is null ? NotFound() : Ok(result);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
     }
 
     // ─── Education Document Types ─────────────────────────────────
     [HttpGet("education-document-types")]
     public async Task<IActionResult> GetEducationDocumentTypes(CancellationToken ct)
-        => Ok(await _mediator.Send(new GetAllEduEducationDocumentTypesQuery(), ct));
+    {
+        var result = await _mediator.Send(new GetAllEduEducationDocumentTypesQuery(), ct);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
+    }
+        
 
     [HttpGet("education-document-types/{id:int}")]
     public async Task<IActionResult> GetEducationDocumentTypeById(int id, CancellationToken ct)
     {
         var result = await _mediator.Send(new GetEduEducationDocumentTypeByIdQuery(id), ct);
-        return result is null ? NotFound() : Ok(result);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
     }
 
     // ─── Education Durations ──────────────────────────────────────
     [HttpGet("education-durations")]
     public async Task<IActionResult> GetEducationDurations(CancellationToken ct)
-        => Ok(await _mediator.Send(new GetAllEduEducationDurationsQuery(), ct));
+    {
+        var result = await _mediator.Send(new GetAllEduEducationDurationsQuery(), ct);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
+    }
+        
 
     [HttpGet("education-durations/{id:int}")]
     public async Task<IActionResult> GetEducationDurationById(int id, CancellationToken ct)
     {
         var result = await _mediator.Send(new GetEduEducationDurationByIdQuery(id), ct);
-        return result is null ? NotFound() : Ok(result);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
     }
 
     // ─── Education Payment Types ──────────────────────────────────
     [HttpGet("education-payment-types")]
     public async Task<IActionResult> GetEducationPaymentTypes(CancellationToken ct)
-        => Ok(await _mediator.Send(new GetAllEduEducationPaymentTypesQuery(), ct));
+    {
+        var result = await _mediator.Send(new GetAllEduEducationPaymentTypesQuery(), ct);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
+    }
+        
 
     [HttpGet("education-payment-types/{id:int}")]
     public async Task<IActionResult> GetEducationPaymentTypeById(int id, CancellationToken ct)
     {
         var result = await _mediator.Send(new GetEduEducationPaymentTypeByIdQuery(id), ct);
-        return result is null ? NotFound() : Ok(result);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
     }
 
     // ─── Education Types ──────────────────────────────────────────
     [HttpGet("education-types")]
     public async Task<IActionResult> GetEducationTypes(CancellationToken ct)
-        => Ok(await _mediator.Send(new GetAllEduEducationTypesQuery(), ct));
+    {
+        var result = await _mediator.Send(new GetAllEduEducationTypesQuery(), ct);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
+    }
+        
 
     [HttpGet("education-types/{id:int}")]
     public async Task<IActionResult> GetEducationTypeById(int id, CancellationToken ct)
     {
         var result = await _mediator.Send(new GetEduEducationTypeByIdQuery(id), ct);
-        return result is null ? NotFound() : Ok(result);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
     }
 
     // ─── Employee Positions ───────────────────────────────────────
     [HttpGet("employee-positions")]
     public async Task<IActionResult> GetEmployeePositions(CancellationToken ct)
-        => Ok(await _mediator.Send(new GetAllEduEmployeePositionsQuery(), ct));
+    {
+        var result = await _mediator.Send(new GetAllEduEmployeePositionsQuery(), ct);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
+    }
 
     [HttpGet("employee-positions/{id:int}")]
     public async Task<IActionResult> GetEmployeePositionById(int id, CancellationToken ct)
     {
         var result = await _mediator.Send(new GetEduEmployeePositionByIdQuery(id), ct);
-        return result is null ? NotFound() : Ok(result);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
     }
 
     // ─── Employees ────────────────────────────────────────────────
     [HttpGet("employees")]
     public async Task<IActionResult> GetEmployees(CancellationToken ct)
-        => Ok(await _mediator.Send(new GetAllEduEmployeesQuery(), ct));
+    {
+        var result = await _mediator.Send(new GetAllEduEmployeesQuery(), ct);
+        if(result is null)
+            return NotFound();
+        return Ok(result);
+    }
+        
 
     [HttpGet("employees/{id:int}")]
     public async Task<IActionResult> GetEmployeeById(int id, CancellationToken ct)
@@ -237,7 +355,12 @@ public class UniversityController : ControllerBase
         var result = await _mediator.Send(new GetEduGrantTypeByIdQuery(id), ct);
         return result is null ? NotFound() : Ok(result);
     }
-
+    [HttpGet("grant-typen")]
+    public async Task<IActionResult> GetGrantTypesN(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetAllEduGrantTypesNQuery(), ct);
+        return result is null ? NotFound() : Ok(result);
+    }
     // ─── Languages ────────────────────────────────────────────────
     [HttpGet("languages")]
     public async Task<IActionResult> GetLanguages(CancellationToken ct)

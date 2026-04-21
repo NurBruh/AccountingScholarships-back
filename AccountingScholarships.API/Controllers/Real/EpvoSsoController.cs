@@ -42,6 +42,14 @@ public class EpvoSsoController : ControllerBase
             return NotFound();
         return Ok(result);
     }
+    [HttpGet("profession-2025")]
+    public async Task<IActionResult> GetProfessionNew(CancellationToken ct)
+    {
+        var result = await _mediator.Send(new GetAllEpvoProfession2025Query(), ct)
+        if (result is null)
+            return NotFound();
+        return Ok(result);
+    }
 
     // ─── Students ─────────────────────────────────────────────────
 
