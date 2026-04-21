@@ -165,10 +165,6 @@ public class ComparisonRepository : IComparisonRepository
             result.Add(dto);
         }
 
-        // Сохраняем логи изменений в БД
-        if (changeLogs.Count > 0)
-            await _changeLogRepo.SaveChangesAsync(changeLogs, ct);
-
         return result.AsReadOnly();
     }
 
