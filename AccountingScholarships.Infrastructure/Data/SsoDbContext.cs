@@ -21,6 +21,7 @@ public class SsoDbContext : DbContext
     public DbSet<Edu_EducationPaymentTypes> Edu_EducationPaymentTypes => Set<Edu_EducationPaymentTypes>();
     public DbSet<Edu_EducationTypes> Edu_EducationTypes => Set<Edu_EducationTypes>();
     public DbSet<Edu_GrantTypes> Edu_GrantTypes => Set<Edu_GrantTypes>();
+    public DbSet<Edu_GrantTypesN> Edu_GrantTypesN => Set<Edu_GrantTypesN>();
     public DbSet<Edu_Languages> Edu_Languages => Set<Edu_Languages>();
     public DbSet<Edu_MaritalStatuses> Edu_MaritalStatuses => Set<Edu_MaritalStatuses>();
     public DbSet<Edu_Messengers> Edu_Messengers => Set<Edu_Messengers>();
@@ -67,7 +68,7 @@ public class SsoDbContext : DbContext
     public DbSet<Edu_Entrants> Edu_Entrants => Set<Edu_Entrants>();
     public DbSet<Edu_EntrantStatuses> Edu_EntrantStatuses => Set<Edu_EntrantStatuses>();
     public DbSet<StudentInfo_Translations> StudentInfo_Translations => Set<StudentInfo_Translations>();
-
+    public DbSet<Scollarship_Students_Info> Scollarship_Students_Infos => Set<Scollarship_Students_Info>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -344,6 +345,7 @@ public class SsoDbContext : DbContext
         });
         modelBuilder.Entity<Edu_EducationTypes>(e => e.HasKey(x => x.ID));
         modelBuilder.Entity<Edu_GrantTypes>(e => e.HasKey(x => x.ID));
+        modelBuilder.Entity<Edu_GrantTypesN>(e =>{e.HasKey(x => x.Id);});
         modelBuilder.Entity<Edu_Languages>(e => e.HasKey(x => x.ID));
         modelBuilder.Entity<Edu_MaritalStatuses>(e => e.HasKey(x => x.ID));
         modelBuilder.Entity<Edu_Messengers>(e => e.HasKey(x => x.ID));
@@ -585,6 +587,12 @@ public class SsoDbContext : DbContext
             e.ToTable("StudentInfo_Translations");
         });
 
+        modelBuilder.Entity<Scollarship_Students_Info>(x =>
+        {
+          x.HasKey(e => e.Id);
+        });
+
+
         // ═══════════════════════════════════════════════════════════════
         // Имена таблиц в MSSQL базе
         // ═══════════════════════════════════════════════════════════════
@@ -599,6 +607,7 @@ public class SsoDbContext : DbContext
         modelBuilder.Entity<Edu_EducationPaymentTypes>().ToTable("Edu_EducationPaymentTypes");
         modelBuilder.Entity<Edu_EducationTypes>().ToTable("Edu_EducationTypes");
         modelBuilder.Entity<Edu_GrantTypes>().ToTable("Edu_GrantTypes");
+        modelBuilder.Entity<Edu_GrantTypesN>().ToTable("Edu_GrantTypes_N");
         modelBuilder.Entity<Edu_Languages>().ToTable("Edu_Languages");
         modelBuilder.Entity<Edu_MaritalStatuses>().ToTable("Edu_MaritalStatuses");
         modelBuilder.Entity<Edu_Messengers>().ToTable("Edu_Messengers");
@@ -640,5 +649,6 @@ public class SsoDbContext : DbContext
         modelBuilder.Entity<Edu_SpecialitySpecializations>().ToTable("Edu_SpecialitySpecializations");
         modelBuilder.Entity<Edu_Entrants>().ToTable("Edu_Entrants");
         modelBuilder.Entity<Edu_EntrantStatuses>().ToTable("Edu_EntrantStatuses");
+        modelBuilder.Entity<Scollarship_Students_Info>().ToTable("Scollarship_Students_Info");
     }
 }

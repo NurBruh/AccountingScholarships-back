@@ -1,5 +1,5 @@
-using AccountingScholarships.Domain.DTO.EpvoSso;
-using AccountingScholarships.Domain.Interfaces;
+using AccountingScholarships.Application.DTO.EpvoSso;
+using AccountingScholarships.Application.Interfaces;
 using MediatR;
 using EpvoStudent = AccountingScholarships.Domain.Entities.Real.epvosso.Student;
 

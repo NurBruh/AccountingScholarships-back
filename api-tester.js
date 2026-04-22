@@ -27,6 +27,10 @@ const EPVO_SSO_ENDPOINTS = [
   "maritalstates",
   "nationalities",
   "study-languages",
+  "students-temp",
+  "students-dump",
+  "students-sso",
+  "student-change-logs",
 ].map((e) => ({ label: `EpvoSso :: ${e}`, url: `${BASE_URL}/api/epvo-sso/${e}` }));
 
 const UNIVERSITY_ENDPOINTS = [
@@ -83,6 +87,7 @@ const UNIVERSITY_ENDPOINTS = [
   "user-documents",
   "user-education",
   "users",
+  "scollarship-students-info",
 ].map((e) => ({ label: `University :: ${e}`, url: `${BASE_URL}/api/university/${e}` }));
 
 const ALL_ENDPOINTS = [...EPVO_SSO_ENDPOINTS, ...UNIVERSITY_ENDPOINTS];

@@ -1,5 +1,5 @@
-using AccountingScholarships.Domain.DTO;
-using AccountingScholarships.Domain.Interfaces;
+using AccountingScholarships.Application.DTO;
+using AccountingScholarships.Application.Interfaces;
 using MediatR;
 
 namespace AccountingScholarships.Application.Queries.EpvoSso;

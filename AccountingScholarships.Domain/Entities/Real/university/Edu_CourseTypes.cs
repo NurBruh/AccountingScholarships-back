@@ -11,7 +11,7 @@ namespace AccountingScholarships.Domain.Entities.Real.university
         public int ID { get; set; }
         public string Title { get; set; } = null!;
         public string? Code { get; set; }
-        public float EctsCoefficient { get; set; }
+        public double EctsCoefficient { get; set; }
         public string? ShortTitle { get; set; }
     }
 }

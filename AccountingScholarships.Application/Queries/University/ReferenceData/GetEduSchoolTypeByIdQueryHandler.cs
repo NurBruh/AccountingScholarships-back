@@ -1,6 +1,6 @@
-using AccountingScholarships.Domain.DTO.University;
+using AccountingScholarships.Application.DTO.University;
 using AccountingScholarships.Domain.Entities.Real.university;
-using AccountingScholarships.Domain.Interfaces;
+using AccountingScholarships.Application.Interfaces;
 using MediatR;
 namespace AccountingScholarships.Application.Queries.University.ReferenceData;
 public class GetEduSchoolTypeByIdQueryHandler : IRequestHandler<GetEduSchoolTypeByIdQuery, Edu_SchoolTypesDto?>

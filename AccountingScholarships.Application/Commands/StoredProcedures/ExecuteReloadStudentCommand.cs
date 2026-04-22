@@ -1,5 +1,5 @@
-using AccountingScholarships.Domain.Common;
-using AccountingScholarships.Domain.Interfaces;
+using AccountingScholarships.Application.Common;
+using AccountingScholarships.Application.Interfaces;
 using MediatR;
 
 namespace AccountingScholarships.Application.Commands.StoredProcedures;

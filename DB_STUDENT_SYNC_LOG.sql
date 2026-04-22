@@ -11,8 +11,11 @@ CREATE TABLE [dbo].[STUDENT_SYNC_LOG] (
     [ResponseBody]  NVARCHAR(MAX)   NULL,
     [ErrorMessage]  NVARCHAR(MAX)   NULL,
     [EpvoEndpoint]  NVARCHAR(500)   NULL,
+    
+    [TriggeredBy]   NVARCHAR(256)   NULL,   -- Кто запустил синхронизацию
 
     CONSTRAINT [PK_STUDENT_SYNC_LOG] PRIMARY KEY CLUSTERED ([Id] ASC)
+
 );
 GO
 

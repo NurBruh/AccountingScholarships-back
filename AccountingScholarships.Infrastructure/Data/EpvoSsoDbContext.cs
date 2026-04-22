@@ -9,6 +9,7 @@ namespace AccountingScholarships.Infrastructure.Data
             : base(options) { }
 
         public DbSet<Profession> Professions => Set<Profession>();
+        public DbSet<Profession_2025> Profession_2025 => Set<Profession_2025>();
         public DbSet<Student> Students => Set<Student>();
         public DbSet<Student_Info> Student_Info => Set<Student_Info>();
         public DbSet<Scholarship> Scholarships => Set<Scholarship>();
@@ -32,6 +33,8 @@ namespace AccountingScholarships.Infrastructure.Data
         public DbSet<Student_Sso> Student_Sso => Set<Student_Sso>();
         public DbSet<Student_Temp> Student_Temp => Set<Student_Temp>();
         public DbSet<StudentSyncLog> StudentSyncLogs => Set<StudentSyncLog>();
+        public DbSet<Student_Dump> Student_Dumps => Set<Student_Dump>();
+        public DbSet<StudentChangeLog> StudentChangeLogs => Set<StudentChangeLog>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,6 +44,11 @@ namespace AccountingScholarships.Infrastructure.Data
             {
                 e.HasKey(x => x.ProfessionId);
                 e.ToTable("PROFESSION");
+            });
+            modelBuilder.Entity<Profession_2025>(e =>
+            {
+                e.HasKey(x => x.ProfessionId);
+                e.ToTable("PROFESSION_EPVO_2025");
             });
 
             modelBuilder.Entity<Student_Info>(e =>
@@ -158,6 +166,12 @@ namespace AccountingScholarships.Infrastructure.Data
                 e.ToTable("STUDENT_TEMP");
             });
 
+            modelBuilder.Entity<Student_Dump>(e =>
+            {
+                e.HasKey(x => x.StudentId);
+                e.ToTable("STUDENT_DUMP");
+            });
+
             modelBuilder.Entity<StudentSyncLog>(e =>
             {
                 e.HasKey(x => x.Id);
@@ -167,6 +181,23 @@ namespace AccountingScholarships.Infrastructure.Data
                 e.Property(x => x.EpvoEndpoint).HasMaxLength(500);
                 e.Property(x => x.TriggeredBy).HasMaxLength(256);
                 e.ToTable("STUDENT_SYNC_LOG");
+            });
+
+            modelBuilder.Entity<StudentChangeLog>(e =>
+            {
+                e.HasKey(x => x.Id);
+                e.Property(x => x.Id).ValueGeneratedOnAdd();
+                e.Property(x => x.IinPlt).HasMaxLength(12);
+                e.Property(x => x.FieldName).HasMaxLength(100);
+                e.Property(x => x.OldValue).HasMaxLength(1000);
+                e.Property(x => x.NewValue).HasMaxLength(1000);
+                e.Property(x => x.DataSource).HasMaxLength(20);
+                e.Property(x => x.ChangedBy).HasMaxLength(256);
+                e.Property(x => x.SyncSessionId).HasMaxLength(50);
+                e.HasIndex(x => x.IinPlt);
+                e.HasIndex(x => x.ChangedAt);
+                e.HasIndex(x => x.SyncSessionId);
+                e.ToTable("STUDENT_CHANGE_LOG");
             });
         }
     }

@@ -1,5 +1,5 @@
 using System.Linq.Expressions;
-using AccountingScholarships.Domain.Interfaces;
+using AccountingScholarships.Application.Interfaces;
 using AccountingScholarships.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

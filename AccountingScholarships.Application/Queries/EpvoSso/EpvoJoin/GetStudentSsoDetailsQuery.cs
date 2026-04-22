@@ -1,4 +1,4 @@
-using AccountingScholarships.Domain.DTO.EpvoSso.EpvoJoin;
+using AccountingScholarships.Application.DTO.EpvoSso.EpvoJoin;
 using MediatR;
 
 namespace AccountingScholarships.Application.Queries.EpvoSso.EpvoJoin;

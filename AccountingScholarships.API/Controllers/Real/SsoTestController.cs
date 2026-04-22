@@ -1,4 +1,3 @@
-using AccountingScholarships.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using AccountingScholarships.Application.Queries.University.Students;
@@ -12,12 +11,10 @@ namespace AccountingScholarships.API.Controllers.Real;
 [Route("api/sso-test")]
 public class SsoTestController : ControllerBase
 {
-    private readonly IEduStudentRepository _repo;
     private readonly IMediator _mediator;
 
-    public SsoTestController(IEduStudentRepository repo, IMediator mediator)
+    public SsoTestController(IMediator mediator)
     {
-        _repo = repo;
         _mediator = mediator;
     }
 
@@ -27,7 +24,7 @@ public class SsoTestController : ControllerBase
     [HttpGet("students")]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        var students = await _repo.GetAllAsDtoAsync(cancellationToken);
+        var students = await _mediator.Send(new GetAllEduStudentsQuery(), cancellationToken);
         return Ok(students);
     }
 
@@ -37,7 +34,7 @@ public class SsoTestController : ControllerBase
     [HttpGet("students/{id:int}")]
     public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken)
     {
-        var student = await _repo.GetAsDtoAsync(id, cancellationToken);
+        var student = await _mediator.Send(new GetEduStudentByIdQuery(id), cancellationToken);
         if (student is null)
             return NotFound(new { message = $"Студент с ID={id} не найден в SSO БД." });
 
@@ -50,23 +47,19 @@ public class SsoTestController : ControllerBase
     [HttpGet("students/by-iin/{iin}")]
     public async Task<IActionResult> GetByIIN(string iin, CancellationToken cancellationToken)
     {
-        var student = await _repo.GetByIINAsync(iin, cancellationToken);
+        var student = await _mediator.Send(new GetEduStudentByIINQuery(iin), cancellationToken);
         if (student is null)
             return NotFound(new { message = $"Студент с ИИН={iin} не найден в SSO БД." });
 
-        var dto = await _repo.GetAsDtoAsync(student.StudentID, cancellationToken);
-        return Ok(dto);
+        return Ok(student);
     }
 
     /// <summary>
-    /// Пример CQRS: Получить список студентов (JOIN c EduUsers) из локальной SSO базы, как просил пользователь.
+    /// Получить список студентов (JOIN c EduUsers) из локальной SSO базы.
     /// </summary>
-    /// <param name="cancellationToken">Токен отмены.</param>
-    /// <returns>Список студентов.</returns>
     [HttpGet("sso-top")]
     public async Task<IActionResult> GetAllSsoStudents(CancellationToken cancellationToken)
     {
-        
         var result = await _mediator.Send(new GetAllSsoStudentsQuery(), cancellationToken);
         return Ok(result);
     }
