@@ -9,6 +9,7 @@ namespace AccountingScholarships.Infrastructure.Data
             : base(options) { }
 
         public DbSet<Profession> Professions => Set<Profession>();
+        public DbSet<Profession_2025> Profession_2025 => Set<Profession_2025>();
         public DbSet<Student> Students => Set<Student>();
         public DbSet<Student_Info> Student_Info => Set<Student_Info>();
         public DbSet<Scholarship> Scholarships => Set<Scholarship>();
@@ -43,6 +44,11 @@ namespace AccountingScholarships.Infrastructure.Data
             {
                 e.HasKey(x => x.ProfessionId);
                 e.ToTable("PROFESSION");
+            });
+            modelBuilder.Entity<Profession_2025>(e =>
+            {
+                e.HasKey(x => x.ProfessionId);
+                e.ToTable("PROFESSION_EPVO_2025");
             });
 
             modelBuilder.Entity<Student_Info>(e =>
