@@ -15,16 +15,23 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var ssolocal = configuration.GetConnectionString("PcConnection");
-        var epvolocal = configuration.GetConnectionString("PcEpvoConnection");
+        // ─── ТУМБЛЕР: DbSettings:UseLocalConnections в appsettings.json ───────────
+        // true  → локальные PC (разработка)    false → сервер (продакшн)
+        // Когда проект готов: убери этот блок и оставь только серверные строки
+        // ──────────────────────────────────────────────────────────────────────────
+        var useLocal = configuration.GetValue<bool>("DbSettings:UseLocalConnections");
 
-        var ssocon = configuration.GetConnectionString("MSSQLConnection");
-        var epvocon = configuration.GetConnectionString("EPVOConnection1");
+        var ssoConn  = useLocal
+            ? configuration.GetConnectionString("PcConnection")
+            : configuration.GetConnectionString("MSSQLConnection");
+        var epvoConn = useLocal
+            ? configuration.GetConnectionString("PcEpvoConnection")
+            : configuration.GetConnectionString("EPVOConnection1");
 
         services.AddDbContext<SsoDbContext>(options =>
-            options.UseSqlServer(ssocon));
+            options.UseSqlServer(ssoConn));
         services.AddDbContext<EpvoSsoDbContext>(options =>
-            options.UseSqlServer(epvocon, sqlOptions =>
+            options.UseSqlServer(epvoConn, sqlOptions =>
             {
                 sqlOptions.CommandTimeout(300);
             }));
