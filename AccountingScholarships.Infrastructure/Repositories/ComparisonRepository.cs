@@ -197,7 +197,7 @@ public class ComparisonRepository : IComparisonRepository
                     && s.Speciality.RupEditorOrgUnit.Parent.TypeID == 2
                         ? s.Speciality.RupEditorOrgUnit.Parent.Title
                         : null,
-                SpecialityName = s.Speciality != null ? s.Speciality.Code + " " + s.Speciality.Title : null,
+                SpecialityName = s.Speciality != null ? ((s.Speciality.Code ?? "") + " " + (s.Speciality.Title ?? "")).Trim() : null,
                 EptESUVOGrantTypeId = s.EducationPaymentType != null
                     ? s.EducationPaymentType.ESUVOGrantTypeId
                     : null,
