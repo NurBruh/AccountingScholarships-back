@@ -197,7 +197,7 @@ public class ComparisonRepository : IComparisonRepository
                     && s.Speciality.RupEditorOrgUnit.Parent.TypeID == 2
                         ? s.Speciality.RupEditorOrgUnit.Parent.Title
                         : null,
-                SpecialityName = s.Speciality != null ? s.Speciality.Title : null,
+                SpecialityName = s.Speciality != null ? s.Speciality.Code + " " + s.Speciality.Title : null,
                 EptESUVOGrantTypeId = s.EducationPaymentType != null
                     ? s.EducationPaymentType.ESUVOGrantTypeId
                     : null,
@@ -235,7 +235,7 @@ public class ComparisonRepository : IComparisonRepository
                 ss.gpa,
                 sl.nameRu   AS StudyLanguage,
                 pe.professionNameRu AS ProfessionName,
-                se.nameRu   AS Specialization,
+                concat(se.specializationCode, ' ', se.nameRu) as Specialization,
                 fac.facultyNameRu   AS FacultyName,
                 CASE
                     WHEN ss.sexId = 2 THEN N'Мужского пола'
