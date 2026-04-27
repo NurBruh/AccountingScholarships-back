@@ -156,8 +156,8 @@ public class ComparisonRepository : IComparisonRepository
                 CompareAndLog(dto, changeLogs, iin, sessionId, "ФИО", dto.Sso_FullName, dto.Epvo_FullName);
                 CompareAndLog(dto, changeLogs, iin, sessionId, "Курс", dto.Sso_CourseNumber?.ToString(), dto.Epvo_CourseNumber?.ToString());
                 CompareAndLog(dto, changeLogs, iin, sessionId, "Форма обучения", dto.Sso_StudyForm, dto.Epvo_StudyForm);
-                CompareAndLog(dto, changeLogs, iin, sessionId, "Институт/Факультет", dto.Sso_Institute, dto.Epvo_FacultyName);
-                CompareAndLog(dto, changeLogs, iin, sessionId, "Кафедра/Специализация", dto.Sso_Cafedra, dto.Epvo_Specialization);
+                CompareAndLog(dto, changeLogs, iin, sessionId, "Институт", dto.Sso_Institute, dto.Epvo_FacultyName);
+                CompareAndLog(dto, changeLogs, iin, sessionId, "Специализация", dto.Sso_Speciality, dto.Epvo_Specialization);
                 CompareAndLog(dto, changeLogs, iin, sessionId, "Тип оплаты", dto.Sso_PaymentType, dto.Epvo_PaymentType);
                 CompareAndLog(dto, changeLogs, iin, sessionId, "Тип гранта", dto.Sso_GrantType, dto.Epvo_GrantType);
                 CompareAndLog(dto, changeLogs, iin, sessionId, "ИИК (Р/С)", dto.Sso_Iic, dto.Epvo_Iic);
@@ -221,7 +221,7 @@ public class ComparisonRepository : IComparisonRepository
             : "STUDENT_DUMP";
 
         var sql = $"""
-            SELECT DISTINCT
+            SELECT 
                 ss.universityId,
                 ss.studentId,
                 CONCAT(ss.lastName, ' ', ss.firstName, ' ', ss.patronymic) AS FullName,
@@ -255,7 +255,7 @@ public class ComparisonRepository : IComparisonRepository
             LEFT JOIN FACULTIES             fac ON fac.facultyId   = ss.facultyId
             LEFT JOIN SPECIALITIES_EPVO     se  ON se.id           = ss.specializationId
             LEFT JOIN STUDENT_INFO          si  ON si.studentId    = ss.studentId
-            WHERE ss.grantType = -4
+            where ss.grantType = -4
             """;
 
         return await _epvoContext.Database
