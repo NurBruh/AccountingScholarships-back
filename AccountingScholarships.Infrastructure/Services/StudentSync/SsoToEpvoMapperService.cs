@@ -46,6 +46,25 @@ public class SsoToEpvoMapperService : ISsoToEpvoMapperService
 
     public async Task<List<Student_Temp>> MapAllAsync(CancellationToken ct = default)
     {
+        /*
+         * ⚠️ ВАЖНО: Загрузка данных разбита на 6 отдельных запросов без .Include()
+         *
+         * ПРИЧИНА 1 — Shadow property Edu_UsersID:
+         *   .Include(s => s.User) заставляет EF Core создать столбец Edu_UsersID,
+         *   которого нет в реальной БД → SqlException: Invalid column name.
+         *
+         * ПРИЧИНА 2 — SQL Contains + старый SQL Server:
+         *   .Where(x => list.Contains(x.ID)) с большим списком (>200 элементов)
+         *   генерирует T-SQL с WITH (CTE) или OPENJSON.
+         *   На SQL Server 2008/2012/2014 это вызывает ошибку:
+         *   "Incorrect syntax near the keyword 'WITH'" (требуется 2016+ для OPENJSON).
+         *   Решение: загружаем всю таблицу (или фильтруем по простым условиям),
+         *   а Contains делаем в памяти C# через .ToList() + .Where(x => hashSet.Contains(x.Id)).
+         *
+         * ПРИЧИНА 3 — Производительность:
+         *   .Select() проекция + AsNoTracking() минимизирует трафик и память.
+         */
+
         // ── 1. Загружаем "плоские" данные студентов (без навигаций, без Includes) ──
         //    Это обходит проблему с shadow property Edu_UsersID
         var studentRows = await _ssoContext.Edu_Students
@@ -75,12 +94,13 @@ public class SsoToEpvoMapperService : ISsoToEpvoMapperService
             })
             .ToListAsync(ct);
 
-        var studentIds = studentRows.Select(r => r.StudentID).ToList();
+        var studentIds = studentRows.Select(r => r.StudentID).ToHashSet();
 
         // ── 2. Загружаем пользователей отдельным запросом (только scalar-поля) ──
-        var userRows = await _ssoContext.Edu_Users
+        //    Избегаем Contains в SQL (генерирует WITH/CTE, ломается на старых SQL Server)
+        var allUserRows = await _ssoContext.Edu_Users
             .AsNoTracking()
-            .Where(u => studentIds.Contains(u.ID) && u.DOB != null)
+            .Where(u => u.DOB != null)
             .Select(u => new
             {
                 u.ID,
@@ -99,12 +119,12 @@ public class SsoToEpvoMapperService : ISsoToEpvoMapperService
                 u.Email,
                 u.ESUVOID,
             })
-            .ToDictionaryAsync(u => u.ID, ct);
+            .ToListAsync(ct);
+        var userRows = allUserRows.Where(u => studentIds.Contains(u.ID)).ToDictionary(u => u.ID);
 
         // ── 3. Загружаем адреса отдельно ──
-        var addrRows = await _ssoContext.Edu_UserAddresses
+        var allAddrRows = await _ssoContext.Edu_UserAddresses
             .AsNoTracking()
-            .Where(a => studentIds.Contains(a.UserID))
             .Select(a => new
             {
                 a.UserID,
@@ -113,17 +133,16 @@ public class SsoToEpvoMapperService : ISsoToEpvoMapperService
                 a.AddressText,
             })
             .ToListAsync(ct);
-
-        var addrByUser = addrRows
+        var addrByUser = allAddrRows
+            .Where(a => studentIds.Contains(a.UserID))
             .GroupBy(a => a.UserID)
             .ToDictionary(
                 g => g.Key,
                 g => g.OrderByDescending(a => a.AddressTypeID).ToList());
 
         // ── 4. Загружаем документы образования (аттестат/диплом) ──
-        var eduDocRows = await _ssoContext.Edu_UserEducation
+        var allEduDocRows = await _ssoContext.Edu_UserEducation
             .AsNoTracking()
-            .Where(e => studentIds.Contains(e.UserID))
             .Select(e => new
             {
                 e.UserID,
@@ -134,15 +153,14 @@ public class SsoToEpvoMapperService : ISsoToEpvoMapperService
                 e.Number,
             })
             .ToListAsync(ct);
-
-        var eduByUser = eduDocRows
+        var eduByUser = allEduDocRows
+            .Where(e => studentIds.Contains(e.UserID))
             .GroupBy(e => e.UserID)
             .ToDictionary(g => g.Key, g => g.ToList());
 
         // ── 5. Загружаем документы пользователя (УДЛ, грант) ──
-        var docRows = await _ssoContext.Edu_UserDocuments
+        var allDocRows = await _ssoContext.Edu_UserDocuments
             .AsNoTracking()
-            .Where(d => studentIds.Contains(d.UserID))
             .Select(d => new
             {
                 d.UserID,
@@ -151,22 +169,23 @@ public class SsoToEpvoMapperService : ISsoToEpvoMapperService
                 d.Number,
             })
             .ToListAsync(ct);
-
-        var docByUser = docRows
+        var docByUser = allDocRows
+            .Where(d => studentIds.Contains(d.UserID))
             .GroupBy(d => d.UserID)
             .ToDictionary(g => g.Key, g => g.ToList());
 
         // ── 6. Сумма ECTS ──
-        var creditsDict = await _ssoContext.Edu_StudentCourses
+        var allCredits = await _ssoContext.Edu_StudentCourses
             .AsNoTracking()
-            .Where(sc => studentIds.Contains(sc.StudentID))
             .Join(_ssoContext.Edu_SemesterCourses.AsNoTracking(),
                   stc => stc.SemesterCourseID,
                   sc => sc.ID,
                   (stc, sc) => new { stc.StudentID, sc.EctsCredits })
+            .ToListAsync(ct);
+        var creditsDict = allCredits
+            .Where(x => studentIds.Contains(x.StudentID))
             .GroupBy(x => x.StudentID)
-            .Select(g => new { StudentID = g.Key, EctsCredits = g.Sum(x => (float?)x.EctsCredits) })
-            .ToDictionaryAsync(x => x.StudentID, x => x.EctsCredits, ct);
+            .ToDictionary(g => g.Key, g => g.Sum(x => (float?)x.EctsCredits) ?? 0);
 
         // ── 7. Собираем результат ──
         var result = new List<Student_Temp>();
@@ -231,7 +250,7 @@ public class SsoToEpvoMapperService : ISsoToEpvoMapperService
                 Certificate = "NA",
                 GrantNumber = grants?.Number,
                 Gpa = (decimal?)s.GPA ?? 0,
-                CurrentCreditsSum = creditsDict.GetValueOrDefault(s.StudentID) ?? 0,
+                CurrentCreditsSum = creditsDict.GetValueOrDefault(s.StudentID),
                 Residence = 1,
                 SitizenshipId = 113,
                 DormState = s.NeedsDorm ? 3 : 1,
