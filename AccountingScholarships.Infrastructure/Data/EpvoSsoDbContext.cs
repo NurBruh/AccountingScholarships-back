@@ -163,6 +163,9 @@ namespace AccountingScholarships.Infrastructure.Data
             modelBuilder.Entity<Student_Temp>(e =>
             {
                 e.HasKey(x => x.StudentId);
+                e.Property(x => x.SyncSessionId).HasMaxLength(50);
+                e.Property(x => x.Iic).HasMaxLength(100);
+                e.Property(x => x.Bic).HasMaxLength(100);
                 e.ToTable("STUDENT_TEMP");
             });
 

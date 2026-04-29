@@ -52,5 +52,7 @@ namespace AccountingScholarships.Domain.Entities.Real.university
         public Edu_Students? Student { get; set; }
         public Edu_Employees? Employee { get; set; }
         public ICollection<Edu_UserDocuments> Documents { get; set; } = new List<Edu_UserDocuments>();
+        public ICollection<Edu_UserAddresses> Addresses { get; set; } = new List<Edu_UserAddresses>();
+        public ICollection<Edu_UserEducation> Education { get; set; } = new List<Edu_UserEducation>();
     }
 }

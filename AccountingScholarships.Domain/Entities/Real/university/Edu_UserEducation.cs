@@ -18,7 +18,7 @@ namespace AccountingScholarships.Domain.Entities.Real.university
         public string? Number { get; set; }
         public string? Series { get; set; }
         public DateTime? IssuedOn { get; set; }
-        public double? GPA { get; set; }
+        public float? GPA { get; set; }
         public int? StudyLanguageID { get; set; } // FK
         public string? ExtraInfo { get; set; }
         public Guid? FileContainerID { get; set; }

@@ -107,8 +107,9 @@ public class StoredProcedureRepository : IStoredProcedureRepository
         // 2. Маппим в сущности Student_Temp
         var entities = rows.Select(MapRowToStudentTemp).ToList();
 
-        // 3. Очищаем STUDENT_TEMP
-        await _context.Database.ExecuteSqlRawAsync("TRUNCATE TABLE [dbo].[STUDENT_TEMP]", ct);
+        // 3. Очищаем только системные записи (без SyncSessionId), не трогаем ручные сессии
+        await _context.Database.ExecuteSqlRawAsync(
+            "DELETE FROM [dbo].[STUDENT_TEMP] WHERE SyncSessionId IS NULL", ct);
 
         // 4. Вставляем записи
         await _context.Student_Temp.AddRangeAsync(entities, ct);

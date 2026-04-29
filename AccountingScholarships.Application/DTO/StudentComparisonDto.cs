@@ -16,6 +16,7 @@ public class StudentComparisonDto
     public string? Sso_PaymentType { get; set; }
     public string? Sso_GrantType { get; set; }
     public string? Sso_Iic { get; set; }
+    public string? Sso_Bic { get; set; }
     public DateTime? Sso_UpdatedDate { get; set; }
 
     // ЕПВО данные
@@ -27,6 +28,7 @@ public class StudentComparisonDto
     public string? Epvo_PaymentType { get; set; }
     public string? Epvo_GrantType { get; set; }
     public string? Epvo_Iic { get; set; }
+    public string? Epvo_Bic { get; set; }
     public DateOnly? Epvo_UpdateDate { get; set; }
 
     // Статус расхождения

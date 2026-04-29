@@ -48,12 +48,13 @@ public class ComparisonRepository : IComparisonRepository
             .GroupBy(x => x.studentID!.Value)
             .ToDictionary(g => g.Key, g => g.First());
 
-        // Мёрджим iic/updated_date в SSO студентов
+        // Мёрджим iic/bic/updated_date в SSO студентов
         foreach (var s in ssoStudents)
         {
             if (ssiDict.TryGetValue(s.StudentID, out var ssi))
             {
                 s.Iic = ssi.Iic;
+                s.Bic = ssi.Bic;
                 s.UpdatedDate = ssi.Updated_Date;
             }
         }
@@ -107,6 +108,7 @@ public class ComparisonRepository : IComparisonRepository
                 dto.Sso_GrantType = ResolveGrantTypeLabel(
                     ComputeGrantType(sso.EptESUVOGrantTypeId, sso.GtypeESUVOGrantTypeId));
                 dto.Sso_Iic = sso.Iic;
+                dto.Sso_Bic = sso.Bic;
                 dto.Sso_UpdatedDate = sso.UpdatedDate;
             }
 
@@ -121,6 +123,7 @@ public class ComparisonRepository : IComparisonRepository
                 dto.Epvo_PaymentType = epvo.PaymentType;
                 dto.Epvo_GrantType = epvo.GrantType;
                 dto.Epvo_Iic = epvo.Iic;
+                dto.Epvo_Bic = epvo.Bic;
                 dto.Epvo_UpdateDate = epvo.UpdateDate;
             }
 
@@ -161,10 +164,15 @@ public class ComparisonRepository : IComparisonRepository
                 CompareAndLog(dto, changeLogs, iin, sessionId, "Тип оплаты", dto.Sso_PaymentType, dto.Epvo_PaymentType);
                 CompareAndLog(dto, changeLogs, iin, sessionId, "Тип гранта", dto.Sso_GrantType, dto.Epvo_GrantType);
                 CompareAndLog(dto, changeLogs, iin, sessionId, "ИИК (Р/С)", dto.Sso_Iic, dto.Epvo_Iic);
+                CompareAndLog(dto, changeLogs, iin, sessionId, "БИК", dto.Sso_Bic, dto.Epvo_Bic);
             }
 
             result.Add(dto);
         }
+
+        // Сохраняем логи изменений, зафиксированные при сравнении
+        if (changeLogs.Any())
+            await _changeLogRepo.SaveChangesAsync(changeLogs, ct);
 
         return result.AsReadOnly();
     }
@@ -247,6 +255,7 @@ public class ComparisonRepository : IComparisonRepository
                     WHEN ss.grantType = -6 THEN N'Трехсторонняя форма обучения'
                 END AS GrantType,
                 si.iic,
+                si.bic,
                 si.updateDate
             FROM {tableName} ss
             LEFT JOIN STUDY_FORMS           sf  ON sf.id          = ss.studyFormId
@@ -385,6 +394,7 @@ public class ComparisonRepository : IComparisonRepository
         public int? EptESUVOGrantTypeId { get; set; }
         public int? GtypeESUVOGrantTypeId { get; set; }
         public string? Iic { get; set; }
+        public string? Bic { get; set; }
         public DateTime? UpdatedDate { get; set; }
     }
 
@@ -434,42 +444,68 @@ public class ComparisonRepository : IComparisonRepository
             if (ssiDict.TryGetValue(sso.StudentID, out var ssi))
             {
                 sso.Iic = ssi.Iic;
+                sso.Bic = ssi.Bic;
                 sso.UpdatedDate = ssi.Updated_Date;
             }
 
             var oldIic = epvo.Iic;
             var newIic = sso.Iic;
+            var oldBic = epvo.Bic;
+            var newBic = sso.Bic;
 
-            // Если счет изменился
-            if (newIic != null && newIic != oldIic)
+            bool iicChanged = newIic != null && newIic != oldIic;
+            bool bicChanged = newBic != null && newBic != oldBic;
+
+            // Если счет или БИК изменился
+            if (iicChanged || bicChanged)
             {
                 try
                 {
                     var sqlUpdate = @"
                         IF EXISTS (SELECT 1 FROM [STUDENT_INFO] WHERE studentId = @StudentId)
-                            UPDATE [STUDENT_INFO] SET iic = @Iic, updateDate = @UpdateDate WHERE studentId = @StudentId
+                            UPDATE [STUDENT_INFO] SET iic = ISNULL(@Iic, iic), bic = ISNULL(@Bic, bic), updateDate = @UpdateDate WHERE studentId = @StudentId
                         ELSE
-                            INSERT INTO [STUDENT_INFO] (studentId, iic, updateDate) VALUES (@StudentId, @Iic, @UpdateDate)";
+                            INSERT INTO [STUDENT_INFO] (studentId, iic, bic, updateDate) VALUES (@StudentId, @Iic, @Bic, @UpdateDate)";
 
                     await _epvoContext.Database.ExecuteSqlRawAsync(sqlUpdate,
-                        new Microsoft.Data.SqlClient.SqlParameter("@Iic", newIic),
+                        new Microsoft.Data.SqlClient.SqlParameter("@Iic", newIic ?? (object)DBNull.Value),
+                        new Microsoft.Data.SqlClient.SqlParameter("@Bic", newBic ?? (object)DBNull.Value),
                         new Microsoft.Data.SqlClient.SqlParameter("@UpdateDate", DateTime.Now),
                         new Microsoft.Data.SqlClient.SqlParameter("@StudentId", epvo.StudentId));
 
                     updated++;
 
-                    // Собираем лог изменений
-                    changeLogs.Add(new StudentChangeLog
+                    if (iicChanged)
                     {
-                        IinPlt = iin,
-                        FieldName = "ИИК (Р/С)",
-                        OldValue = oldIic,
-                        NewValue = newIic,
-                        ChangedAt = DateTime.Now,
-                        ChangedBy = triggeredBy,
-                        DataSource = "SSO",
-                        SyncSessionId = sessionId
-                    });
+                        // Собираем лог изменений
+                        changeLogs.Add(new StudentChangeLog
+                        {
+                            IinPlt = iin,
+                            FieldName = "ИИК (Р/С)",
+                            OldValue = oldIic,
+                            NewValue = newIic,
+                            ChangedAt = DateTime.Now,
+                            ChangedBy = triggeredBy,
+                            DataSource = "SSO",
+                            SyncSessionId = sessionId
+                        });
+                    }
+
+                    if (bicChanged)
+                    {
+                        // Собираем лог изменений для БИК
+                        changeLogs.Add(new StudentChangeLog
+                        {
+                            IinPlt = iin,
+                            FieldName = "БИК",
+                            OldValue = oldBic,
+                            NewValue = newBic,
+                            ChangedAt = DateTime.Now,
+                            ChangedBy = triggeredBy,
+                            DataSource = "SSO",
+                            SyncSessionId = sessionId
+                        });
+                    }
 
                     // Собираем лог синхронизации
                     syncLogs.Add(new StudentSyncLog
@@ -478,7 +514,7 @@ public class ComparisonRepository : IComparisonRepository
                         IinPlt = iin,
                         SentAt = DateTime.UtcNow,
                         Status = "Success",
-                        RequestBody = $"{{ \"iic_updated\": \"{newIic}\" }}",
+                        RequestBody = $"{{ \"iic_updated\": \"{newIic}\", \"bic_updated\": \"{newBic}\" }}",
                         TriggeredBy = triggeredBy
                     });
                 }

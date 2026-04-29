@@ -2,6 +2,7 @@ using System.Text;
 using AccountingScholarships.Application.Interfaces;
 using AccountingScholarships.Infrastructure.Data;
 using AccountingScholarships.Infrastructure.Repositories;
+using AccountingScholarships.Infrastructure.Services.StudentSync;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -65,6 +66,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEduStudentRepository, EduStudentRepository>();
         services.AddScoped(typeof(ISsoRepository<>), typeof(SsoRepository<>));
         services.AddScoped<IComparisonRepository, ComparisonRepository>();
+        services.AddScoped<ISsoToEpvoMapperService, SsoToEpvoMapperService>();
         services.AddScoped<IChangeLogRepository, ChangeLogRepository>();
         services.AddScoped<IStoredProcedureRepository, StoredProcedureRepository>();
         services.AddScoped<IAuthService, AuthService>();

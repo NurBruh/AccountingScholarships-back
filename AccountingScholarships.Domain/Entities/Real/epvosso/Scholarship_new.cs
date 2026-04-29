@@ -14,7 +14,7 @@ namespace AccountingScholarships.Domain.Entities.Real.epvosso
         public int ScholarshipYear { get; set; }
         public int ScholarshipMonth { get; set; }
         public DateOnly? ScholarshipPayDate { get; set; }
-        public double? ScholarshipMoney { get; set; }
+        public float? ScholarshipMoney { get; set; }
         public int? ScholarshipTypeId { get; set; }
         public DateOnly? TerminationDate { get; set; }
         public bool? AdditionalPayment { get; set; }
