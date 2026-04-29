@@ -1,4 +1,5 @@
 using AccountingScholarships.Application.Common;
+using AccountingScholarships.Application.DTO.EpvoSso;
 using AccountingScholarships.Domain.Entities.Real.epvosso;
 using AccountingScholarships.Application.Interfaces;
 using AccountingScholarships.Infrastructure.Data;
@@ -14,11 +15,13 @@ namespace AccountingScholarships.Infrastructure.Repositories;
 public class StoredProcedureRepository : IStoredProcedureRepository
 {
     private readonly EpvoSsoDbContext _context;
+    private readonly IComparisonRepository _comparisonRepo;
     private readonly string _dataSource;
 
-    public StoredProcedureRepository(EpvoSsoDbContext context, Microsoft.Extensions.Configuration.IConfiguration configuration)
+    public StoredProcedureRepository(EpvoSsoDbContext context, IComparisonRepository comparisonRepo, Microsoft.Extensions.Configuration.IConfiguration configuration)
     {
         _context = context;
+        _comparisonRepo = comparisonRepo;
         _dataSource = configuration["SyncSettings:EpvoDataSource"] ?? "Dump";
     }
 
@@ -144,16 +147,24 @@ public class StoredProcedureRepository : IStoredProcedureRepository
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        // 2. Загружаем существующие записи из STUDENT_DUMP в память и строим словарь
-        //    Избегаем Contains(list) чтобы не генерировать OPENJSON, несовместимый
-        //    со старым уровнем совместимости SQL Server.
+        var useSso = _dataSource.Equals("Sso", StringComparison.OrdinalIgnoreCase);
+        var targetTable = useSso ? "STUDENT_SSO" : "STUDENT_DUMP";
+
+        // 2. Загружаем существующие записи из целевой таблицы в память и строим словарь
         var tempIds = new HashSet<int>(tempStudents.Select(s => s.StudentId));
-        var allDumps = await _context.Student_Dumps
-            .AsNoTracking()
-            .ToListAsync(ct);
-        var existingDumps = allDumps
-            .Where(d => tempIds.Contains(d.StudentId))
-            .ToDictionary(d => d.StudentId);
+        Dictionary<int, Student_Dump> existingDumps = new();
+        Dictionary<int, Student_Sso> existingSso = new();
+
+        if (useSso)
+        {
+            var allSso = await _context.Student_Sso.AsNoTracking().ToListAsync(ct);
+            existingSso = allSso.Where(d => tempIds.Contains(d.StudentId)).ToDictionary(d => d.StudentId);
+        }
+        else
+        {
+            var allDumps = await _context.Student_Dumps.AsNoTracking().ToListAsync(ct);
+            existingDumps = allDumps.Where(d => tempIds.Contains(d.StudentId)).ToDictionary(d => d.StudentId);
+        }
 
         // 3. UPSERT: обновляем существующие, добавляем новые
         foreach (var temp in tempStudents)
@@ -163,28 +174,42 @@ public class StoredProcedureRepository : IStoredProcedureRepository
                 StudentId    = temp.StudentId,
                 IinPlt       = temp.IinPlt,
                 SentAt       = DateTime.UtcNow,
-                EpvoEndpoint = "STUDENT_DUMP (local sync)",
+                EpvoEndpoint = $"{targetTable} (local sync)",
                 RequestBody  = JsonSerializer.Serialize(temp, jsonOptions),
                 TriggeredBy  = triggeredBy
             };
 
             try
             {
-                if (existingDumps.TryGetValue(temp.StudentId, out var existing))
+                if (useSso)
                 {
-                    // UPDATE — копируем все поля из TEMP в DUMP
-                    CopyTempToDump(temp, existing);
+                    if (existingSso.TryGetValue(temp.StudentId, out var existing))
+                    {
+                        CopyTempToTarget(temp, existing);
+                    }
+                    else
+                    {
+                        var newSso = new Student_Sso();
+                        CopyTempToTarget(temp, newSso);
+                        _context.Student_Sso.Add(newSso);
+                    }
                 }
                 else
                 {
-                    // INSERT — создаём новую запись в STUDENT_DUMP
-                    var newDump = new Student_Dump();
-                    CopyTempToDump(temp, newDump);
-                    _context.Student_Dumps.Add(newDump);
+                    if (existingDumps.TryGetValue(temp.StudentId, out var existing))
+                    {
+                        CopyTempToTarget(temp, existing);
+                    }
+                    else
+                    {
+                        var newDump = new Student_Dump();
+                        CopyTempToTarget(temp, newDump);
+                        _context.Student_Dumps.Add(newDump);
+                    }
                 }
 
                 log.Status       = "Success";
-                log.ResponseBody = "{\"result\":\"synced_to_dump\"}";
+                log.ResponseBody = $"{{\"result\":\"synced_to_{targetTable.ToLowerInvariant()}\"}}";
                 success++;
             }
             catch (Exception ex)
@@ -197,7 +222,7 @@ public class StoredProcedureRepository : IStoredProcedureRepository
             logs.Add(log);
         }
 
-        // 4. Сохраняем изменения в STUDENT_DUMP и логи одним батчем
+        // 4. Сохраняем изменения в целевой таблице и логи одним батчем
         await _context.StudentSyncLogs.AddRangeAsync(logs, ct);
         await _context.SaveChangesAsync(ct);
 
@@ -206,88 +231,182 @@ public class StoredProcedureRepository : IStoredProcedureRepository
             Total   = tempStudents.Count,
             Success = success,
             Errors  = errors,
-            Message = $"STUDENT_DUMP обновлён. Обработано: {tempStudents.Count}. Успешно: {success}. Ошибок: {errors}."
+            Message = $"{targetTable} обновлён. Обработано: {tempStudents.Count}. Успешно: {success}. Ошибок: {errors}."
         };
     }
 
-    /// <summary>
-    /// Копирует все поля из Student_Temp в Student_Dump.
-    /// </summary>
-    private static void CopyTempToDump(Student_Temp src, Student_Dump dst)
+    #region Mapping Helpers
+
+    private static EpvoStudentTempDto MapRowToEpvoStudentTempDto(Dictionary<string, object?> row)
     {
-        dst.UniversityId              = src.UniversityId;
-        dst.StudentId                 = src.StudentId;
-        dst.FirstName                 = src.FirstName;
-        dst.LastName                  = src.LastName;
-        dst.Patronymic                = src.Patronymic;
-        dst.BirthDate                 = src.BirthDate;
-        dst.StartDate                 = src.StartDate;
-        dst.Address                   = src.Address;
-        dst.NationId                  = src.NationId;
-        dst.StudyFormId               = src.StudyFormId;
-        dst.StudyCalendarId           = src.StudyCalendarId;
-        dst.PaymentFormId             = src.PaymentFormId;
-        dst.StudyLanguageId           = src.StudyLanguageId;
-        dst.Photo                     = src.Photo;
-        dst.ProfessionId              = src.ProfessionId;
-        dst.CourseNumber              = src.CourseNumber;
-        dst.TranscriptNumber          = src.TranscriptNumber;
-        dst.TranscriptSeries          = src.TranscriptSeries;
-        dst.IsMarried                 = src.IsMarried;
-        dst.IcNumber                  = src.IcNumber;
-        dst.IcDate                    = src.IcDate;
-        dst.Education                 = src.Education;
-        dst.HasExcellent              = src.HasExcellent;
-        dst.StartOrder                = src.StartOrder;
-        dst.IsStudent                 = src.IsStudent;
-        dst.Certificate               = src.Certificate;
-        dst.GrantNumber               = src.GrantNumber;
-        dst.Gpa                       = src.Gpa;
-        dst.CurrentCreditsSum         = src.CurrentCreditsSum;
-        dst.Residence                 = src.Residence;
-        dst.SitizenshipId             = src.SitizenshipId;
-        dst.DormState                 = src.DormState;
-        dst.IsInRetire                = src.IsInRetire;
-        dst.FromId                    = src.FromId;
-        dst.Local                     = src.Local;
-        dst.City                      = src.City;
-        dst.ContractId                = src.ContractId;
-        dst.SpecializationId          = src.SpecializationId;
-        dst.IinPlt                    = src.IinPlt;
-        dst.AltynBelgi                = src.AltynBelgi;
-        dst.DataVydachiAttestata      = src.DataVydachiAttestata;
-        dst.DataVydachiDiploma        = src.DataVydachiDiploma;
-        dst.DateDocEducation          = src.DateDocEducation;
-        dst.EndCollege                = src.EndCollege;
-        dst.EndHighSchool             = src.EndHighSchool;
-        dst.EndSchool                 = src.EndSchool;
-        dst.IcSeries                  = src.IcSeries;
-        dst.IcType                    = src.IcType;
-        dst.LivingAddress             = src.LivingAddress;
-        dst.NomerAttestata            = src.NomerAttestata;
-        dst.OtherBirthPlace           = src.OtherBirthPlace;
-        dst.SeriesNumberDocEducation  = src.SeriesNumberDocEducation;
-        dst.SeriyaAttestata           = src.SeriyaAttestata;
-        dst.SeriyaDiploma             = src.SeriyaDiploma;
-        dst.SchoolName                = src.SchoolName;
-        dst.FacultyId                 = src.FacultyId;
-        dst.SexId                     = src.SexId;
-        dst.Mail                      = src.Mail;
-        dst.Phone                     = src.Phone;
-        dst.SumPoints                 = src.SumPoints;
-        dst.SumPointsCreative         = src.SumPointsCreative;
-        dst.EnrollOrderDate           = src.EnrollOrderDate;
-        dst.MobilePhone               = src.MobilePhone;
-        dst.GrantType                 = src.GrantType;
-        dst.AcademicMobility          = src.AcademicMobility;
-        dst.IncorrectIin              = src.IncorrectIin;
-        dst.BirthPlaceCatoId          = src.BirthPlaceCatoId;
-        dst.LivingPlaceCatoId         = src.LivingPlaceCatoId;
-        dst.RegistrationPlaceCatoId   = src.RegistrationPlaceCatoId;
-        dst.NaselennyiPunktAttestataCatoId = src.NaselennyiPunktAttestataCatoId;
-        dst.EnterExamType             = src.EnterExamType;
-        dst.FundingId                 = src.FundingId;
-        dst.TypeCode                  = src.TypeCode;
+        return new EpvoStudentTempDto
+        {
+            UniversityId = GetInt(row, "universityId"),
+            StudentId = GetInt(row, "studentId") ?? 0,
+            FirstName = GetStr(row, "firstname"),
+            LastName = GetStr(row, "lastname"),
+            Patronymic = GetStr(row, "patronymic"),
+            BirthDate = GetDate(row, "birthDate"),
+            StartDate = GetDate(row, "startDate"),
+            Address = GetStr(row, "address"),
+            NationId = GetInt(row, "nationid"),
+            StudyFormId = GetInt(row, "studyformid"),
+            PaymentFormId = GetInt(row, "paymentformid"),
+            StudyLanguageId = GetInt(row, "studylanguageid"),
+            Photo = null,
+            ProfessionId = GetInt(row, "professionid"),
+            CourseNumber = GetInt(row, "coursenumber"),
+            TranscriptNumber = GetStr(row, "transcriptNumber"),
+            TranscriptSeries = GetStr(row, "transcriptSeries"),
+            IsMarried = GetInt(row, "ismarried"),
+            IcNumber = GetStr(row, "icnumber"),
+            IcDate = GetDate(row, "icDate"),
+            Education = GetStr(row, "education"),
+            HasExcellent = GetBool(row, "hasexcellent"),
+            StartOrder = GetStr(row, "startorder"),
+            IsStudent = GetInt(row, "isstudent"),
+            Certificate = GetStr(row, "certificate"),
+            GrantNumber = GetStr(row, "grantnumber"),
+            Gpa = GetDecimal(row, "gpa"),
+            CurrentCreditsSum = GetFloat(row, "currentCreditsSum"),
+            Residence = GetInt(row, "residence"),
+            SitizenshipId = GetInt(row, "sitizenshipid"),
+            DormState = GetInt(row, "dormState"),
+            IsInRetire = GetBool(row, "isinretire"),
+            FromId = GetInt(row, "fromid"),
+            Local = GetBool(row, "local"),
+            City = GetStr(row, "city"),
+            ContractId = GetInt(row, "contractid"),
+            SpecializationId = GetInt(row, "specializationid"),
+            IinPlt = GetStr(row, "iinplt"),
+            AltynBelgi = GetBool(row, "altynBelgi"),
+            DataVydachiAttestata = GetDate(row, "datavydachiattestata"),
+            DataVydachiDiploma = GetDate(row, "datavydachidiploma"),
+            DateDocEducation = GetDate(row, "dateDocEducation"),
+            EndCollege = GetBool(row, "endCollege"),
+            EndHighSchool = GetBool(row, "endHighSchool"),
+            EndSchool = GetBool(row, "endSchool"),
+            IcSeries = GetStr(row, "icseries"),
+            IcType = GetInt(row, "ictype"),
+            LivingAddress = GetStr(row, "livingAddress"),
+            NomerAttestata = GetStr(row, "nomerattestata"),
+            OtherBirthPlace = GetStr(row, "otherBirthPlace"),
+            SeriesNumberDocEducation = GetStr(row, "seriesNumberDocEducation"),
+            SeriyaAttestata = GetStr(row, "seriyaattestata"),
+            SeriyaDiploma = GetStr(row, "seriyaDiploma"),
+            SchoolName = GetStr(row, "schoolName"),
+            FacultyId = GetInt(row, "facultyId"),
+            SexId = GetInt(row, "sexid"),
+            Mail = GetStr(row, "mail"),
+            Phone = GetStr(row, "phone"),
+            SumPoints = GetInt(row, "sumPoints"),
+            SumPointsCreative = GetInt(row, "sumPointsCreative"),
+            EnrollOrderDate = GetDate(row, "enrollOrderDate"),
+            MobilePhone = GetStr(row, "mobilePhone"),
+            GrantType = GetInt(row, "grant_type"),
+            AcademicMobility = GetInt(row, "academicMobility"),
+            IncorrectIin = GetBool(row, "incorrectIin"),
+            BirthPlaceCatoId = GetInt(row, "birthPlaceCatoId"),
+            LivingPlaceCatoId = GetInt(row, "livingPlaceCatoId"),
+            RegistrationPlaceCatoId = GetInt(row, "registrationPlaceCatoId"),
+            NaselennyiPunktAttestataCatoId = GetInt(row, "naselennyiPunktAttestataCatoId"),
+            FundingId = GetInt(row, "fundingId"),
+            TypeCode = GetStr(row, "typeCode")
+        };
+    }
+
+    private static void CopyTempToTarget(Student_Temp src, object dst)
+    {
+        var srcProps = typeof(Student_Temp).GetProperties();
+        var dstType = dst.GetType();
+        foreach (var sp in srcProps)
+        {
+            var dp = dstType.GetProperty(sp.Name);
+            if (dp != null && dp.CanWrite)
+            {
+                dp.SetValue(dst, sp.GetValue(src));
+            }
+        }
+    }
+
+    private static Student_Temp MapDtoToEntity(EpvoStudentTempDto dto)
+    {
+        return new Student_Temp
+        {
+            UniversityId = dto.UniversityId,
+            StudentId = dto.StudentId,
+            FirstName = dto.FirstName,
+            LastName = dto.LastName,
+            Patronymic = dto.Patronymic,
+            BirthDate = dto.BirthDate,
+            StartDate = dto.StartDate,
+            Address = dto.Address,
+            NationId = dto.NationId,
+            StudyFormId = dto.StudyFormId,
+            StudyCalendarId = dto.StudyCalendarId,
+            PaymentFormId = dto.PaymentFormId,
+            StudyLanguageId = dto.StudyLanguageId,
+            Photo = dto.Photo,
+            ProfessionId = dto.ProfessionId,
+            CourseNumber = dto.CourseNumber,
+            TranscriptNumber = dto.TranscriptNumber,
+            TranscriptSeries = dto.TranscriptSeries,
+            IsMarried = dto.IsMarried,
+            IcNumber = dto.IcNumber,
+            IcDate = dto.IcDate,
+            Education = dto.Education,
+            HasExcellent = dto.HasExcellent,
+            StartOrder = dto.StartOrder,
+            IsStudent = dto.IsStudent,
+            Certificate = dto.Certificate,
+            GrantNumber = dto.GrantNumber,
+            Gpa = dto.Gpa,
+            CurrentCreditsSum = dto.CurrentCreditsSum,
+            Residence = dto.Residence,
+            SitizenshipId = dto.SitizenshipId,
+            DormState = dto.DormState,
+            IsInRetire = dto.IsInRetire,
+            FromId = dto.FromId,
+            Local = dto.Local,
+            City = dto.City,
+            ContractId = dto.ContractId,
+            SpecializationId = dto.SpecializationId,
+            IinPlt = dto.IinPlt,
+            AltynBelgi = dto.AltynBelgi,
+            DataVydachiAttestata = dto.DataVydachiAttestata,
+            DataVydachiDiploma = dto.DataVydachiDiploma,
+            DateDocEducation = dto.DateDocEducation,
+            EndCollege = dto.EndCollege,
+            EndHighSchool = dto.EndHighSchool,
+            EndSchool = dto.EndSchool,
+            IcSeries = dto.IcSeries,
+            IcType = dto.IcType,
+            LivingAddress = dto.LivingAddress,
+            NomerAttestata = dto.NomerAttestata,
+            OtherBirthPlace = dto.OtherBirthPlace,
+            SeriesNumberDocEducation = dto.SeriesNumberDocEducation,
+            SeriyaAttestata = dto.SeriyaAttestata,
+            SeriyaDiploma = dto.SeriyaDiploma,
+            SchoolName = dto.SchoolName,
+            FacultyId = dto.FacultyId,
+            SexId = dto.SexId,
+            Mail = dto.Mail,
+            Phone = dto.Phone,
+            SumPoints = dto.SumPoints,
+            SumPointsCreative = dto.SumPointsCreative,
+            EnrollOrderDate = dto.EnrollOrderDate,
+            MobilePhone = dto.MobilePhone,
+            GrantType = dto.GrantType,
+            AcademicMobility = dto.AcademicMobility,
+            IncorrectIin = dto.IncorrectIin,
+            BirthPlaceCatoId = dto.BirthPlaceCatoId,
+            LivingPlaceCatoId = dto.LivingPlaceCatoId,
+            RegistrationPlaceCatoId = dto.RegistrationPlaceCatoId,
+            NaselennyiPunktAttestataCatoId = dto.NaselennyiPunktAttestataCatoId,
+            EnterExamType = dto.EnterExamType,
+            FundingId = dto.FundingId,
+            TypeCode = dto.TypeCode
+        };
     }
 
     private static Student_Temp MapRowToStudentTemp(Dictionary<string, object?> row)
@@ -415,6 +534,48 @@ public class StoredProcedureRepository : IStoredProcedureRepository
         return null;
     }
 
+    private static object? GetRaw(Dictionary<string, object?> row, string key)
+    {
+        var entry = row.FirstOrDefault(kv =>
+            string.Equals(kv.Key, key, StringComparison.OrdinalIgnoreCase));
+        var val = entry.Value;
+        if (val == null || val is DBNull) return null;
+        return val;
+    }
+
+    #endregion
+
+    public async Task<int> SavePreviewToTempAsync(List<EpvoStudentTempDto> items, CancellationToken ct = default)
+    {
+        if (items == null || items.Count == 0) return 0;
+
+        await _context.Database.ExecuteSqlRawAsync(
+            "DELETE FROM [dbo].[STUDENT_TEMP] WHERE SyncSessionId IS NULL", ct);
+
+        var entities = items.Select(MapDtoToEntity).ToList();
+
+        await _context.Student_Temp.AddRangeAsync(entities, ct);
+        await _context.SaveChangesAsync(ct);
+
+        return entities.Count;
+    }
+
+    public async Task UpsertStudentTempAsync(EpvoStudentTempDto dto, CancellationToken ct = default)
+    {
+        var existing = await _context.Student_Temp.FindAsync(new object[] { dto.StudentId }, ct);
+        if (existing != null)
+        {
+            var updated = MapDtoToEntity(dto);
+            _context.Entry(existing).CurrentValues.SetValues(updated);
+        }
+        else
+        {
+            _context.Student_Temp.Add(MapDtoToEntity(dto));
+        }
+
+        await _context.SaveChangesAsync(ct);
+    }
+
     public async Task<SyncLogPagedResult> GetSyncLogsAsync(string? status, int page, int pageSize, CancellationToken ct = default)
     {
         var query = _context.StudentSyncLogs.AsNoTracking();
@@ -446,115 +607,5 @@ public class StoredProcedureRepository : IStoredProcedureRepository
             .Where(x => x.StudentId == studentId)
             .OrderByDescending(x => x.SentAt)
             .ToListAsync(ct);
-    }
-
-    private static object? GetRaw(Dictionary<string, object?> row, string key)
-    {
-        var entry = row.FirstOrDefault(kv =>
-            string.Equals(kv.Key, key, StringComparison.OrdinalIgnoreCase));
-        var val = entry.Value;
-        if (val == null || val is DBNull) return null;
-        return val;
-    }
-
-    // ─── Sync Preview ─────────────────────────────────────────────
-
-    public async Task<SyncPreviewResult> GetSyncPreviewAsync(CancellationToken ct = default)
-    {
-        // 1. Читаем результат SP (read-only, ничего не пишем)
-        var rows = await ReadReloadStudentAsync(ct);
-
-        // 2. Загружаем справочники факультетов и профессий
-        var facultyDict = await _context.Faculties
-            .AsNoTracking()
-            .Where(f => f.FacultyNameRu != null)
-            .ToDictionaryAsync(f => f.FacultyId, f => f.FacultyNameRu!, ct);
-
-        var professionDict = await _context.Professions
-            .AsNoTracking()
-            .Where(p => p.ProfessionNameRu != null)
-            .ToDictionaryAsync(p => p.ProfessionId, p => p.ProfessionNameRu!, ct);
-
-        // 3. Загружаем существующие IIN из STUDENT_DUMP/STUDENT_SSO и STUDENT в HashSet
-        List<string> iinsInSso;
-        if (_dataSource.Equals("Sso", StringComparison.OrdinalIgnoreCase))
-        {
-            iinsInSso = await _context.Student_Sso
-                .AsNoTracking()
-                .Where(s => s.IinPlt != null)
-                .Select(s => s.IinPlt!)
-                .ToListAsync(ct);
-        }
-        else
-        {
-            iinsInSso = await _context.Student_Dumps
-                .AsNoTracking()
-                .Where(s => s.IinPlt != null)
-                .Select(s => s.IinPlt!)
-                .ToListAsync(ct);
-        }
-
-        var iinsInStudent = await _context.Students
-            .AsNoTracking()
-            .Where(s => s.IinPlt != null)
-            .Select(s => s.IinPlt!)
-            .ToListAsync(ct);
-
-        var ssoSet     = new HashSet<string>(iinsInSso,     StringComparer.OrdinalIgnoreCase);
-        var studentSet = new HashSet<string>(iinsInStudent, StringComparer.OrdinalIgnoreCase);
-
-        // 3. Формируем предпросмотр с флагом дубликата
-        var items = rows.Select(row =>
-        {
-            var iin = GetStr(row, "iinplt");
-            var professionId = GetInt(row, "professionid");
-
-            string? duplicateSource = null;
-            if (iin != null && ssoSet.Contains(iin))
-                duplicateSource = _dataSource.Equals("Sso", StringComparison.OrdinalIgnoreCase) ? "STUDENT_SSO" : "STUDENT_DUMP";
-            else if (iin != null && studentSet.Contains(iin))
-                duplicateSource = "STUDENT";
-
-            // Разбираем paymentFormId → текст
-            var paymentFormId = GetInt(row, "paymentformid");
-            var paymentType = paymentFormId == 2 ? "Стипендия"
-                            : paymentFormId == 1 ? "Платник" : null;
-
-            // Разбираем grantType → текст
-            var grantTypeId = GetInt(row, "grant_type");
-            var grantType = grantTypeId == -4 ? "Государственный грант"
-                          : grantTypeId == -7 ? "Из собственных средств"
-                          : grantTypeId == -6 ? "Трехсторонняя форма обучения" : null;
-
-            var lastName  = GetStr(row, "lastname")  ?? "";
-            var firstName = GetStr(row, "firstname") ?? "";
-            var patronymic = GetStr(row, "patronymic") ?? "";
-            var fullName  = $"{lastName} {firstName} {patronymic}".Trim();
-
-            facultyDict.TryGetValue(GetInt(row, "facultyId") ?? 0, out var facultyName);
-            professionDict.TryGetValue(GetInt(row, "professionid") ?? 0, out var professionName);
-
-            return new SyncPreviewItem
-            {
-                StudentId       = GetInt(row, "studentid"),
-                IinPlt          = iin,
-                FullName        = fullName,
-                CourseNumber    = GetInt(row, "coursenumber"),
-                FacultyName     = facultyName,
-                ProfessionName  = professionName,
-                PaymentType     = paymentType,
-                GrantType       = grantType,
-                IsDuplicate     = duplicateSource != null,
-                DuplicateSource = duplicateSource,
-            };
-        }).ToList();
-
-        return new SyncPreviewResult
-        {
-            Total          = items.Count,
-            NewCount       = items.Count(x => !x.IsDuplicate),
-            DuplicateCount = items.Count(x => x.IsDuplicate),
-            Items          = items,
-        };
     }
 }

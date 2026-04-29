@@ -117,6 +117,7 @@ public class SsoDbContext : DbContext
             entity.HasOne(e => e.User)
                   .WithOne(u => u.Student)
                   .HasForeignKey<Edu_Students>(e => e.StudentID)
+                  .HasPrincipalKey<Edu_Users>(u => u.ID)
                   .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(e => e.EducationType)

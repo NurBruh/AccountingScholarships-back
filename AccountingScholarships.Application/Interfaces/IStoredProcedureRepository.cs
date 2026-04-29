@@ -1,4 +1,5 @@
 using AccountingScholarships.Application.Common;
+using AccountingScholarships.Application.DTO.EpvoSso;
 using AccountingScholarships.Domain.Entities.Real.epvosso;
 
 namespace AccountingScholarships.Application.Interfaces;
@@ -32,10 +33,14 @@ public interface IStoredProcedureRepository
     Task<SendTempResult> SendTempToEpvoAsync(string triggeredBy, CancellationToken ct = default);
 
     /// <summary>
-    /// Выполняет [dbo].[Reload_STUDENT] (read-only), проверяет дубликаты по iinPlt
-    /// против STUDENT_SSO и STUDENT. Возвращает список с флагом IsDuplicate и статистику.
+    /// Сохраняет переданный список студентов в STUDENT_TEMP (очищает auto-записи).
     /// </summary>
-    Task<SyncPreviewResult> GetSyncPreviewAsync(CancellationToken ct = default);
+    Task<int> SavePreviewToTempAsync(List<EpvoStudentTempDto> items, CancellationToken ct = default);
+
+    /// <summary>
+    /// Обновляет одну запись в STUDENT_TEMP (или добавляет, если не найдена).
+    /// </summary>
+    Task UpsertStudentTempAsync(EpvoStudentTempDto dto, CancellationToken ct = default);
 
     /// <summary>
     /// Возвращает постраничный список логов синхронизации с ЕПВО.

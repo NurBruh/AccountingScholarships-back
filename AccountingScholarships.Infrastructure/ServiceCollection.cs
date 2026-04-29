@@ -69,6 +69,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISsoToEpvoMapperService, SsoToEpvoMapperService>();
         services.AddScoped<IChangeLogRepository, ChangeLogRepository>();
         services.AddScoped<IStoredProcedureRepository, StoredProcedureRepository>();
+        services.AddScoped<IPreviewRepository, PreviewRepository>();
         services.AddScoped<IAuthService, AuthService>();
 
         return services;

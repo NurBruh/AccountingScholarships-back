@@ -1,4 +1,5 @@
 using AccountingScholarships.Application.Commands.StoredProcedures;
+using AccountingScholarships.Application.DTO.EpvoSso;
 using AccountingScholarships.Application.Queries.EpvoSso;
 using AccountingScholarships.Application.Interfaces;
 using MediatR;
@@ -17,11 +18,13 @@ public class EpvoSsoController : ControllerBase
 {
     private readonly IMediator _mediator;
     private readonly IStoredProcedureRepository _spRepo;
+    private readonly IPreviewRepository _previewRepo;
 
-    public EpvoSsoController(IMediator mediator, IStoredProcedureRepository spRepo)
+    public EpvoSsoController(IMediator mediator, IStoredProcedureRepository spRepo, IPreviewRepository previewRepo)
     {
         _mediator = mediator;
         _spRepo = spRepo;
+        _previewRepo = previewRepo;
     }
 
     // ─── Professions ──────────────────────────────────────────────
@@ -434,7 +437,7 @@ public class EpvoSsoController : ControllerBase
     [HttpGet("sync-preview")]
     public async Task<IActionResult> GetSyncPreview(CancellationToken ct)
     {
-        var result = await _spRepo.GetSyncPreviewAsync(ct);
+        var result = await _previewRepo.GetSyncPreviewAsync(ct);
         return Ok(result);
     }
 
@@ -454,13 +457,13 @@ public class EpvoSsoController : ControllerBase
     }
 
     /// <summary>
-    /// Выполняет [dbo].[Reload_STUDENT] и сохраняет результат в STUDENT_TEMP.
-    /// STUDENT_TEMP очищается перед вставкой.
+    /// Сохраняет переданные записи предпросмотра в STUDENT_TEMP.
+    /// STUDENT_TEMP очищается от auto-записей перед вставкой.
     /// </summary>
     [HttpPost("save-to-temp")]
-    public async Task<IActionResult> SaveToTemp(CancellationToken ct)
+    public async Task<IActionResult> SaveToTemp([FromBody] List<EpvoStudentTempDto> items, CancellationToken ct)
     {
-        var count = await _spRepo.SaveReloadStudentToTempAsync(ct);
+        var count = await _spRepo.SavePreviewToTempAsync(items, ct);
         return Ok(new
         {
             Message = $"STUDENT_TEMP обновлён. Загружено записей: {count}",
@@ -469,9 +472,19 @@ public class EpvoSsoController : ControllerBase
     }
 
     /// <summary>
+    /// Обновляет одну запись в STUDENT_TEMP (или добавляет, если не найдена).
+    /// </summary>
+    [HttpPost("update-temp-student")]
+    public async Task<IActionResult> UpdateTempStudent([FromBody] EpvoStudentTempDto dto, CancellationToken ct)
+    {
+        await _spRepo.UpsertStudentTempAsync(dto, ct);
+        return Ok(new { Message = "Запись обновлена в STUDENT_TEMP", StudentId = dto.StudentId });
+    }
+
+    /// <summary>
     /// Читает STUDENT_TEMP, симулирует отправку в ЕПВО,
     /// каждую попытку пишет в STUDENT_SYNC_LOG (Success / Error).
-    /// STUDENT_SSO не затрагивается. Фиксирует кто запустил.
+    /// Целевая таблица определяется настройкой SyncSettings:EpvoDataSource (Dump / Sso).
     /// </summary>
     [HttpPost("send-temp-to-epvo")]
     public async Task<IActionResult> SendTempToEpvo(CancellationToken ct)
