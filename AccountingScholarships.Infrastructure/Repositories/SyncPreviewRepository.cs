@@ -119,12 +119,10 @@ public class SyncPreviewRepository : ISyncPreviewRepository
         var tempIds = await _epvoContext.Student_Temp
             .AsNoTracking()
             .Where(t => studentIds.Contains(t.StudentId))
-            .Select(t => new { t.StudentId, t.SyncSessionId })
+            .Select(t => t.StudentId)
             .ToListAsync(ct);
 
-        var tempByStudentId = tempIds
-            .GroupBy(t => t.StudentId)
-            .ToDictionary(g => g.Key, g => g.First().SyncSessionId);
+        var tempByStudentId = tempIds.ToHashSet();
 
         // ── 6. Сравниваем и формируем результат ──
         var items = new List<SyncPreviewComparisonDto>();
@@ -144,11 +142,12 @@ public class SyncPreviewRepository : ISyncPreviewRepository
             }
 
             // ИИК / БИК / UpdatedDate из Scollarship_Students_Info
+            DateTime? ssoUpdated = null;
             if (internalId > 0 && ssiDict.TryGetValue(internalId, out var ssi))
             {
                 sso.Iic = ssi.Iic;
                 sso.Bic = ssi.Bic;
-                sso.SyncSessionId = ssi.Updated_Date?.ToString("O"); // временно используем для хранения даты
+                ssoUpdated = ssi.Updated_Date;
             }
 
             // GrantType по логике Zapros.txt
@@ -177,14 +176,6 @@ public class SyncPreviewRepository : ISyncPreviewRepository
             var paymentType = sso.PaymentFormId == 2 ? "Стипендия" : sso.PaymentFormId == 1 ? "Платник" : null;
             var grantTypeLabel = ResolveGrantTypeLabel(sso.GrantType);
 
-            // Дата обновления из ССО (хранилась во временном SyncSessionId)
-            DateTime? ssoUpdated = null;
-            if (DateTime.TryParse(sso.SyncSessionId ?? "", out var parsedDt))
-                ssoUpdated = parsedDt;
-            sso.SyncSessionId = null; // очищаем временное использование
-
-            tempByStudentId.TryGetValue(sso.StudentId, out var tempSessionId);
-
             items.Add(new SyncPreviewComparisonDto
             {
                 StudentId = sso.StudentId,
@@ -204,8 +195,7 @@ public class SyncPreviewRepository : ISyncPreviewRepository
                 HasDifference = diffs.Count > 0,
                 DifferentFields = diffs.Select(d => d.FieldName).ToList(),
                 FieldDiffs = diffs,
-                IsInTemp = tempByStudentId.ContainsKey(sso.StudentId),
-                TempSyncSessionId = tempSessionId,
+                IsInTemp = tempByStudentId.Contains(sso.StudentId),
                 TempData = MapToDto(sso)
             });
         }
@@ -339,9 +329,10 @@ public class SyncPreviewRepository : ISyncPreviewRepository
             NaselennyiPunktAttestataCatoId = dto.NaselennyiPunktAttestataCatoId,
             FundingId = dto.FundingId,
             TypeCode = dto.TypeCode,
-            SyncSessionId = sessionId,
             Iic = dto.Iic,
-            Bic = dto.Bic
+            Bic = dto.Bic,
+            BankId = dto.BankId,
+            UpdateDate = dto.UpdateDate
         }).ToList();
 
         // Upsert: обновляем существующие, добавляем новые
@@ -358,7 +349,6 @@ public class SyncPreviewRepository : ISyncPreviewRepository
             {
                 // Обновляем все поля
                 _epvoContext.Entry(exist).CurrentValues.SetValues(entity);
-                exist.SyncSessionId = sessionId;
             }
             else
             {
@@ -605,7 +595,9 @@ public class SyncPreviewRepository : ISyncPreviewRepository
             FundingId = src.FundingId,
             TypeCode = src.TypeCode,
             Iic = src.Iic,
-            Bic = src.Bic
+            Bic = src.Bic,
+            BankId = src.BankId,
+            UpdateDate = src.UpdateDate
         };
     }
 

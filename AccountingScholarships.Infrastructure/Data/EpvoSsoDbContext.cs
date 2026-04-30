@@ -166,6 +166,8 @@ namespace AccountingScholarships.Infrastructure.Data
                 e.Property(x => x.SyncSessionId).HasMaxLength(50);
                 e.Property(x => x.Iic).HasMaxLength(100);
                 e.Property(x => x.Bic).HasMaxLength(100);
+                e.Property(x => x.BankId);
+                e.Property(x => x.UpdateDate);
                 e.ToTable("STUDENT_TEMP");
             });
 

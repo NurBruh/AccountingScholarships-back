@@ -84,5 +84,7 @@ namespace AccountingScholarships.Domain.Entities.Real.epvosso
         public string? SyncSessionId { get; set; }
         public string? Iic { get; set; }
         public string? Bic { get; set; }
+        public int? BankId { get; set; }
+        public DateOnly? UpdateDate { get; set; }
     }
 }

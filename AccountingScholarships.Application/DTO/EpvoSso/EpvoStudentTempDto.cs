@@ -77,4 +77,6 @@ public class EpvoStudentTempDto
     public string? TypeCode { get; set; }
     public string? Iic { get; set; }
     public string? Bic { get; set; }
+    public int? BankId { get; set; }
+    public DateOnly? UpdateDate { get; set; }
 }

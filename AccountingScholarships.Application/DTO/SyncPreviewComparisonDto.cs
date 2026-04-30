@@ -27,7 +27,6 @@ public class SyncPreviewComparisonDto
 
     /// <summary>true — запись уже есть в STUDENT_TEMP</summary>
     public bool IsInTemp { get; set; }
-    public string? TempSyncSessionId { get; set; }
 
     /// <summary>Данные для сохранения в STUDENT_TEMP (трансформированные из ССО)</summary>
     public EpvoSso.EpvoStudentTempDto? TempData { get; set; }
