@@ -13,9 +13,9 @@ namespace AccountingScholarships.Domain.Entities.Real.university
         public int SemesterCourseID { get; set; } // FK
         public string RegisteredBy { get; set; }
         public DateTime RegisteredOn { get; set; }
-        public float? Grade1 { get; set; }
-        public float? Grade2 { get; set; }
-        public float? ExamGrade { get; set; }
+        public double? Grade1 { get; set; }
+        public double? Grade2 { get; set; }
+        public double? ExamGrade { get; set; }
         public string? LetterGrade { get; set; }
         public string LastUpdatedBy { get; set; }
         public DateTime LastUpdatedOn { get; set; }

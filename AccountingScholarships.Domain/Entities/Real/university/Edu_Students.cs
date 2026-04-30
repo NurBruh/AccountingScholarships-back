@@ -17,19 +17,19 @@ namespace AccountingScholarships.Domain.Entities.Real.university
         public int Year { get; set; }
         public int? RupID { get; set; }
         public DateOnly? EntryDate { get; set; }
-        public float? GPA { get; set; }
+        public double? GPA { get; set; }
         public string LastUpdatedBy { get; set; }
         public DateTime LastUpdatedOn { get; set; }
         public DateTime? GraduatedOn { get; set; }
         public DateOnly? AcademicStatusEndsOn { get; set; }
         public DateOnly? AcademicStatusStartsOn { get; set; }
-        public float? GPA_Y { get; set; }
+        public double? GPA_Y { get; set; }
         public bool? IsPersonalDataComplete { get; set; }
         public int? HosterPrivelegeID { get; set; }
         public int? MinorSpecialityID { get; set; }
         public int? EnrollmentTypeId { get; set; }
-        public float? EctsGPA { get; set; }
-        public float? EctsGPA_Y { get; set; }
+        public double? EctsGPA { get; set; }
+        public double? EctsGPA_Y { get; set; }
         public bool? IsScholarship { get; set; }
         public int? ScholarshipTypeID { get; set; }
         public string? ScholarshipOrderNumber { get; set; }
