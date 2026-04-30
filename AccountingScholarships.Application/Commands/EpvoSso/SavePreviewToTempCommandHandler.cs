@@ -17,8 +17,7 @@ public class SavePreviewToTempCommandHandler
         SavePreviewToTempCommand request, CancellationToken cancellationToken)
     {
         return await _repository.SaveToTempAsync(
-            request.Items,
-            request.SessionId,
+            request.Iins,
             cancellationToken);
     }
 }

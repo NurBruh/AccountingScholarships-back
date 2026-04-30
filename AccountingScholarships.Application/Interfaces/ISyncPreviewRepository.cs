@@ -1,5 +1,4 @@
 using AccountingScholarships.Application.DTO;
-using AccountingScholarships.Application.DTO.EpvoSso;
 
 namespace AccountingScholarships.Application.Interfaces;
 
@@ -7,6 +6,7 @@ public interface ISyncPreviewRepository
 {
     /// <summary>
     /// Возвращает предпросмотр синхронизации с пагинацией.
+    /// Базируется на данных ComparisonRepository (ССО vs ЕПВО).
     /// Показывает только записи с различиями и отсутствующие в ЕПВО.
     /// </summary>
     Task<SyncPreviewComparisonPagedDto> GetPreviewAsync(
@@ -17,11 +17,11 @@ public interface ISyncPreviewRepository
         CancellationToken ct = default);
 
     /// <summary>
-    /// Сохраняет выбранные записи в STUDENT_TEMP с указанным SessionId.
-    /// Не удаляет существующие записи.
+    /// Сохраняет записи по ИИН в STUDENT_TEMP.
+    /// Трансформация ССО → ЕПВО выполняется внутри через SsoToEpvoMapperService.
+    /// Не удаляет существующие записи (Upsert по StudentId).
     /// </summary>
     Task<int> SaveToTempAsync(
-        List<EpvoStudentTempDto> items,
-        string sessionId,
+        List<string> iins,
         CancellationToken ct = default);
 }

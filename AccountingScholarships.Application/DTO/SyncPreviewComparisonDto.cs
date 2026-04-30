@@ -2,6 +2,7 @@ namespace AccountingScholarships.Application.DTO;
 
 /// <summary>
 /// Элемент предпросмотра синхронизации ССО → ЕПВО.
+/// Базируется на данных ComparisonRepository.
 /// Показывает только различия и записи, отсутствующие в ЕПВО.
 /// </summary>
 public class SyncPreviewComparisonDto
@@ -27,9 +28,6 @@ public class SyncPreviewComparisonDto
 
     /// <summary>true — запись уже есть в STUDENT_TEMP</summary>
     public bool IsInTemp { get; set; }
-
-    /// <summary>Данные для сохранения в STUDENT_TEMP (трансформированные из ССО)</summary>
-    public EpvoSso.EpvoStudentTempDto? TempData { get; set; }
 }
 
 public class SyncPreviewComparisonPagedDto

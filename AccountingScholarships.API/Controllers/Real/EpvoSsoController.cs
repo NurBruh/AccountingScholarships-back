@@ -461,23 +461,23 @@ public class EpvoSsoController : ControllerBase
     }
 
     /// <summary>
-    /// Сохраняет выбранные записи предпросмотра в STUDENT_TEMP.
+    /// Сохраняет записи предпросмотра в STUDENT_TEMP по списку ИИН.
+    /// Трансформация ССО → ЕПВО выполняется автоматически.
     /// Не удаляет существующие записи. Обновляет существующие по StudentId.
     /// </summary>
     [HttpPost("sync-preview-comparison/save-temp")]
     public async Task<IActionResult> SavePreviewToTemp([FromBody] SavePreviewToTempRequest request, CancellationToken ct)
     {
-        if (request?.Items == null || !request.Items.Any())
-            return BadRequest("Нет данных для сохранения");
+        if (request?.Iins == null || !request.Iins.Any())
+            return BadRequest("Нет ИИН для сохранения");
 
-        var sessionId = $"preview-{Guid.NewGuid():N}";
-        var count = await _syncPreviewRepo.SaveToTempAsync(request.Items, sessionId, ct);
-        return Ok(new { Message = "Сохранено в STUDENT_TEMP", Count = count, SessionId = sessionId });
+        var count = await _syncPreviewRepo.SaveToTempAsync(request.Iins, ct);
+        return Ok(new { Message = "Сохранено в STUDENT_TEMP", Count = count });
     }
 
     public class SavePreviewToTempRequest
     {
-        public List<Application.DTO.EpvoSso.EpvoStudentTempDto> Items { get; set; } = new();
+        public List<string> Iins { get; set; } = new();
     }
 
     /// <summary>
