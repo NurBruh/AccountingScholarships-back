@@ -19,12 +19,14 @@ public class EpvoSsoController : ControllerBase
     private readonly IMediator _mediator;
     private readonly IStoredProcedureRepository _spRepo;
     private readonly IPreviewRepository _previewRepo;
+    private readonly ISyncPreviewRepository _syncPreviewRepo;
 
-    public EpvoSsoController(IMediator mediator, IStoredProcedureRepository spRepo, IPreviewRepository previewRepo)
+    public EpvoSsoController(IMediator mediator, IStoredProcedureRepository spRepo, IPreviewRepository previewRepo, ISyncPreviewRepository syncPreviewRepo)
     {
         _mediator = mediator;
         _spRepo = spRepo;
         _previewRepo = previewRepo;
+        _syncPreviewRepo = syncPreviewRepo;
     }
 
     // ─── Professions ──────────────────────────────────────────────
@@ -439,6 +441,43 @@ public class EpvoSsoController : ControllerBase
     {
         var result = await _previewRepo.GetSyncPreviewAsync(ct);
         return Ok(result);
+    }
+
+    /// <summary>
+    /// Новый предпросмотр синхронизации ССО → ЕПВО.
+    /// Показывает только студентов-грантников с различиями и отсутствующих в ЕПВО.
+    /// Поддерживает пагинацию, фильтрацию и поиск.
+    /// </summary>
+    [HttpGet("sync-preview-comparison")]
+    public async Task<IActionResult> GetSyncPreviewComparison(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 50,
+        [FromQuery] string filter = "all",
+        [FromQuery] string? search = null,
+        CancellationToken ct = default)
+    {
+        var result = await _syncPreviewRepo.GetPreviewAsync(page, pageSize, filter, search, ct);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Сохраняет выбранные записи предпросмотра в STUDENT_TEMP.
+    /// Не удаляет существующие записи. Обновляет существующие по StudentId.
+    /// </summary>
+    [HttpPost("sync-preview-comparison/save-temp")]
+    public async Task<IActionResult> SavePreviewToTemp([FromBody] SavePreviewToTempRequest request, CancellationToken ct)
+    {
+        if (request?.Items == null || !request.Items.Any())
+            return BadRequest("Нет данных для сохранения");
+
+        var sessionId = $"preview-{Guid.NewGuid():N}";
+        var count = await _syncPreviewRepo.SaveToTempAsync(request.Items, sessionId, ct);
+        return Ok(new { Message = "Сохранено в STUDENT_TEMP", Count = count, SessionId = sessionId });
+    }
+
+    public class SavePreviewToTempRequest
+    {
+        public List<Application.DTO.EpvoSso.EpvoStudentTempDto> Items { get; set; } = new();
     }
 
     /// <summary>

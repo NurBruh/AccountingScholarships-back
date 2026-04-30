@@ -70,6 +70,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IChangeLogRepository, ChangeLogRepository>();
         services.AddScoped<IStoredProcedureRepository, StoredProcedureRepository>();
         services.AddScoped<IPreviewRepository, PreviewRepository>();
+        services.AddScoped<ISyncPreviewRepository, SyncPreviewRepository>();
         services.AddScoped<IAuthService, AuthService>();
 
         return services;

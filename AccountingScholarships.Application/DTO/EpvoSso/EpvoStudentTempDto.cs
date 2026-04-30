@@ -75,4 +75,6 @@ public class EpvoStudentTempDto
     public int? EnterExamType { get; set; }
     public int? FundingId { get; set; }
     public string? TypeCode { get; set; }
+    public string? Iic { get; set; }
+    public string? Bic { get; set; }
 }
